@@ -1,16 +1,13 @@
 package com.gygy.contractservice.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UuidGenerator;
-
-import java.sql.Date;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -36,5 +33,11 @@ public class Discount {
     private LocalDate createdAt;
     @Column(name="updated_at")
     private LocalDate updatedAt;
+    @ManyToOne
+    @JoinColumn(name="contract_detail_id",nullable = false)
+    private ContractDetail contractDetail;
+    @ManyToMany(mappedBy = "discounts")
+    @JsonIgnore
+    private List<BillingPlan> billingPlans;
 
 }

@@ -42,6 +42,10 @@ public class Commitment {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @ManyToOne
+    @JoinColumn(name="contract_detail_id", nullable = false)
+    private ContractDetail contractDetail;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();

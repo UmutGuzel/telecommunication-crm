@@ -11,6 +11,7 @@ import org.hibernate.annotations.UuidGenerator;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -49,6 +50,16 @@ public class BillingPlan {
     private LocalDateTime createdAt;
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+    @ManyToOne
+    @JoinColumn(name = "contract_detail_id", nullable = false)
+    private ContractDetail contractDetail;
+
+    @ManyToMany
+    @JoinTable(
+            name = "billingPlan_discount",
+            joinColumns = @JoinColumn(name = "billing_plan_id"),
+            inverseJoinColumns = @JoinColumn(name = "discount_id"))
+    private List<Discount> discounts;
 
     @PrePersist
     protected void onCreate() {
