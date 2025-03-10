@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ContractServiceImpl implements ContractService {
@@ -28,5 +30,12 @@ public class ContractServiceImpl implements ContractService {
         Contract contract = contractMapper.toEntity(requestDto, plan);
         Contract savedContract = contractRepository.save(contract);
         return contractMapper.toDto(savedContract);
+    }
+
+    @Override
+    public List<ContractDto> getAllContracts() {
+        return contractRepository.findAll().stream()
+                .map(contractMapper::toDto)
+                .toList();
     }
 }

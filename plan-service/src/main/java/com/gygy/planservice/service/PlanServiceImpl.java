@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class PlanServiceImpl implements PlanService {
@@ -28,5 +30,12 @@ public class PlanServiceImpl implements PlanService {
         Plan plan = planMapper.toEntity(requestDto, category);
         Plan savedPlan = planRepository.save(plan);
         return planMapper.toDto(savedPlan);
+    }
+
+    @Override
+    public List<PlanDto> getAllPlans() {
+        return planRepository.findAll().stream()
+                .map(planMapper::toDto)
+                .toList();
     }
 }

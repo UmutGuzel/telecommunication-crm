@@ -20,7 +20,14 @@ spring:
     location: classpath:banner.txt    # Use custom banner file
     charset: UTF-8                    # Banner file encoding
     # If you want to disable banner completely:
-    # banner-mode: "off"             # Valid values: "console", "log", "off"
+    # banner-mode: "off"é
 
 server:
   port: 9040
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method

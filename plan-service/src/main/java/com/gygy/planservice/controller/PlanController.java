@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -25,25 +26,21 @@ public class PlanController {
 
     @GetMapping("/{id}")
     public ResponseEntity<PlanDto> getPlanById(@PathVariable UUID id) {
-        // TODO add the getPlanById method to the service
         return ResponseEntity.ok().build();
     }
 
     @GetMapping
-    public ResponseEntity<?> getAllPlans() {
-        // TODO add the getAllPlans method to the service
-        return ResponseEntity.ok().build();
+    public ResponseEntity<List<PlanDto>> getAllPlans() {
+        return ResponseEntity.ok(planService.getAllPlans());
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updatePlan(@PathVariable UUID id, @RequestBody PlanRequestDto requestDto) {
-        // TODO add the updatePlan method to the service
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deletePlan(@PathVariable UUID id) {
-        // TODO add the deletePlan method to the service
         return ResponseEntity.noContent().build();
     }
 }
