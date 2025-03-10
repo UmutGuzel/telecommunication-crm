@@ -36,8 +36,8 @@ public class ContractDetail {
     private ServiceType serviceType;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "type", nullable = false)
-    private ContractDetailType type;
+    @Column(name = "contract_detail_type", nullable = false)
+    private ContractDetailType contractDetailType;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
