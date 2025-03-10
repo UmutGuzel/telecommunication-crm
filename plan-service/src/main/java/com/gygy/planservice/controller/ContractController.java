@@ -35,8 +35,9 @@ public class ContractController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateContract(@PathVariable UUID id, @RequestBody ContractRequestDto requestDto) {
-        return ResponseEntity.ok().build();
+    public ResponseEntity<ContractDto> updateContract(@PathVariable UUID id,
+            @RequestBody ContractRequestDto requestDto) {
+        return ResponseEntity.ok(contractService.updateContract(id, requestDto));
     }
 
     @DeleteMapping("/{id}")

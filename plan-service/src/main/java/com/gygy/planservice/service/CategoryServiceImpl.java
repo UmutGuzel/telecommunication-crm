@@ -40,4 +40,17 @@ public class CategoryServiceImpl implements CategoryService {
                 .orElseThrow(() -> new RuntimeException("Category not found with id: " + id));
         return categoryMapper.toDto(category);
     }
+
+    @Override
+    @Transactional
+    public CategoryDto updateCategory(UUID id, CategoryRequestDto requestDto) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Category not found with id: " + id));
+
+        category.setName(requestDto.getName());
+        category.setDescription(requestDto.getDescription());
+
+        Category updatedCategory = categoryRepository.save(category);
+        return categoryMapper.toDto(updatedCategory);
+    }
 }

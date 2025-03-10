@@ -46,4 +46,21 @@ public class ContractServiceImpl implements ContractService {
                 .orElseThrow(() -> new RuntimeException("Contract not found with id: " + id));
         return contractMapper.toDto(contract);
     }
+
+    @Override
+    @Transactional
+    public ContractDto updateContract(UUID id, ContractRequestDto requestDto) {
+        Contract contract = contractRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Contract not found with id: " + id));
+
+        Plan plan = planRepository.findById(requestDto.getPlanId())
+                .orElseThrow(() -> new RuntimeException("Plan not found with id: " + requestDto.getPlanId()));
+
+        contract.setType(requestDto.getType());
+        contract.setDiscount(requestDto.getDiscount());
+        contract.setPlan(plan);
+
+        Contract updatedContract = contractRepository.save(contract);
+        return contractMapper.toDto(updatedContract);
+    }
 }

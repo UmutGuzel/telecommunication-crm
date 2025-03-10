@@ -12,4 +12,6 @@ public interface PlanService {
     List<PlanDto> getAllPlans();
 
     PlanDto getPlanById(UUID id);
+
+    PlanDto updatePlan(UUID id, PlanRequestDto requestDto);
 }

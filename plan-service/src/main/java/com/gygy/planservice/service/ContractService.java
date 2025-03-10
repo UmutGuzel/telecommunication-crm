@@ -12,4 +12,6 @@ public interface ContractService {
     List<ContractDto> getAllContracts();
 
     ContractDto getContractById(UUID id);
+
+    ContractDto updateContract(UUID id, ContractRequestDto requestDto);
 }

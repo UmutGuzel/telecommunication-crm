@@ -46,4 +46,22 @@ public class PlanServiceImpl implements PlanService {
                 .orElseThrow(() -> new RuntimeException("Plan not found with id: " + id));
         return planMapper.toDto(plan);
     }
+
+    @Override
+    @Transactional
+    public PlanDto updatePlan(UUID id, PlanRequestDto requestDto) {
+        Plan plan = planRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Plan not found with id: " + id));
+
+        Category category = categoryRepository.findById(requestDto.getCategoryId())
+                .orElseThrow(() -> new RuntimeException("Category not found with id: " + requestDto.getCategoryId()));
+
+        plan.setName(requestDto.getName());
+        plan.setDescription(requestDto.getDescription());
+        plan.setPrice(requestDto.getPrice());
+        plan.setCategory(category);
+
+        Plan updatedPlan = planRepository.save(plan);
+        return planMapper.toDto(updatedPlan);
+    }
 }
