@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -37,5 +38,29 @@ public class ContractServiceImpl implements ContractService {
         return contractRepository.findAll().stream()
                 .map(contractMapper::toDto)
                 .toList();
+    }
+
+    @Override
+    public ContractDto getContractById(UUID id) {
+        Contract contract = contractRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Contract not found with id: " + id));
+        return contractMapper.toDto(contract);
+    }
+
+    @Override
+    @Transactional
+    public ContractDto updateContract(UUID id, ContractRequestDto requestDto) {
+        Contract contract = contractRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Contract not found with id: " + id));
+
+        Plan plan = planRepository.findById(requestDto.getPlanId())
+                .orElseThrow(() -> new RuntimeException("Plan not found with id: " + requestDto.getPlanId()));
+
+        contract.setType(requestDto.getType());
+        contract.setDiscount(requestDto.getDiscount());
+        contract.setPlan(plan);
+
+        Contract updatedContract = contractRepository.save(contract);
+        return contractMapper.toDto(updatedContract);
     }
 }

@@ -26,7 +26,7 @@ public class PlanController {
 
     @GetMapping("/{id}")
     public ResponseEntity<PlanDto> getPlanById(@PathVariable UUID id) {
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(planService.getPlanById(id));
     }
 
     @GetMapping
@@ -35,8 +35,8 @@ public class PlanController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updatePlan(@PathVariable UUID id, @RequestBody PlanRequestDto requestDto) {
-        return ResponseEntity.ok().build();
+    public ResponseEntity<PlanDto> updatePlan(@PathVariable UUID id, @RequestBody PlanRequestDto requestDto) {
+        return ResponseEntity.ok(planService.updatePlan(id, requestDto));
     }
 
     @DeleteMapping("/{id}")

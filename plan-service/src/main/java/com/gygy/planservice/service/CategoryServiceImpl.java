@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -31,5 +32,25 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.findAll().stream()
                 .map(categoryMapper::toDto)
                 .toList();
+    }
+
+    @Override
+    public CategoryDto getCategoryById(UUID id) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Category not found with id: " + id));
+        return categoryMapper.toDto(category);
+    }
+
+    @Override
+    @Transactional
+    public CategoryDto updateCategory(UUID id, CategoryRequestDto requestDto) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Category not found with id: " + id));
+
+        category.setName(requestDto.getName());
+        category.setDescription(requestDto.getDescription());
+
+        Category updatedCategory = categoryRepository.save(category);
+        return categoryMapper.toDto(updatedCategory);
     }
 }
