@@ -13,10 +13,10 @@ import jakarta.persistence.ManyToMany;
 public class Permission {
     @Id
     private UUID id;
-    private String Name;
-    private String Description;
-    private LocalDateTime CreatedAt;
-    private LocalDateTime UpdatedAt;
+    private String name;
+    private String description;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
     @ManyToMany(mappedBy = "permissions")
     private List<Role> roles;
     @ManyToMany(mappedBy = "permissions")

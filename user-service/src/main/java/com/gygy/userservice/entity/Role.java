@@ -16,10 +16,10 @@ import lombok.Data;
 public class Role {
     @Id
     private UUID id;
-    private String Name;
-    private String Description;
-    private LocalDateTime CreatedAt;
-    private LocalDateTime UpdatedAt;
+    private String name;
+    private String description;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
     @ManyToMany
     @JoinTable(name = "role_permission", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "permission_id"))
     private List<Permission> permissions;

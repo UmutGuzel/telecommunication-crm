@@ -16,17 +16,17 @@ import jakarta.persistence.JoinColumn;
 public class User {
     @Id
     private UUID id;
-    private String Name;
-    private String Surname;
-    private String Email;
-    private String Password;
-    private String PhoneNumber;
-    private String Address;
-    private String City;
-    private String Country;
-    private LocalDate BirthDate;
-    private LocalDateTime CreatedAt;
-    private LocalDateTime UpdatedAt;
+    private String name;
+    private String surname;
+    private String email;
+    private String password;
+    private String phoneNumber;
+    private String address;
+    private String city;
+    private String country;
+    private LocalDate birthDate;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
     @ManyToMany
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private List<Role> roles;
