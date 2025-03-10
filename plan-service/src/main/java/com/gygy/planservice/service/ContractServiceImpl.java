@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -37,5 +38,12 @@ public class ContractServiceImpl implements ContractService {
         return contractRepository.findAll().stream()
                 .map(contractMapper::toDto)
                 .toList();
+    }
+
+    @Override
+    public ContractDto getContractById(UUID id) {
+        Contract contract = contractRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Contract not found with id: " + id));
+        return contractMapper.toDto(contract);
     }
 }

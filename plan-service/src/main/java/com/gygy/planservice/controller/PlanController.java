@@ -26,7 +26,7 @@ public class PlanController {
 
     @GetMapping("/{id}")
     public ResponseEntity<PlanDto> getPlanById(@PathVariable UUID id) {
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(planService.getPlanById(id));
     }
 
     @GetMapping

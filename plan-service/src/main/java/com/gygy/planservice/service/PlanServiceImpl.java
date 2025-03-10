@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -37,5 +38,12 @@ public class PlanServiceImpl implements PlanService {
         return planRepository.findAll().stream()
                 .map(planMapper::toDto)
                 .toList();
+    }
+
+    @Override
+    public PlanDto getPlanById(UUID id) {
+        Plan plan = planRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Plan not found with id: " + id));
+        return planMapper.toDto(plan);
     }
 }

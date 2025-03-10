@@ -31,7 +31,7 @@ public class ContractController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ContractDto> getContractById(@PathVariable UUID id) {
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(contractService.getContractById(id));
     }
 
     @PutMapping("/{id}")
