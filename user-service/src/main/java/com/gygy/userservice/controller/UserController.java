@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.http.HttpStatus;
 import com.gygy.userservice.entity.User;
 import an.awesome.pipelinr.Pipeline;
+import com.gygy.userservice.application.user.command.CreateUser.CreateUserCommand;
+import com.gygy.userservice.application.user.command.CreateUser.CreateUserResponse;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("api/v1/user")
@@ -36,12 +39,11 @@ public class UserController {
     // return query.execute(pipeline);
     // }
 
-    // @PostMapping
-    // @ResponseStatus(HttpStatus.CREATED)
-    // public CreateUserResponse createUser(@RequestBody CreateUserCommand command)
-    // {
-    // return command.execute(pipeline);
-    // }
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public CreateUserResponse createUser(@Valid @RequestBody CreateUserCommand command) {
+        return command.execute(pipeline);
+    }
 
     // @PutMapping
     // @ResponseStatus(HttpStatus.OK)

@@ -7,9 +7,13 @@ import java.util.UUID;
 import lombok.Data;
 import java.util.List;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Entity;
+import lombok.Builder;
 
+@Entity
 @Table(name = "permissions")
 @Data
+@Builder
 public class Permission {
     @Id
     private UUID id;
