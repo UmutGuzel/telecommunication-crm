@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.http.HttpStatus;
 import an.awesome.pipelinr.Pipeline;
+import com.gygy.userservice.application.role.command.CreateRole.CreateRoleCommand;
+import com.gygy.userservice.application.role.command.CreateRole.CreateRoleResponse;
 
 @RestController
 @RequestMapping("api/v1/role")
@@ -35,12 +37,11 @@ public class RoleController {
     // return query.execute(pipeline);
     // }
 
-    // @PostMapping
-    // @ResponseStatus(HttpStatus.CREATED)
-    // public CreateRoleResponse createRole(@RequestBody CreateRoleCommand command)
-    // {
-    // return command.execute(pipeline);
-    // }
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public CreateRoleResponse createRole(@RequestBody CreateRoleCommand command) {
+        return command.execute(pipeline);
+    }
 
     // @PutMapping("/{id}")
     // @ResponseStatus(HttpStatus.OK)

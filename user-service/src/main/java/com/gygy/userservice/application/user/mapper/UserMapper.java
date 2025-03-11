@@ -3,6 +3,7 @@ package com.gygy.userservice.application.user.mapper;
 import org.springframework.stereotype.Component;
 import com.gygy.userservice.entity.User;
 import com.gygy.userservice.application.user.command.CreateUser.CreateUserCommand;
+import com.gygy.userservice.application.user.command.UpdateUser.UpdateUserCommand;
 import lombok.Data;
 
 @Component
@@ -17,6 +18,24 @@ public class UserMapper {
                 .phoneNumber(command.getPhoneNumber())
                 .address(command.getAddress())
                 .build();
+    }
+
+    public void updateEntity(User user, UpdateUserCommand command) {
+        if (command.getName() != null && !command.getName().isEmpty()) {
+            user.setName(command.getName());
+        }
+        if (command.getSurname() != null && !command.getSurname().isEmpty()) {
+            user.setSurname(command.getSurname());
+        }
+        if (command.getEmail() != null && !command.getEmail().isEmpty()) {
+            user.setEmail(command.getEmail());
+        }
+        if (command.getPhoneNumber() != null && !command.getPhoneNumber().isEmpty()) {
+            user.setPhoneNumber(command.getPhoneNumber());
+        }
+        if (command.getAddress() != null && !command.getAddress().isEmpty()) {
+            user.setAddress(command.getAddress());
+        }
     }
 
 }

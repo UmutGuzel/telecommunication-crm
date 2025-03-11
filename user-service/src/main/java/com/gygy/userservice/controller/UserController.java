@@ -18,10 +18,14 @@ import com.gygy.userservice.entity.User;
 import an.awesome.pipelinr.Pipeline;
 import com.gygy.userservice.application.user.command.CreateUser.CreateUserCommand;
 import com.gygy.userservice.application.user.command.CreateUser.CreateUserResponse;
+import com.gygy.userservice.application.user.command.UpdateUser.UpdateUserCommand;
+import com.gygy.userservice.application.user.command.UpdateUser.UpdateUserResponse;
+import com.gygy.userservice.application.user.command.Login.LoginCommand;
+import com.gygy.userservice.application.user.command.Login.LoginResponse;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("api/v1/user")
+@RequestMapping("api/auth")
 @Data
 public class UserController {
     private final Pipeline pipeline;
@@ -33,24 +37,23 @@ public class UserController {
     // return query.execute(pipeline);
     // }
 
-    // @GetMapping
-    // @ResponseStatus(HttpStatus.OK)
-    // public UserByIdResponse getUserById(@RequestBody GetUserByIdQuery query) {
-    // return query.execute(pipeline);
-    // }
-
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public CreateUserResponse createUser(@Valid @RequestBody CreateUserCommand command) {
+    @PostMapping("/login")
+    @ResponseStatus(HttpStatus.OK)
+    public LoginResponse login(@RequestBody LoginCommand command) {
         return command.execute(pipeline);
     }
 
-    // @PutMapping
-    // @ResponseStatus(HttpStatus.OK)
-    // public UpdateUserResponse updateUser(@RequestBody UpdateUserCommand command)
-    // {
-    // return command.execute(pipeline);
-    // }
+    @PostMapping("/register")
+    @ResponseStatus(HttpStatus.CREATED)
+    public CreateUserResponse createUser(@RequestBody CreateUserCommand command) {
+        return command.execute(pipeline);
+    }
+
+    @PutMapping
+    @ResponseStatus(HttpStatus.OK)
+    public UpdateUserResponse updateUser(@RequestBody UpdateUserCommand command) {
+        return command.execute(pipeline);
+    }
 
     // @DeleteMapping
     // @ResponseStatus(HttpStatus.NO_CONTENT)
