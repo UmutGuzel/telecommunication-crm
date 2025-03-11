@@ -64,4 +64,14 @@ public class PlanServiceImpl implements PlanService {
         Plan updatedPlan = planRepository.save(plan);
         return planMapper.toDto(updatedPlan);
     }
+
+    @Override
+    @Transactional
+    public void deletePlan(UUID id) {
+        Plan plan = planRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Plan not found with id: " + id));
+
+        plan.setIsPassive(true);
+        planRepository.save(plan);
+    }
 }

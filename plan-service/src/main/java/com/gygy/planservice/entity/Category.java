@@ -25,6 +25,9 @@ public class Category {
 
     private String description;
 
+    @Column(name = "is_passive")
+    private Boolean isPassive = false;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

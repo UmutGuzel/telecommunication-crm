@@ -40,7 +40,8 @@ public class PlanController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deletePlan(@PathVariable UUID id) {
+    public ResponseEntity<Void> deletePlan(@PathVariable UUID id) {
+        planService.deletePlan(id);
         return ResponseEntity.noContent().build();
     }
 }

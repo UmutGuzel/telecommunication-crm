@@ -25,6 +25,9 @@ public class Contract {
 
     private Double discount;
 
+    @Column(name = "is_passive")
+    private Boolean isPassive = false;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "plan_id")
     private Plan plan;

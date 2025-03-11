@@ -27,6 +27,9 @@ public class Plan {
 
     private Double price;
 
+    @Column(name = "is_passive")
+    private Boolean isPassive = false;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;

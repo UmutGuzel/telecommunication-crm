@@ -38,4 +38,10 @@ public class CategoryController {
             @RequestBody CategoryRequestDto requestDto) {
         return ResponseEntity.ok(categoryService.updateCategory(id, requestDto));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCategory(@PathVariable UUID id) {
+        categoryService.deleteCategory(id);
+        return ResponseEntity.noContent().build();
+    }
 }
