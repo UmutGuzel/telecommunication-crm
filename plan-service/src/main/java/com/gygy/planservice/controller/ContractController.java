@@ -41,7 +41,13 @@ public class ContractController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteContract(@PathVariable UUID id) {
+    public ResponseEntity<Void> deleteContract(@PathVariable UUID id) {
+        contractService.deleteContract(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/active")
+    public ResponseEntity<List<ContractDto>> getAllActiveContracts() {
+        return ResponseEntity.ok(contractService.getAllActiveContracts());
     }
 }

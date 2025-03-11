@@ -38,4 +38,15 @@ public class CategoryController {
             @RequestBody CategoryRequestDto requestDto) {
         return ResponseEntity.ok(categoryService.updateCategory(id, requestDto));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCategory(@PathVariable UUID id) {
+        categoryService.deleteCategory(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/active")
+    public ResponseEntity<List<CategoryDto>> getAllActiveCategories() {
+        return ResponseEntity.ok(categoryService.getAllActiveCategories());
+    }
 }

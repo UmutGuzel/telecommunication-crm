@@ -53,4 +53,21 @@ public class CategoryServiceImpl implements CategoryService {
         Category updatedCategory = categoryRepository.save(category);
         return categoryMapper.toDto(updatedCategory);
     }
+
+    @Override
+    @Transactional
+    public void deleteCategory(UUID id) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Category not found with id: " + id));
+
+        category.setIsPassive(true);
+        categoryRepository.save(category);
+    }
+
+    @Override
+    public List<CategoryDto> getAllActiveCategories() {
+        return categoryRepository.findAllByIsPassiveFalse().stream()
+                .map(categoryMapper::toDto)
+                .toList();
+    }
 }

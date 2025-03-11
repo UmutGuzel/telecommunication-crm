@@ -14,4 +14,8 @@ public interface PlanService {
     PlanDto getPlanById(UUID id);
 
     PlanDto updatePlan(UUID id, PlanRequestDto requestDto);
+
+    void deletePlan(UUID id);
+
+    List<PlanDto> getAllActivePlans();
 }

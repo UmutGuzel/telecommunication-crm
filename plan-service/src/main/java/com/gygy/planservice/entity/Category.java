@@ -19,11 +19,17 @@ public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id")
     private UUID id;
 
+    @Column(name = "name")
     private String name;
 
+    @Column(name = "description")
     private String description;
+
+    @Column(name = "is_passive")
+    private Boolean isPassive = false;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)

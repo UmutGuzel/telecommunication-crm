@@ -63,4 +63,21 @@ public class ContractServiceImpl implements ContractService {
         Contract updatedContract = contractRepository.save(contract);
         return contractMapper.toDto(updatedContract);
     }
+
+    @Override
+    @Transactional
+    public void deleteContract(UUID id) {
+        Contract contract = contractRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Contract not found with id: " + id));
+
+        contract.setIsPassive(true);
+        contractRepository.save(contract);
+    }
+
+    @Override
+    public List<ContractDto> getAllActiveContracts() {
+        return contractRepository.findAllByIsPassiveFalse().stream()
+                .map(contractMapper::toDto)
+                .toList();
+    }
 }
