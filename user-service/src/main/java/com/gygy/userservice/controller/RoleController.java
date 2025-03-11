@@ -17,6 +17,8 @@ import org.springframework.http.HttpStatus;
 import an.awesome.pipelinr.Pipeline;
 import com.gygy.userservice.application.role.command.CreateRole.CreateRoleCommand;
 import com.gygy.userservice.application.role.command.CreateRole.CreateRoleResponse;
+import com.gygy.userservice.application.role.command.UpdateRolePermission.UpdateRolePermissionCommand;
+import com.gygy.userservice.application.role.command.UpdateRolePermission.UpdateRolePermissionResponse;
 
 @RestController
 @RequestMapping("api/v1/role")
@@ -43,12 +45,11 @@ public class RoleController {
         return command.execute(pipeline);
     }
 
-    // @PutMapping("/{id}")
-    // @ResponseStatus(HttpStatus.OK)
-    // public UpdateRoleResponse updateRole(@RequestBody UpdateRoleCommand command)
-    // {
-    // return command.execute(pipeline);
-    // }
+    @PutMapping
+    @ResponseStatus(HttpStatus.OK)
+    public UpdateRolePermissionResponse updateRolePermission(@RequestBody UpdateRolePermissionCommand command) {
+        return command.execute(pipeline);
+    }
 
     // @DeleteMapping("/{id}")
     // @ResponseStatus(HttpStatus.NO_CONTENT)

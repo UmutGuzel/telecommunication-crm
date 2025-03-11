@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.http.HttpStatus;
 import an.awesome.pipelinr.Pipeline;
+import com.gygy.userservice.application.permission.command.CreatePermission.CreatePermissionCommand;
+import com.gygy.userservice.application.permission.command.CreatePermission.CreatePermissionResponse;
 
 @RestController
 @RequestMapping("api/v1/permission")
@@ -36,12 +38,11 @@ public class PermissionController {
     // return query.execute(pipeline);
     // }
 
-    // @PostMapping
-    // @ResponseStatus(HttpStatus.CREATED)
-    // public CreatePermissionResponse createPermission(@RequestBody
-    // CreatePermissionCommand command) {
-    // return command.execute(pipeline);
-    // }
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public CreatePermissionResponse createPermission(@RequestBody CreatePermissionCommand command) {
+        return command.execute(pipeline);
+    }
 
     // @PutMapping("/{id}")
     // @ResponseStatus(HttpStatus.OK)

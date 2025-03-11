@@ -22,6 +22,8 @@ import com.gygy.userservice.application.user.command.UpdateUser.UpdateUserComman
 import com.gygy.userservice.application.user.command.UpdateUser.UpdateUserResponse;
 import com.gygy.userservice.application.user.command.Login.LoginCommand;
 import com.gygy.userservice.application.user.command.Login.LoginResponse;
+import com.gygy.userservice.application.user.command.UpdateUserRole.UpdateUserRoleCommand;
+import com.gygy.userservice.application.user.command.UpdateUserRole.UpdateUserRoleResponse;
 import jakarta.validation.Valid;
 
 @RestController
@@ -49,9 +51,15 @@ public class UserController {
         return command.execute(pipeline);
     }
 
-    @PutMapping
+    @PutMapping("/user")
     @ResponseStatus(HttpStatus.OK)
     public UpdateUserResponse updateUser(@RequestBody UpdateUserCommand command) {
+        return command.execute(pipeline);
+    }
+
+    @PutMapping("/role")
+    @ResponseStatus(HttpStatus.OK)
+    public UpdateUserRoleResponse updateUserRole(@RequestBody UpdateUserRoleCommand command) {
         return command.execute(pipeline);
     }
 
