@@ -3,6 +3,8 @@ package com.gygy.planservice.controller;
 import com.gygy.planservice.dto.CategoryDto;
 import com.gygy.planservice.dto.CategoryRequestDto;
 import com.gygy.planservice.service.CategoryService;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,13 +31,14 @@ public class CategoryController {
     }
 
     @PostMapping
-    public ResponseEntity<CategoryDto> createCategory(@RequestBody CategoryRequestDto requestDto) {
+    public ResponseEntity<CategoryDto> createCategory(@Valid @RequestBody CategoryRequestDto requestDto) {
         return new ResponseEntity<>(categoryService.createCategory(requestDto), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CategoryDto> updateCategory(@PathVariable UUID id,
-            @RequestBody CategoryRequestDto requestDto) {
+    public ResponseEntity<CategoryDto> updateCategory(
+            @PathVariable UUID id,
+            @Valid @RequestBody CategoryRequestDto requestDto) {
         return ResponseEntity.ok(categoryService.updateCategory(id, requestDto));
     }
 

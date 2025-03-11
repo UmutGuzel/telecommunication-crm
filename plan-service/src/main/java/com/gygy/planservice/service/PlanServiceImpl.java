@@ -4,6 +4,9 @@ import com.gygy.planservice.dto.PlanDto;
 import com.gygy.planservice.dto.PlanRequestDto;
 import com.gygy.planservice.entity.Category;
 import com.gygy.planservice.entity.Plan;
+import com.gygy.planservice.exception.CategoryNotFoundException;
+import com.gygy.planservice.exception.InvalidInputException;
+import com.gygy.planservice.exception.PlanNotFoundException;
 import com.gygy.planservice.mapper.PlanMapper;
 import com.gygy.planservice.repository.CategoryRepository;
 import com.gygy.planservice.repository.PlanRepository;
@@ -25,8 +28,16 @@ public class PlanServiceImpl implements PlanService {
     @Override
     @Transactional
     public PlanDto createPlan(PlanRequestDto requestDto) {
+        if (requestDto == null) {
+            throw new InvalidInputException("Plan request cannot be null");
+        }
+        if (requestDto.getCategoryId() == null) {
+            throw new InvalidInputException("Category ID cannot be null");
+        }
+
         Category category = categoryRepository.findById(requestDto.getCategoryId())
-                .orElseThrow(() -> new RuntimeException("Category not found with id: " + requestDto.getCategoryId()));
+                .orElseThrow(() -> new CategoryNotFoundException(
+                        "Category not found with id: " + requestDto.getCategoryId()));
 
         Plan plan = planMapper.toEntity(requestDto, category);
         Plan savedPlan = planRepository.save(plan);
@@ -42,19 +53,34 @@ public class PlanServiceImpl implements PlanService {
 
     @Override
     public PlanDto getPlanById(UUID id) {
+        if (id == null) {
+            throw new InvalidInputException("Plan ID cannot be null");
+        }
+
         Plan plan = planRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Plan not found with id: " + id));
+                .orElseThrow(() -> new PlanNotFoundException("Plan not found with id: " + id));
         return planMapper.toDto(plan);
     }
 
     @Override
     @Transactional
     public PlanDto updatePlan(UUID id, PlanRequestDto requestDto) {
+        if (id == null) {
+            throw new InvalidInputException("Plan ID cannot be null");
+        }
+        if (requestDto == null) {
+            throw new InvalidInputException("Plan request cannot be null");
+        }
+        if (requestDto.getCategoryId() == null) {
+            throw new InvalidInputException("Category ID cannot be null");
+        }
+
         Plan plan = planRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Plan not found with id: " + id));
+                .orElseThrow(() -> new PlanNotFoundException("Plan not found with id: " + id));
 
         Category category = categoryRepository.findById(requestDto.getCategoryId())
-                .orElseThrow(() -> new RuntimeException("Category not found with id: " + requestDto.getCategoryId()));
+                .orElseThrow(() -> new CategoryNotFoundException(
+                        "Category not found with id: " + requestDto.getCategoryId()));
 
         plan.setName(requestDto.getName());
         plan.setDescription(requestDto.getDescription());
@@ -68,8 +94,12 @@ public class PlanServiceImpl implements PlanService {
     @Override
     @Transactional
     public void deletePlan(UUID id) {
+        if (id == null) {
+            throw new InvalidInputException("Plan ID cannot be null");
+        }
+
         Plan plan = planRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Plan not found with id: " + id));
+                .orElseThrow(() -> new PlanNotFoundException("Plan not found with id: " + id));
 
         plan.setIsPassive(true);
         planRepository.save(plan);

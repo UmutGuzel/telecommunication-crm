@@ -3,6 +3,8 @@ package com.gygy.planservice.controller;
 import com.gygy.planservice.dto.PlanDto;
 import com.gygy.planservice.dto.PlanRequestDto;
 import com.gygy.planservice.service.PlanService;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +21,8 @@ public class PlanController {
     private final PlanService planService;
 
     @PostMapping
-    public ResponseEntity<PlanDto> createPlan(@RequestBody PlanRequestDto requestDto) {
-        PlanDto createdPlan = planService.createPlan(requestDto);
-        return new ResponseEntity<>(createdPlan, HttpStatus.CREATED);
+    public ResponseEntity<PlanDto> createPlan(@Valid @RequestBody PlanRequestDto requestDto) {
+        return new ResponseEntity<>(planService.createPlan(requestDto), HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
@@ -35,7 +36,9 @@ public class PlanController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PlanDto> updatePlan(@PathVariable UUID id, @RequestBody PlanRequestDto requestDto) {
+    public ResponseEntity<PlanDto> updatePlan(
+            @PathVariable UUID id,
+            @Valid @RequestBody PlanRequestDto requestDto) {
         return ResponseEntity.ok(planService.updatePlan(id, requestDto));
     }
 

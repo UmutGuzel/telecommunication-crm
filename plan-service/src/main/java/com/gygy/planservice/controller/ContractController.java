@@ -3,6 +3,8 @@ package com.gygy.planservice.controller;
 import com.gygy.planservice.dto.ContractDto;
 import com.gygy.planservice.dto.ContractRequestDto;
 import com.gygy.planservice.service.ContractService;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +21,8 @@ public class ContractController {
     private final ContractService contractService;
 
     @PostMapping
-    public ResponseEntity<ContractDto> createContract(@RequestBody ContractRequestDto requestDto) {
-        ContractDto createdContract = contractService.createContract(requestDto);
-        return new ResponseEntity<>(createdContract, HttpStatus.CREATED);
+    public ResponseEntity<ContractDto> createContract(@Valid @RequestBody ContractRequestDto requestDto) {
+        return new ResponseEntity<>(contractService.createContract(requestDto), HttpStatus.CREATED);
     }
 
     @GetMapping
@@ -35,8 +36,9 @@ public class ContractController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ContractDto> updateContract(@PathVariable UUID id,
-            @RequestBody ContractRequestDto requestDto) {
+    public ResponseEntity<ContractDto> updateContract(
+            @PathVariable UUID id,
+            @Valid @RequestBody ContractRequestDto requestDto) {
         return ResponseEntity.ok(contractService.updateContract(id, requestDto));
     }
 
