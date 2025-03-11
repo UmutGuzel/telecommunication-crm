@@ -73,4 +73,11 @@ public class ContractServiceImpl implements ContractService {
         contract.setIsPassive(true);
         contractRepository.save(contract);
     }
+
+    @Override
+    public List<ContractDto> getAllActiveContracts() {
+        return contractRepository.findAllByIsPassiveFalse().stream()
+                .map(contractMapper::toDto)
+                .toList();
+    }
 }

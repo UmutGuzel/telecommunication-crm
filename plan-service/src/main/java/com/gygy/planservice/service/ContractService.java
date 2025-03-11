@@ -16,4 +16,6 @@ public interface ContractService {
     ContractDto updateContract(UUID id, ContractRequestDto requestDto);
 
     void deleteContract(UUID id);
+
+    List<ContractDto> getAllActiveContracts();
 }

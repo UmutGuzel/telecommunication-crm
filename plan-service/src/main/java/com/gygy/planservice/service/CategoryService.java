@@ -16,4 +16,6 @@ public interface CategoryService {
     CategoryDto updateCategory(UUID id, CategoryRequestDto requestDto);
 
     void deleteCategory(UUID id);
+
+    List<CategoryDto> getAllActiveCategories();
 }

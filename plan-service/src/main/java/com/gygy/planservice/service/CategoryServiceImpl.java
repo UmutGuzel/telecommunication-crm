@@ -63,4 +63,11 @@ public class CategoryServiceImpl implements CategoryService {
         category.setIsPassive(true);
         categoryRepository.save(category);
     }
+
+    @Override
+    public List<CategoryDto> getAllActiveCategories() {
+        return categoryRepository.findAllByIsPassiveFalse().stream()
+                .map(categoryMapper::toDto)
+                .toList();
+    }
 }

@@ -44,4 +44,9 @@ public class PlanController {
         planService.deletePlan(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/active")
+    public ResponseEntity<List<PlanDto>> getAllActivePlans() {
+        return ResponseEntity.ok(planService.getAllActivePlans());
+    }
 }

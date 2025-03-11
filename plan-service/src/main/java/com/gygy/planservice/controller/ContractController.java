@@ -45,4 +45,9 @@ public class ContractController {
         contractService.deleteContract(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/active")
+    public ResponseEntity<List<ContractDto>> getAllActiveContracts() {
+        return ResponseEntity.ok(contractService.getAllActiveContracts());
+    }
 }

@@ -74,4 +74,11 @@ public class PlanServiceImpl implements PlanService {
         plan.setIsPassive(true);
         planRepository.save(plan);
     }
+
+    @Override
+    public List<PlanDto> getAllActivePlans() {
+        return planRepository.findAllByIsPassiveFalse().stream()
+                .map(planMapper::toDto)
+                .toList();
+    }
 }
