@@ -4,6 +4,9 @@ import com.gygy.planservice.dto.ContractDto;
 import com.gygy.planservice.dto.ContractRequestDto;
 import com.gygy.planservice.entity.Contract;
 import com.gygy.planservice.entity.Plan;
+import com.gygy.planservice.exception.ContractNotFoundException;
+import com.gygy.planservice.exception.InvalidInputException;
+import com.gygy.planservice.exception.PlanNotFoundException;
 import com.gygy.planservice.mapper.ContractMapper;
 import com.gygy.planservice.repository.ContractRepository;
 import com.gygy.planservice.repository.PlanRepository;
@@ -25,8 +28,15 @@ public class ContractServiceImpl implements ContractService {
     @Override
     @Transactional
     public ContractDto createContract(ContractRequestDto requestDto) {
+        if (requestDto == null) {
+            throw new InvalidInputException("Contract request cannot be null");
+        }
+        if (requestDto.getPlanId() == null) {
+            throw new InvalidInputException("Plan ID cannot be null");
+        }
+
         Plan plan = planRepository.findById(requestDto.getPlanId())
-                .orElseThrow(() -> new RuntimeException("Plan not found with id: " + requestDto.getPlanId()));
+                .orElseThrow(() -> new PlanNotFoundException("Plan not found with id: " + requestDto.getPlanId()));
 
         Contract contract = contractMapper.toEntity(requestDto, plan);
         Contract savedContract = contractRepository.save(contract);
@@ -42,19 +52,33 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     public ContractDto getContractById(UUID id) {
+        if (id == null) {
+            throw new InvalidInputException("Contract ID cannot be null");
+        }
+
         Contract contract = contractRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Contract not found with id: " + id));
+                .orElseThrow(() -> new ContractNotFoundException("Contract not found with id: " + id));
         return contractMapper.toDto(contract);
     }
 
     @Override
     @Transactional
     public ContractDto updateContract(UUID id, ContractRequestDto requestDto) {
+        if (id == null) {
+            throw new InvalidInputException("Contract ID cannot be null");
+        }
+        if (requestDto == null) {
+            throw new InvalidInputException("Contract request cannot be null");
+        }
+        if (requestDto.getPlanId() == null) {
+            throw new InvalidInputException("Plan ID cannot be null");
+        }
+
         Contract contract = contractRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Contract not found with id: " + id));
+                .orElseThrow(() -> new ContractNotFoundException("Contract not found with id: " + id));
 
         Plan plan = planRepository.findById(requestDto.getPlanId())
-                .orElseThrow(() -> new RuntimeException("Plan not found with id: " + requestDto.getPlanId()));
+                .orElseThrow(() -> new PlanNotFoundException("Plan not found with id: " + requestDto.getPlanId()));
 
         contract.setType(requestDto.getType());
         contract.setDiscount(requestDto.getDiscount());
@@ -67,8 +91,12 @@ public class ContractServiceImpl implements ContractService {
     @Override
     @Transactional
     public void deleteContract(UUID id) {
+        if (id == null) {
+            throw new InvalidInputException("Contract ID cannot be null");
+        }
+
         Contract contract = contractRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Contract not found with id: " + id));
+                .orElseThrow(() -> new ContractNotFoundException("Contract not found with id: " + id));
 
         contract.setIsPassive(true);
         contractRepository.save(contract);
