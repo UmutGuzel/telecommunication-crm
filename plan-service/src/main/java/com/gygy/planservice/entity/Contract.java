@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -19,11 +20,14 @@ public class Contract {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id")
     private UUID id;
 
+    @Column(name = "type")
     private String type;
 
-    private Double discount;
+    @Column(name = "discount")
+    private BigDecimal discount;
 
     @Column(name = "is_passive")
     private Boolean isPassive = false;

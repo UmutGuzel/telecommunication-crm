@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.UUID;
+import java.math.BigDecimal;
 
 @Data
 @NoArgsConstructor
@@ -12,6 +13,6 @@ import java.util.UUID;
 public class ContractDto {
     private UUID id;
     private String type;
-    private Double discount;
+    private BigDecimal discount;
     private PlanDto plan;
 }

@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Data
@@ -12,6 +13,6 @@ import java.util.UUID;
 public class PlanRequestDto {
     private String name;
     private String description;
-    private Double price;
+    private BigDecimal price;
     private UUID categoryId;
 }
