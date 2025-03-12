@@ -14,6 +14,7 @@ import jakarta.validation.constraints.NotBlank;
 import com.gygy.userservice.application.role.rule.RoleRule;
 import java.util.List;
 import java.util.UUID;
+import lombok.Data;
 
 @Getter
 @Setter
@@ -26,7 +27,7 @@ public class CreateRoleCommand implements Command<CreateRoleResponse> {
     private List<UUID> permissionIds;
 
     @Component
-    @RequiredArgsConstructor
+    @Data
     public static class CreateRoleCommandHandler implements Command.Handler<CreateRoleCommand, CreateRoleResponse> {
         private final RoleRepository roleRepository;
         private final RoleMapper roleMapper;

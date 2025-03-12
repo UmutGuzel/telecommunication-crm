@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.Builder;
 import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
 import com.gygy.userservice.persistance.UserRepository;
@@ -20,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class CreateUserCommand implements Command<CreateUserResponse> {
     @NotBlank(message = "Name is required")
     private String name;

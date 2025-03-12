@@ -12,10 +12,12 @@ import com.gygy.userservice.entity.User;
 import com.gygy.userservice.application.user.rule.UserRule;
 import com.gygy.userservice.application.user.mapper.UserMapper;
 import jakarta.validation.constraints.Email;
+import lombok.Builder;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class UpdateUserCommand implements Command<UpdateUserResponse> {
     private String name;
     private String surname;

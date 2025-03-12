@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 import com.gygy.userservice.entity.User;
 import com.gygy.userservice.application.user.command.CreateUser.CreateUserCommand;
 import com.gygy.userservice.application.user.command.UpdateUser.UpdateUserCommand;
+import com.gygy.userservice.application.user.command.ChangePassword.ChangePasswordCommand;
 import lombok.Data;
 
 @Component
@@ -17,6 +18,13 @@ public class UserMapper {
                 .password(command.getPassword())
                 .phoneNumber(command.getPhoneNumber())
                 .address(command.getAddress())
+                .build();
+    }
+
+    public User toEntity(ChangePasswordCommand command) {
+        return User.builder()
+                .email(command.getEmail())
+                .password(command.getNewPassword())
                 .build();
     }
 

@@ -26,7 +26,7 @@ public class RoleServiceImpl implements RoleService {
     public List<Role> getRolesByNames(List<String> names) {
         List<Role> roles = roleRepository.findAllByNameIn(names);
         roleRule.checkRolesExists(roles);
-        return roleRepository.findAllByNameIn(names);
+        return roles;
     }
 
     @Override

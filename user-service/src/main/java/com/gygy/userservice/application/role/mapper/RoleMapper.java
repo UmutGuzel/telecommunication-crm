@@ -17,6 +17,12 @@ public class RoleMapper {
                 .build();
     }
 
+    public Role toEntity(UpdateRolePermissionCommand command) {
+        return Role.builder()
+                .name(command.getRoleName())
+                .build();
+    }
+
     public UpdateRolePermissionResponse toResponse(Role role) {
         return UpdateRolePermissionResponse.builder()
                 .id(role.getId())
