@@ -1,5 +1,6 @@
-package com.gygy.customerservice.entity;
+package com.gygy.customerservice.domain.entity;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,6 +32,8 @@ public class Address {
     private String district;
     private String city;
     private String country;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     @Column(name = "adress_line")
     private String addressLine;

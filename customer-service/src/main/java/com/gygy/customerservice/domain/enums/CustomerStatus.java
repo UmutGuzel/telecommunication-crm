@@ -1,4 +1,4 @@
-package com.gygy.customerservice.entity;
+package com.gygy.customerservice.domain.enums;
 
 public enum CustomerStatus {
     ACTIVE, 

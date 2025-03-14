@@ -1,9 +1,14 @@
-package com.gygy.customerservice.entity;
+package com.gygy.customerservice.domain.entity;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
+import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
+import com.gygy.customerservice.domain.enums.CustomerStatus;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -13,15 +18,12 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 @Entity
 @Table(name = "customers")
 public class Customer {
@@ -38,11 +40,14 @@ public class Customer {
     @Enumerated(EnumType.STRING)
     private CustomerStatus status;
 
-    @OneToOne(mappedBy = "customer")
-    private IndividualCustomer individualCustomer;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
-    @OneToOne(mappedBy = "customer")
-    private CorporateCustomer corporateCustomer;
+//    @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL)
+//    private IndividualCustomer individualCustomer;
+//
+//    @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL)
+//    private CorporateCustomer corporateCustomer;
 
     @ManyToOne
     @JoinColumn(name = "address_id", insertable = false, updatable = false)

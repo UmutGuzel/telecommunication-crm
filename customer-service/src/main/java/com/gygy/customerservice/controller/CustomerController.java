@@ -1,51 +1,52 @@
 package com.gygy.customerservice.controller;
 
-import com.gygy.customerservice.dto.CreateCustomerDTO;
-import com.gygy.customerservice.dto.UpdateCustomerDTO;
-import com.gygy.customerservice.dto.CustomerDetailsDTO;
-import com.gygy.customerservice.dto.ListCustomerDTO;
-import com.gygy.customerservice.service.CustomerService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
-import java.util.UUID;
+
+import com.gygy.customerservice.application.customer.command.delete.DeleteCustomerCommand;
+import com.gygy.customerservice.application.customer.command.delete.DeletedCustomerResponse;
+import com.gygy.customerservice.application.customer.command.update.UpdateCustomerCommand;
+import com.gygy.customerservice.application.customer.command.update.UpdatedCustomerResponse;
+import com.gygy.customerservice.application.customer.query.GetListCustomerItemDto;
+import com.gygy.customerservice.application.customer.query.GetListCustomerQuery;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
+
+import com.gygy.customerservice.application.customer.command.create.CreateCustomerCommand;
+import com.gygy.customerservice.application.customer.command.create.CreatedCustomerResponse;
+import com.gygy.customerservice.core.web.BaseController;
+
+import an.awesome.pipelinr.Pipeline;
+
 
 @RestController
-@RequestMapping("/customers")
-public class CustomerController {
+@RequestMapping("api/v1/customers")
+public class CustomerController extends BaseController {
 
-    @Autowired
-    private CustomerService customerService;
-
-    @PostMapping
-    public ResponseEntity<CustomerDetailsDTO> createCustomer(@RequestBody CreateCustomerDTO createCustomerDTO) {
-        CustomerDetailsDTO createdCustomer = customerService.createCustomer(createCustomerDTO);
-        return ResponseEntity.ok(createdCustomer);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<CustomerDetailsDTO> getCustomerById(@PathVariable UUID id) {
-        CustomerDetailsDTO customer = customerService.getCustomerById(id);
-        return ResponseEntity.ok(customer);
+    public CustomerController(Pipeline pipeline) {
+        super(pipeline);
     }
 
     @GetMapping
-    public ResponseEntity<List<ListCustomerDTO>> getAllCustomers() {
-        List<ListCustomerDTO> customers = customerService.getAllCustomers();
-        return ResponseEntity.ok(customers);
+    @ResponseStatus(HttpStatus.OK)
+    public List<GetListCustomerItemDto> getAllCustomers(@RequestBody GetListCustomerQuery query) {
+        return query.execute(pipeline);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<CustomerDetailsDTO> updateCustomer(@PathVariable UUID id, @RequestBody UpdateCustomerDTO updateCustomerDTO) {
-        CustomerDetailsDTO updatedCustomer = customerService.updateCustomer(id, updateCustomerDTO);
-        return ResponseEntity.ok(updatedCustomer);
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public CreatedCustomerResponse createCustomer(@RequestBody CreateCustomerCommand command) {
+        return command.execute(pipeline);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCustomer(@PathVariable UUID id) {
-        customerService.deleteCustomer(id);
-        return ResponseEntity.noContent().build();
+    @PutMapping
+    @ResponseStatus(HttpStatus.OK)
+    public UpdatedCustomerResponse updateCustomer(@RequestBody UpdateCustomerCommand command) {
+        return command.execute(pipeline);
     }
-} 
+
+    @DeleteMapping
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public DeletedCustomerResponse deleteCustomer(@RequestBody DeleteCustomerCommand command) {
+        return command.execute(pipeline);
+    }
+}
