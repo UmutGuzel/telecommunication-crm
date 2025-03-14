@@ -21,6 +21,8 @@ public class ContractDetail {
     @UuidGenerator
     private UUID id;
 
+    private UUID customerId;
+
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
 
