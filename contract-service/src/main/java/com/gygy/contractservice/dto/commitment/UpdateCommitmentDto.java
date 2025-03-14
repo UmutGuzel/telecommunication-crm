@@ -23,4 +23,6 @@ public class UpdateCommitmentDto {
     private BigDecimal earlyTerminationFee;
     @NotNull(message = "Status is required")
     private String status;
+    @NotNull(message = "Contract detail ID is required")
+    private UUID contractDetailId;
 }

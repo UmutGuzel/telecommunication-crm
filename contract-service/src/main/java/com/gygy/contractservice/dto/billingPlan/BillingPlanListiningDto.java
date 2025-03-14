@@ -2,8 +2,6 @@ package com.gygy.contractservice.dto.billingPlan;
 
 import com.gygy.contractservice.entity.ContractDetail;
 import com.gygy.contractservice.model.enums.BillingCycleType;
-import com.gygy.contractservice.model.enums.PaymentMethod;
-import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,7 +15,7 @@ public class BillingPlanListiningDto {
     private UUID id;
     private String name;
     private String description;
-    private String cycleType;
+    private BillingCycleType cycleType;
     private Integer billingDay;
     private Integer paymentDueDays;
     private BigDecimal baseAmount;
@@ -26,5 +24,22 @@ public class BillingPlanListiningDto {
     private String status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-     private UUID contractDetailId;
+     private ContractDetail contractDetail;
+
+    public BillingPlanListiningDto(String name, String description, Integer billingDay, BillingCycleType cycleType, BigDecimal baseAmount, ContractDetail contractDetail, Integer paymentDueDays, String status, BigDecimal taxRate) {
+        this.name = name;
+        this.description = description;
+        this.billingDay = billingDay;
+        this.cycleType = cycleType;
+        this.baseAmount = baseAmount;
+        this.taxRate = taxRate;
+        this.paymentDueDays = paymentDueDays;
+        this.status = status;
+        this.contractDetail = contractDetail;
+    }
+
+
+
+
+
 }

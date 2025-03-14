@@ -2,7 +2,6 @@ package com.gygy.contractservice.entity;
 
 import com.gygy.contractservice.model.enums.BillingCycleType;
 import com.gygy.contractservice.model.enums.PaymentMethod;
-import com.gygy.contractservice.model.enums.ServiceType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
