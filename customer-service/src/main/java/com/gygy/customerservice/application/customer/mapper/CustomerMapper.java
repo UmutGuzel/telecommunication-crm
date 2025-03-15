@@ -7,13 +7,22 @@ import com.gygy.customerservice.application.customer.command.update.UpdateCustom
 import com.gygy.customerservice.application.customer.command.update.UpdatedCustomerResponse;
 import com.gygy.customerservice.application.customer.query.GetListCustomerItemDto;
 import com.gygy.customerservice.domain.entity.Customer;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Component;
+
+import com.gygy.customerservice.application.customer.dto.AddressResponse;
+import com.gygy.customerservice.domain.entity.Address;
 
 @Component
 @RequiredArgsConstructor
 public class CustomerMapper {
+    private final AddressMapper addressMapper;
+   
     public Customer convertCreateCommandToCustomer(CreateCustomerCommand command) {
+        Address address = addressMapper.convertCreateAddressDtoToAddress(command.getAddress());
+        
         return Customer.builder()
                 .email(command.getEmail())
                 .phoneNumber(command.getPhoneNumber())
@@ -21,10 +30,13 @@ public class CustomerMapper {
     }
 
     public CreatedCustomerResponse convertCustomerToCreatedCustomerResponse(Customer customer) {
+        AddressResponse addressResponse = addressMapper.convertAddressToAddressResponse(customer.getAddress());
+
         return CreatedCustomerResponse.builder()
                 .id(customer.getId())
                 .email(customer.getEmail())
                 .phoneNumber(customer.getPhoneNumber())
+                .address(addressResponse)
                 .build();
     }
 
@@ -35,6 +47,11 @@ public class CustomerMapper {
         if (command.getPhoneNumber() != null && !command.getPhoneNumber().isEmpty()) {
             customer.setPhoneNumber(command.getPhoneNumber());
         }
+
+        if (command.getAddress() != null) {
+            Address updatedAddress = addressMapper.convertUpdateAddressDtoToAddress(customer.getAddress(), command.getAddress());
+            customer.setAddress(updatedAddress);
+        }
     }
 
     public UpdatedCustomerResponse convertCustomerToUpdatedCustomerResponse(Customer customer) {
@@ -42,6 +59,7 @@ public class CustomerMapper {
                 .id(customer.getId())
                 .email(customer.getEmail())
                 .phoneNumber(customer.getPhoneNumber())
+                .address(addressMapper.convertAddressToAddressResponse(customer.getAddress()))
                 .build();
     }
 

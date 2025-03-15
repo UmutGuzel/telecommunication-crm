@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,6 +21,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 @Entity
 @Table(name = "addresses")
 public class Address {
@@ -34,9 +36,6 @@ public class Address {
     private String country;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
-    @Column(name = "adress_line")
-    private String addressLine;
 
     @OneToMany(mappedBy = "address")
     private List<Customer> customers;
