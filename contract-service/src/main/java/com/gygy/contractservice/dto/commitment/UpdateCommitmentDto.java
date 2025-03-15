@@ -1,5 +1,6 @@
 package com.gygy.contractservice.dto.commitment;
 
+import com.gygy.contractservice.model.enums.BillingCycleType;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -13,6 +14,7 @@ import java.util.UUID;
 @Setter
 public class UpdateCommitmentDto {
     private UUID id;
+    private String name;
     private Integer durationMonths;
     @NotNull(message = "Start date is required")
     private LocalDate startDate;
@@ -25,4 +27,8 @@ public class UpdateCommitmentDto {
     private String status;
     @NotNull(message = "Contract detail ID is required")
     private UUID contractDetailId;
+    private BillingCycleType cycleType;
+    private Integer billingDay;
+
+
 }
