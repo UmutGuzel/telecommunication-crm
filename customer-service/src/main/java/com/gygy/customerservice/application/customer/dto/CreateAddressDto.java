@@ -16,5 +16,4 @@ public class CreateAddressDto {
     private String district;
     private String city;
     private String country;
-    private String addressLine;
 }

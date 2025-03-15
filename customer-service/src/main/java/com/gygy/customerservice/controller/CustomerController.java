@@ -28,7 +28,8 @@ public class CustomerController extends BaseController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<GetListCustomerItemDto> getAllCustomers(@RequestBody GetListCustomerQuery query) {
+    public List<GetListCustomerItemDto> getAllCustomers() {
+        GetListCustomerQuery query = new GetListCustomerQuery();
         return query.execute(pipeline);
     }
 

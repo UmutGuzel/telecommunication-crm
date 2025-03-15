@@ -8,16 +8,7 @@ import org.hibernate.annotations.UuidGenerator;
 
 import com.gygy.customerservice.domain.enums.CustomerStatus;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -49,7 +40,7 @@ public class Customer {
 //    @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL)
 //    private CorporateCustomer corporateCustomer;
 
-    @ManyToOne
-    @JoinColumn(name = "address_id", insertable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_id")
     private Address address;
 } 
