@@ -1,5 +1,6 @@
 package com.gygy.contractservice.dto.commitment;
 
+import com.gygy.contractservice.entity.ContractDetail;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -17,4 +18,13 @@ public class CommitmentListiningDto {
     private BigDecimal earlyTerminationFee;
     private String status;
     private UUID contractDetailId;
+
+    public CommitmentListiningDto(String status, LocalDate startDate, LocalDate endDate, Integer durationMonths, ContractDetail contractDetail, BigDecimal earlyTerminationFee) {
+        this.status = status;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.durationMonths = durationMonths;
+        this.contractDetailId = contractDetail.getId();
+        this.earlyTerminationFee = earlyTerminationFee;
+    }
 }

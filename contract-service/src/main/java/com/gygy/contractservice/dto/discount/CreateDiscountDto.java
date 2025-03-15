@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -14,7 +15,7 @@ public class CreateDiscountDto {
     @NotNull(message = "Contract detail ID is required")
     private UUID contractDetailId;
     @NotNull(message = "Billing Plan  ID is required")
-    private UUID billingPlanId;
+    private List<UUID> billingPlanId;
 
     @NotBlank(message = "Discount type is required")
     private String discountType;

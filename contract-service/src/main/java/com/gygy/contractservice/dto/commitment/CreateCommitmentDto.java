@@ -24,8 +24,7 @@ public class CreateCommitmentDto {
     private LocalDate startDate;
     @NotNull(message = "End date is required")
     private LocalDate endDate;
-    @NotNull(message = "Early termination fee is required")
-    @DecimalMin(value = "0.0", inclusive = true, message = "Early termination fee must be at least 0")
+
     private BigDecimal earlyTerminationFee;
     @NotNull(message = "Status is required")
     private String status;
