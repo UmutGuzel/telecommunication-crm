@@ -179,15 +179,7 @@ public class CommitmentBusinessRules {
 
     }
     
-    /**
-     * Fatura döngüsü tipi ile faturalama gününün tutarlı olup olmadığını kontrol eder.
-     * Örneğin, aylık faturalama için gün 1-28 arasında olmalıdır,
-     * yıllık faturalama için özel kontroller yapılmalıdır.
-     * 
-     * @param cycleType Faturalama döngüsü tipi (MONTHLY, QUARTERLY, YEARLY, vb.)
-     * @param billingDay Faturalama günü
-     * @throws BusinessException Tutarsızlık durumunda
-     */
+
     public void checkIfCycleTypeAndBillingDayAreConsistent(String cycleType, int billingDay) {
         if (cycleType == null) {
             throw new BusinessException("Cycle type cannot be null");
@@ -246,31 +238,15 @@ public class CommitmentBusinessRules {
         // (Örn: Haftasonu faturalama yapılmaz vb.)
     }
     
-    /**
-     * Müşterinin mevcut durumuna göre yeni bir taahhüt alıp alamayacağını kontrol eder.
-     * Örneğin, müşterinin aktif bir taahhüdü varsa veya ödenmemiş faturaları bulunuyorsa.
-     * 
-     * @param customerId Müşteri ID'si
-     * @throws BusinessException Eğer müşteri yeni taahhüt alamıyorsa
-     */
+
     public void checkIfCustomerCanMakeNewCommitment(UUID customerId) {
         if (commitmentRepository.existsByContractDetail_CustomerIdAndStatus(customerId, "ACTIVE")) {
             throw new BusinessException("Customer already has an active commitment");
         }
-        
-        // Diğer özel iş kuralları buraya eklenebilir
-        // Örnek: Müşterinin ödenmemiş faturası var mı?
-        // Örnek: Müşteri kara listede mi?
+
     }
     
-    /**
-     * Bir paketin başka bir pakete yükseltme (upgrade) yolunun geçerli olup olmadığını kontrol eder.
-     * Bu metod, hangi paketlerden hangi paketlere yükseltme yapılabileceğini belirtir.
-     * 
-     * @param currentPackage Mevcut paket
-     * @param targetPackage Hedef paket
-     * @return Yükseltme yolu geçerli ise true, değilse false
-     */
+
     public boolean isValidUpgradePath(String currentPackage, String targetPackage) {
         // Paket hiyerarşisini harita olarak tanımlayalım
         // Her paket için, hangi paketlere yükseltilebileceğini belirtelim
@@ -299,24 +275,9 @@ public class CommitmentBusinessRules {
         // Tanımlanmamış paketler için varsayılan olarak false döndür
         return false;
     }
-    
-    /**
-     * Bir paketin başka bir pakete düşürme (downgrade) yolunun geçerli olup olmadığını kontrol eder.
-     * Bu metod, hangi paketlerden hangi paketlere düşürme yapılabileceğini belirtir.
-     * 
-     * @param currentPackage Mevcut paket
-     * @param targetPackage Hedef paket
-     * @return Düşürme yolu geçerli ise true, değilse false
-     */
     public boolean isValidDowngradePath(String currentPackage, String targetPackage) {
-        // Basit bir yaklaşım olarak, düşürme yolları yükseltme yollarının tersidir
-        // Ancak bazı paketler arasında doğrudan düşürme mümkün olmayabilir
-        
-        // Paket hiyerarşisini harita olarak tanımlayalım
-        // Her paket için, hangi paketlere düşürülebileceğini belirtelim
         java.util.Map<String, java.util.List<String>> downgradePathMap = new java.util.HashMap<>();
         
-        // INTERNET paketleri için düşürme yolları
         downgradePathMap.put("INTERNET_ULTIMATE", java.util.Arrays.asList("INTERNET_PREMIUM", "INTERNET_STANDARD", "INTERNET_BASIC"));
         downgradePathMap.put("INTERNET_PREMIUM", java.util.Arrays.asList("INTERNET_STANDARD", "INTERNET_BASIC"));
         downgradePathMap.put("INTERNET_STANDARD", java.util.Arrays.asList("INTERNET_BASIC"));
