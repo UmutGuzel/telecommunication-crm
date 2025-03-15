@@ -1,3 +1,21 @@
 spring:
   application:
     name: config-server
+  cloud:
+    config:
+      server:
+        git:
+          uri: "https://github.com/UmutGuzel/crm.microservice.config"
+          default-label: "master"
+
+server:
+  port: 8090
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health"
+    endpoint:
+      health:
+        show-details: always
