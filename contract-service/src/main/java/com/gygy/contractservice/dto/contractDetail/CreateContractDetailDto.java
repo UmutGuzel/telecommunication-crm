@@ -1,7 +1,7 @@
 package com.gygy.contractservice.dto.contractDetail;
 
 import com.gygy.contractservice.model.enums.ContractDetailType;
-import com.gygy.contractservice.model.enums.ContractStatus;
+import com.gygy.contractservice.model.enums.Status;
 import com.gygy.contractservice.model.enums.ServiceType;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -22,7 +22,7 @@ public class CreateContractDetailDto {
     private LocalDate endDate;
 
     @NotNull(message = "Status is required")
-    private ContractStatus status;
+    private Status status;
 
     @NotNull(message = "Contract detail type is required")
     private ContractDetailType contractDetailType;

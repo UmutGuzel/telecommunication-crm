@@ -8,7 +8,6 @@ import com.gygy.contractservice.entity.Contract;
 import com.gygy.contractservice.repository.ContractRepository;
 import com.gygy.contractservice.service.ContractService;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -23,7 +22,9 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public Optional<Contract> findById(UUID id) {return contractRepository.findById(id); }
+    public Optional<Contract> findById(UUID id) {
+        return contractRepository.findById(id);
+    }
 
     @Override
     public void add(CreateContractDto createContractDto) {
@@ -42,21 +43,21 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     public List<ContractListiningDto> getAll() {
-        List<ContractListiningDto> contractListiningDtos=
+        List<ContractListiningDto> contractListiningDtos =
                 contractRepository
                         .findAll()
                         .stream()
-                        .map((contract)-> new ContractListiningDto(contract.getContractNumber()
-                                ,contract.getStatus()
-                                ,contract.getDocumentType()
-                                ,contract.getDocumentUrl()
-                                ,contract.getSignatureDate())).toList();
+                        .map(contract -> new ContractListiningDto(contract.getContractNumber()
+                                , contract.getStatus()
+                                , contract.getDocumentType()
+                                , contract.getDocumentUrl()
+                                , contract.getSignatureDate())).toList();
         return contractListiningDtos;
     }
 
     @Override
     public Contract update(UpdateContractDto updateContractDto) {
-        Contract contract=contractRepository.findById(updateContractDto.getId()).orElseThrow(()-> new RuntimeException("Contract not found"));
+        Contract contract = contractRepository.findById(updateContractDto.getId()).orElseThrow(() -> new RuntimeException("Contract not found"));
         contract.setContractNumber(updateContractDto.getContractNumber());
         contract.setStatus(updateContractDto.getStatus());
         contract.setDocumentUrl(updateContractDto.getDocumentUrl());
@@ -69,8 +70,35 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     public void delete(DeleteContractDto deleteContractDto) {
-        Contract contract=contractRepository.findById(deleteContractDto.getId()).orElseThrow(()-> new RuntimeException("Contract not found"));
+        Contract contract = contractRepository.findById(deleteContractDto.getId()).orElseThrow(() -> new RuntimeException("Contract not found"));
         contractRepository.delete(contract);
+
+    }
+
+    @Override
+    public List<ContractListiningDto> getActiveContracts() {
+        return contractRepository.findAll().stream()
+                .filter(contract -> "ACTIVE".equals(contract.getStatus().toString()))
+                .map(contract -> new ContractListiningDto(
+                        contract.getContractNumber(),
+                        contract.getStatus(),
+                        contract.getDocumentType(),
+                        contract.getDocumentUrl(),
+                        contract.getSignatureDate()))
+                .toList();
+    }
+
+    @Override
+    public List<ContractListiningDto> getSuspendedContracts() {
+        return contractRepository.findAll().stream()
+                .filter(contract -> "SUSPENDED".equals(contract.getStatus().toString()))
+                .map(contract -> new ContractListiningDto(
+                        contract.getContractNumber(),
+                        contract.getStatus(),
+                        contract.getDocumentType(),
+                        contract.getDocumentUrl(),
+                        contract.getSignatureDate()))
+                .toList();
 
     }
 }

@@ -6,13 +6,10 @@ import com.gygy.contractservice.core.exception.result.NotFoundExceptionResult;
 import com.gygy.contractservice.core.exception.result.ValidationExceptionResult;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import java.util.List;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -23,10 +20,6 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public BusinessExceptionResult handlerRuntimeException(BusinessException e) {
         return new BusinessExceptionResult(e.getMessage());
-    }
-    @ExceptionHandler({ValidationException.class})
-    public ResponseEntity<List<String>> validationException(ValidationException e) {
-        return new ResponseEntity<>(e.getErrors(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler({MethodArgumentNotValidException.class})
