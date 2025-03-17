@@ -15,7 +15,6 @@ import com.gygy.contractservice.service.DiscountService;
 import com.gygy.contractservice.core.exception.type.BusinessException;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -51,8 +50,7 @@ public class BillingPlanServiceImpl implements BillingPlanService {
 
     @Override
     public void add(CreateBillingPlanDto createBillingPlanDto) {
-        // İş kurallarını tek tek kontrol et
-        // 1. İsim benzersizliği kontrolü
+
         billingPlanBusinessRules.checkIfBillingPlanNameExists(createBillingPlanDto.getName());
         
         // 2. Döngü tipi ve faturalama günü tutarlılığı
@@ -93,7 +91,7 @@ public class BillingPlanServiceImpl implements BillingPlanService {
 
     @Override
     public List<BillingPlanListiningDto> getAll() {
-        return billingPlanRepository.findAll().stream().map((billingPlan)-> new BillingPlanListiningDto(billingPlan.getName()
+        return billingPlanRepository.findAll().stream().map(billingPlan-> new BillingPlanListiningDto(billingPlan.getName()
                                         ,billingPlan.getDescription()
                                         ,billingPlan.getBillingDay()
                                         ,billingPlan.getCycleType()

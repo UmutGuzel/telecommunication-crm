@@ -5,7 +5,6 @@ import com.gygy.contractservice.dto.contract.CreateContractDto;
 import com.gygy.contractservice.dto.contract.DeleteContractDto;
 import com.gygy.contractservice.dto.contract.UpdateContractDto;
 import com.gygy.contractservice.entity.Contract;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -16,4 +15,6 @@ public interface ContractService {
     List<ContractListiningDto> getAll();
     Contract update(UpdateContractDto updateContractDto);
     void delete(DeleteContractDto deleteContractDto);
+    List<ContractListiningDto> getActiveContracts();
+    List<ContractListiningDto> getSuspendedContracts();
 }

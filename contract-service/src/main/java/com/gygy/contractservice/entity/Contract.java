@@ -1,6 +1,6 @@
 package com.gygy.contractservice.entity;
 
-import com.gygy.contractservice.model.enums.ContractStatus;
+import com.gygy.contractservice.model.enums.Status;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -37,7 +37,7 @@ public class Contract {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private ContractStatus status;
+    private Status status;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

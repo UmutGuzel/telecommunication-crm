@@ -1,14 +1,9 @@
 package com.gygy.contractservice.dto.contract;
 
-import com.gygy.contractservice.entity.ContractDetail;
-import com.gygy.contractservice.model.enums.ContractStatus;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import com.gygy.contractservice.model.enums.Status;
 import lombok.Getter;
 import lombok.Setter;
-
 import java.time.LocalDateTime;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -18,11 +13,11 @@ public class ContractListiningDto {
     private String documentUrl;
     private LocalDateTime uploadDate;
     private LocalDateTime signatureDate;
-    private ContractStatus status;
+    private Status status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public ContractListiningDto(String contractNumber, ContractStatus status, String documentType, String documentUrl, LocalDateTime signatureDate) {
+    public ContractListiningDto(String contractNumber, Status status, String documentType, String documentUrl, LocalDateTime signatureDate) {
         this.contractNumber = contractNumber;
         this.documentType = documentType;
         this.documentUrl = documentUrl;

@@ -6,7 +6,6 @@ import com.gygy.contractservice.dto.contract.DeleteContractDto;
 import com.gygy.contractservice.dto.contract.UpdateContractDto;
 import com.gygy.contractservice.service.ContractService;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -32,5 +31,13 @@ public class ContractController {
     @DeleteMapping
     public void delete(@RequestBody DeleteContractDto deleteContractDto) {
         contractService.delete(deleteContractDto);
+    }
+    @GetMapping("/getActiveContracts")
+    public List<ContractListiningDto> getActiveContracts(){
+        return contractService.getActiveContracts();
+    }
+    @GetMapping("/getSuspendedContracts")
+    public List<ContractListiningDto> getSuspendedContracts(){
+        return contractService.getSuspendedContracts();
     }
 }

@@ -7,14 +7,12 @@ import com.gygy.contractservice.dto.contractDetail.UpdateContractDetailDto;
 import com.gygy.contractservice.entity.Contract;
 import com.gygy.contractservice.entity.ContractDetail;
 import com.gygy.contractservice.repository.ContractDetailRepository;
-import com.gygy.contractservice.service.CommitmentService;
 import com.gygy.contractservice.service.ContractDetailService;
 import com.gygy.contractservice.service.ContractService;
 import org.springframework.stereotype.Service;
-
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -22,12 +20,10 @@ public class ContractDetailServiceImpl implements ContractDetailService {
 
     private final ContractDetailRepository contractDetailRepository;
     private final ContractService contractService;
-    private final CommitmentService commitmentService;
 
-    public ContractDetailServiceImpl(ContractDetailRepository contractDetailRepository, ContractService contractService, CommitmentService commitmentService) {
+    public ContractDetailServiceImpl(ContractDetailRepository contractDetailRepository, ContractService contractService) {
         this.contractDetailRepository = contractDetailRepository;
         this.contractService = contractService;
-        this.commitmentService = commitmentService;
     }
 
     @Override
@@ -56,7 +52,7 @@ public class ContractDetailServiceImpl implements ContractDetailService {
                 contractDetailRepository
                         .findAll()
                         .stream()
-                        .map((contractDetail) ->new ContractDetailListiningDto(contractDetail.getContractDetailType()
+                        .map(contractDetail ->new ContractDetailListiningDto(contractDetail.getContractDetailType()
                                 ,contractDetail.getContract().getId(),contractDetail.getStatus(),contractDetail.getEndDate(),contractDetail.getStartDate())).toList();
 
         return contractDetailListiningDtos;
@@ -80,4 +76,85 @@ public class ContractDetailServiceImpl implements ContractDetailService {
         contractDetailRepository.delete(contractDetail);
 
     }
+
+    @Override
+    public List<ContractDetailListiningDto> getContractByDate(UUID id, LocalDate startDate, LocalDate endDate) {
+        return contractDetailRepository
+                .findById(id)
+                .stream()
+                .filter(contractDetail -> (contractDetail.getStartDate().isAfter(startDate)|| contractDetail.getStartDate().isEqual(startDate))  &&
+                        (contractDetail.getEndDate().isBefore(endDate) || contractDetail.getEndDate().isEqual(endDate)))
+                .map(contractDetail -> new ContractDetailListiningDto(
+                        contractDetail.getContractDetailType(),
+                        contractDetail.getServiceType(),
+                        contractDetail.getStartDate(),
+                        contractDetail.getContract().getId(),
+                        contractDetail.getEndDate(),
+                        contractDetail.getStatus())).toList();
+    }
+
+    @Override
+    public List<ContractDetailListiningDto> getIndividualContractDetails() {
+        return contractDetailRepository
+                .findAll()
+                .stream()
+                .filter(contractDetail -> "INDIVIDUAL".equals(contractDetail.getContractDetailType().toString()))
+                .map(contractDetail -> new ContractDetailListiningDto(
+                        contractDetail.getContractDetailType(),
+                        contractDetail.getServiceType(),
+                        contractDetail.getStartDate(),
+                        contractDetail.getContract().getId(),
+                        contractDetail.getEndDate(),
+                        contractDetail.getStatus())).toList();
+    }
+
+    @Override
+    public List<ContractDetailListiningDto> getCorporateContractDetails() {
+        return contractDetailRepository
+                .findAll().stream().filter(contractDetail -> "CORPORATE".equals(contractDetail.getContractDetailType().toString()))
+                .map(contractDetail -> new ContractDetailListiningDto(
+                        contractDetail.getContractDetailType(),
+                        contractDetail.getServiceType() ,
+                        contractDetail.getStartDate(),
+                        contractDetail.getContract().getId(),
+                        contractDetail.getEndDate(),
+                        contractDetail.getStatus())).toList();
+    }
+
+    @Override
+    public List<ContractDetailListiningDto> getContractsByCustomerId(UUID customerId) {
+        return contractDetailRepository.findAll().stream().filter(contractDetail -> contractDetail.getCustomerId().equals(customerId))
+                .map(contractDetail -> new ContractDetailListiningDto(
+                        contractDetail.getContractDetailType(),
+                        contractDetail.getServiceType(),
+                        contractDetail.getStartDate(),
+                        contractDetail.getContract().getId(),
+                        contractDetail.getEndDate(),
+                        contractDetail.getStatus())).toList();
+    }
+    @Override
+    public List<ContractDetailListiningDto> getExpiredContractsByCustomerId(UUID customerId) {
+        return contractDetailRepository.findAll().stream().filter(contractDetail -> contractDetail.getEndDate().isBefore(LocalDate.now()) && contractDetail.getCustomerId().equals(customerId))
+                .map(contractDetail -> new ContractDetailListiningDto(
+                        contractDetail.getContractDetailType(),
+                        contractDetail.getServiceType(),
+                        contractDetail.getStartDate(),
+                        contractDetail.getContract().getId(),
+                        contractDetail.getEndDate(),
+                        contractDetail.getStatus())).toList();
+}
+
+    @Override
+    public List<ContractDetailListiningDto> getContractsByMonthAndYear(int month, int year) {
+        return contractDetailRepository.findAll().stream().filter(contractDetail -> contractDetail.getEndDate().getMonthValue() == month && contractDetail.getEndDate().getYear() == year)
+                .map(contractDetail -> new ContractDetailListiningDto(
+                        contractDetail.getContractDetailType(),
+                        contractDetail.getServiceType(),
+                        contractDetail.getStartDate(),
+                        contractDetail.getContract().getId(),
+                        contractDetail.getEndDate(),
+                        contractDetail.getStatus()))
+                .toList();
+    }
+
 }
