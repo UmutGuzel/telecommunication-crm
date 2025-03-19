@@ -31,6 +31,7 @@
         <module name="plan-service" />
         <module name="analytics-service" />
         <module name="gateway-server" />
+        <module name="user-service" />
         <module name="notification-service" />
         <module name="customer-support-service" />
       </profile>
@@ -42,7 +43,6 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
         </processorPath>
         <module name="contract-service" />
-        <module name="user-service" />
       </profile>
       <profile name="Annotation profile for customer-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />

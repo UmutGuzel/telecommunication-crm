@@ -7,10 +7,12 @@ import lombok.RequiredArgsConstructor;
 import jakarta.validation.Validator;
 import jakarta.validation.ConstraintViolation;
 import java.util.Set;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
+@Order(3)
 public class ValidationBehavior implements Command.Middleware {
     private final Validator validator;
 

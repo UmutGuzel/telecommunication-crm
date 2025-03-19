@@ -24,6 +24,8 @@ import com.gygy.userservice.application.user.command.Login.LoginCommand;
 import com.gygy.userservice.application.user.command.Login.LoginResponse;
 import com.gygy.userservice.application.user.command.UpdateUserRole.UpdateUserRoleCommand;
 import com.gygy.userservice.application.user.command.UpdateUserRole.UpdateUserRoleResponse;
+import com.gygy.userservice.application.user.command.ForgotPassword.ForgotPasswordCommand;
+import com.gygy.userservice.application.user.command.ForgotPassword.ForgotPasswordResponse;
 import jakarta.validation.Valid;
 
 @RestController
@@ -60,6 +62,12 @@ public class UserController {
     @PutMapping("/role")
     @ResponseStatus(HttpStatus.OK)
     public UpdateUserRoleResponse updateUserRole(@RequestBody UpdateUserRoleCommand command) {
+        return command.execute(pipeline);
+    }
+
+    @PostMapping("/forgot-password")
+    @ResponseStatus(HttpStatus.OK)
+    public ForgotPasswordResponse forgotPassword(@RequestBody ForgotPasswordCommand command) {
         return command.execute(pipeline);
     }
 
