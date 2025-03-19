@@ -7,6 +7,10 @@ on:
     branches: [ '**' ]
   workflow_dispatch:
 
+permissions:
+  checks: write
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -32,4 +36,6 @@ jobs:
       with:
         name: Maven Tests
         path: user-service/target/surefire-reports/*.xml
-        reporter: java-junit 
+        reporter: java-junit
+        fail-on-error: true
+        fail-on-empty: true 
