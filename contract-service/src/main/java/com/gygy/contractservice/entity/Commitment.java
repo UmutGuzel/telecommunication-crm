@@ -1,9 +1,8 @@
 package com.gygy.contractservice.entity;
 
+import com.gygy.contractservice.model.enums.BillingCycleType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
 
@@ -20,6 +19,8 @@ public class Commitment {
     @Id
     @UuidGenerator
     private UUID id;
+
+    private String name;
 
     @Column(name = "duration_months", nullable = false)
     private Integer durationMonths;
@@ -41,6 +42,11 @@ public class Commitment {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "cycle_type", nullable = false)
+    private BillingCycleType cycleType;
 
     @ManyToOne
     @JoinColumn(name="contract_detail_id", nullable = false)
