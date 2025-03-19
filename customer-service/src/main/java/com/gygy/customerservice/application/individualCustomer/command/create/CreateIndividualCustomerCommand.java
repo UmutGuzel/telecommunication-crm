@@ -9,6 +9,8 @@ import com.gygy.customerservice.domain.entity.Address;
 import com.gygy.customerservice.domain.entity.Customer;
 import com.gygy.customerservice.domain.entity.IndividualCustomer;
 import com.gygy.customerservice.domain.enums.IndividualCustomerGender;
+import com.gygy.customerservice.infrastructure.messaging.CreatedIndividualCustomerEvent;
+import com.gygy.customerservice.infrastructure.messaging.KafkaProducerService;
 import com.gygy.customerservice.persistance.repository.AddressRepository;
 import com.gygy.customerservice.persistance.repository.CustomerRepository;
 import com.gygy.customerservice.persistance.repository.IndividualCustomerRepository;
@@ -43,6 +45,7 @@ public class CreateIndividualCustomerCommand implements Command<CreatedIndividua
         private final CustomerRule customerRule;
         private final AddressRepository addressRepository;
         private final AddressMapper addressMapper;
+        private final KafkaProducerService kafkaProducerService;
 
         @Override
         public CreatedIndividualCustomerResponse handle(CreateIndividualCustomerCommand command) {
@@ -65,6 +68,13 @@ public class CreateIndividualCustomerCommand implements Command<CreatedIndividua
             newIndividualCustomer.setAddress(finalAddress);
 
             individualCustomerRepository.save(newIndividualCustomer);
+
+            kafkaProducerService.sendCreatedIndividualCustomerEvent(CreatedIndividualCustomerEvent.builder()
+                    .id(newIndividualCustomer.getId())
+                    .email(newIndividualCustomer.getEmail())
+                    .name(newIndividualCustomer.getName())
+                    .surname(newIndividualCustomer.getSurname())
+                    .build());
 
             return individualCustomerMapper.convertIndividualCustomerToResponse(newIndividualCustomer);
         }
