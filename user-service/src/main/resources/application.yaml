@@ -1,3 +1,20 @@
+configurl: http://localhost:8090
 spring:
   application:
     name: user-service
+  cloud:
+    config:
+      profile: local
+  config:
+      import: configserver:${configurl}
+
+
+jwt:
+  expiration: 7200000
+  secret: "KRbQDv3hU8U9BOF0kjynHH35tpPiOoiBEJVooJ9Z1yTZZXaqlha0xHXx1DOlVvU"
+
+# Error
+# Warning
+# Info
+# Debug
+# Trace

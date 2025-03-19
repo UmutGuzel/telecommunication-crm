@@ -1,0 +1,20 @@
+configurl: http://localhost:8090
+spring:
+  application:
+    name: plan-service
+  cloud:
+    config:
+      profile: local
+  config:
+      import: configserver:${configurl}
+
+
+  banner:
+    location: classpath:banner.txt    # Use custom banner file
+    charset: UTF-8                    # Banner file encoding
+    # If you want to disable banner completely:
+    # banner-mode: "off"é
+
+
+
+
