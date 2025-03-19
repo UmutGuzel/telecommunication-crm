@@ -2,13 +2,9 @@ name: User Service Unit Tests
 
 on:
   push:
-    paths:
-      - 'user-service/**'
-    branches: [ main, master ]
+    branches: [ '**' ]
   pull_request:
-    paths:
-      - 'user-service/**'
-    branches: [ main, master ]
+    branches: [ '**' ]
   workflow_dispatch:
 
 jobs:

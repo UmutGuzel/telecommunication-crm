@@ -39,6 +39,8 @@ public class User {
     private LocalDate birthDate;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private String resetToken;
+    private Long resetTokenExpiry;
     @ManyToMany
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private List<Role> roles;
