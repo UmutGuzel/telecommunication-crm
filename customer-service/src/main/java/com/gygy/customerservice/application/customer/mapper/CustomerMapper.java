@@ -63,7 +63,7 @@ public class CustomerMapper {
                 .build();
     }
 
-    public DeletedCustomerResponse converCustomerToDeletedCustomerResponse(Customer customer) {
+    public DeletedCustomerResponse convertCustomerToDeletedCustomerResponse(Customer customer) {
         return DeletedCustomerResponse.builder()
                 .id(customer.getId())
                 .build();
