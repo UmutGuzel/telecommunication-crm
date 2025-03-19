@@ -19,3 +19,9 @@ server:
 jwt:
   expiration: 7200000
   secret: "KRbQDv3hU8U9BOF0kjynHH35tpPiOoiBEJVooJ9Z1yTZZXaqlha0xHXx1DOlVvU"
+
+logging:
+  level:
+    com.gygy.userservice.core.pipeline: DEBUG
+    com.gygy: INFO
+    root: WARN
