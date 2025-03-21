@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: plan-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: plan-service
+  template:
+    metadata:
+      labels:
+        app: plan-service
+    spec:
+      containers:
+      - name: plan-service
+        image: plan-service:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 9040
+        env:
+        - name: SPRING_CLOUD_CONFIG_PROFILE
+          value: "dev"
+        - name: CONFIGURL
+          value: "http://config-server:8090"
+        readinessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 9040
+          initialDelaySeconds: 90
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 9040
+          initialDelaySeconds: 90
+          periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: plan-service
+spec:
+  selector:
+    app: plan-service
+  ports:
+  - port: 9040
+    targetPort: 9040
+  type: ClusterIP
