@@ -9,75 +9,15 @@ This directory contains Kubernetes configuration files for deploying the Telecom
 - **infrastructure/** - Infrastructure components (Kafka, Prometheus, Grafana, etc.)
 - **services/** - Application microservices
 
-## Deployment Instructions
+## Deployment Order
 
-### Using the Deployment Script
-
-The easiest way to deploy the entire application is to use the provided deployment script:
-
-```bash
-# Make the script executable
-chmod +x deploy.sh
-
-# Run the deployment script
-./deploy.sh
-```
-
-### Manual Deployment
-
-For manual deployment, follow this order:
+For proper deployment, services should be deployed in the following order:
 
 1. Create namespace: `kubectl apply -f namespace.yaml`
 2. Deploy infrastructure components: `kubectl apply -f infrastructure/`
 3. Deploy databases: `kubectl apply -f databases/`
 4. Deploy configuration servers: `kubectl apply -f config/`
 5. Deploy application services: `kubectl apply -f services/`
-
-### Cleanup
-
-To clean up all resources:
-
-```bash
-# Make the script executable
-chmod +x cleanup.sh
-
-# Run the cleanup script
-./cleanup.sh
-```
-
-## Troubleshooting
-
-### Checking Pod Status
-
-```bash
-kubectl get pods -n telecom-crm
-```
-
-### Viewing Pod Logs
-
-```bash
-kubectl logs -n telecom-crm <pod-name>
-```
-
-### Debugging Individual Services
-
-To check the status of specific services:
-
-```bash
-kubectl describe pod -n telecom-crm <pod-name>
-```
-
-### Accessing Services Locally
-
-Port-forward to access services from your local machine:
-
-```bash
-# Example: Access Kafka
-kubectl port-forward -n telecom-crm svc/kafka 9092:9092
-
-# Example: Access Gateway
-kubectl port-forward -n telecom-crm svc/gateway-service 8080:8080
-```
 
 ## Port Mappings
 
@@ -90,7 +30,7 @@ The following services are exposed:
 | payment-service-db | 5432 | 5432 |
 | customer-support-service-db | 5432 | 5435 |
 | contract-service-db | 5432 | 5436 |
-| kafka | 9092, 9093 | 9092, 9093 |
+| kafka | 9092, 9093, 9094 | 9092 |
 | papercut-smtp | 25, 37408 | 25, 37408 |
 | config-server | 8090 | 8090 |
 | discovery-server | 8888 | 8888 |
