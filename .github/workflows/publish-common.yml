@@ -37,4 +37,4 @@ jobs:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
           cd common
-          mvn clean deploy -Prelease -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }} --settings ${{ github.workspace }}/.github/workflows/settings.xml
+          mvn clean deploy -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }} --settings ${{ github.workspace }}/.github/workflows/settings.xml
