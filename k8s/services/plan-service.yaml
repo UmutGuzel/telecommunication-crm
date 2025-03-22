@@ -14,8 +14,8 @@ spec:
     spec:
       containers:
       - name: plan-service
-        image: plan-service:latest
-        imagePullPolicy: IfNotPresent
+        image: umutgu/plan-service:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 9040
         env:

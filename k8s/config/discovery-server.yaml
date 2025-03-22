@@ -14,8 +14,8 @@ spec:
     spec:
       containers:
       - name: discovery-server
-        image: discovery-server:latest
-        imagePullPolicy: IfNotPresent
+        image: umutgu/discovery-server:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 8888
         env:

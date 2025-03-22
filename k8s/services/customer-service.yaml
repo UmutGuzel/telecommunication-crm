@@ -14,8 +14,8 @@ spec:
     spec:
       containers:
       - name: customer-service
-        image: customer-service:latest
-        imagePullPolicy: IfNotPresent
+        image: umutgu/customer-service:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 9020
         env:
