@@ -14,8 +14,8 @@ spec:
     spec:
       containers:
       - name: user-service
-        image: user-service:latest
-        imagePullPolicy: IfNotPresent
+        image: umutgu/user-service:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 9010
         env:

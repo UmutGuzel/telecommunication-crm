@@ -14,8 +14,8 @@ spec:
     spec:
       containers:
       - name: analytics-service
-        image: analytics-service:latest
-        imagePullPolicy: IfNotPresent
+        image: umutgu/analytics-service:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 9070
         env:
