@@ -6,7 +6,8 @@ spring:
     config:
       profile: local
   config:
-      import: configserver:${configurl}
+    import: configserver:${configurl}/
+
 
 
 jwt:
@@ -18,3 +19,7 @@ jwt:
 # Info
 # Debug
 # Trace
+
+app-config:
+  gateway-url: ${GATEWAY_URL:http://localhost:8080}
+  reset-password-path: /api/auth/reset-password
