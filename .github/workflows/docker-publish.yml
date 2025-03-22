@@ -52,5 +52,5 @@ jobs:
         context: ./${{ matrix.service }}
         push: true
         tags: |
-          ${{ secrets.DOCKER_USERNAME }}/${{ matrix.service }}:${{ github.ref == 'refs/heads/release/staging' && 'staging-latest' || 'production-latest' }}
+          ${{ secrets.DOCKER_USERNAME }}/${{ matrix.service }}:${{ github.ref == 'refs/heads/release/staging' && 'staging' || 'latest' }}
           ${{ secrets.DOCKER_USERNAME }}/${{ matrix.service }}:${{ github.ref == 'refs/heads/release/staging' && 'staging-' || 'production-' }}${{ github.sha }}

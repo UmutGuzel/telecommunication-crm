@@ -14,8 +14,8 @@ spec:
     spec:
       containers:
       - name: contract-service
-        image: contract-service:latest
-        imagePullPolicy: IfNotPresent
+        image: umutgu/contract-service:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 9030
         env:
