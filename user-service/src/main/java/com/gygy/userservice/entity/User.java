@@ -17,6 +17,7 @@ import jakarta.persistence.JoinColumn;
 import lombok.Builder;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import jakarta.persistence.Column;
 
 @Entity
 @Table(name = "users")
@@ -30,7 +31,9 @@ public class User {
     private UUID id;
     private String name;
     private String surname;
+    @Column(nullable = false)
     private String email;
+    @Column(nullable = false)
     private String password;
     private String phoneNumber;
     private String address;
@@ -45,4 +48,8 @@ public class User {
     @ManyToMany
     @JoinTable(name = "user_permission", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "permission_id"))
     private List<Permission> permissions;
+    @Column(name = "reset_token")
+    private String resetToken;
+    @Column(name = "reset_token_expiry")
+    private LocalDateTime resetTokenExpiry;
 }

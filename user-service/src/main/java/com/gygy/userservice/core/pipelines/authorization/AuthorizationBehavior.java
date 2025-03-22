@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 @Component
-@Order(1) // Execute before validation
+@Order(2) // Execute before validation
 @RequiredArgsConstructor
 public class AuthorizationBehavior implements Command.Middleware {
 

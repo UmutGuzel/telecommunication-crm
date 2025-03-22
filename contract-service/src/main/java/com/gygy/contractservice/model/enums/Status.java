@@ -1,6 +1,6 @@
 package com.gygy.contractservice.model.enums;
 
-public enum ContractStatus {
+public enum Status {
     ACTIVE,
     SUSPENDED,
     TERMINATED,
