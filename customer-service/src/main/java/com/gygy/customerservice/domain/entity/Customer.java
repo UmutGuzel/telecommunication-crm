@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.UuidGenerator;
 
 import com.gygy.customerservice.domain.enums.CustomerStatus;
@@ -14,9 +15,10 @@ import jakarta.persistence.*;
 @NoArgsConstructor
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @Entity
 @Table(name = "customers")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Customer {
 
     @Id
@@ -33,12 +35,6 @@ public class Customer {
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
-//    @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL)
-//    private IndividualCustomer individualCustomer;
-//
-//    @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL)
-//    private CorporateCustomer corporateCustomer;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "address_id")
