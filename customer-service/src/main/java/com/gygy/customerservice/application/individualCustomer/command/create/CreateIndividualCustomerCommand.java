@@ -38,7 +38,7 @@ public class CreateIndividualCustomerCommand implements Command<CreatedIndividua
 
     @Component
     @RequiredArgsConstructor
-    public static class CreateCustomerCommandHandler implements Handler<CreateIndividualCustomerCommand, CreatedIndividualCustomerResponse> {
+    public static class CreateIndividualCustomerCommandHandler implements Handler<CreateIndividualCustomerCommand, CreatedIndividualCustomerResponse> {
         private final CustomerRepository customerRepository;
         private final IndividualCustomerRepository individualCustomerRepository;
         private final IndividualCustomerMapper individualCustomerMapper;
