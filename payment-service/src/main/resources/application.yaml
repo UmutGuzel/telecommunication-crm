@@ -1,27 +1,9 @@
 spring:
   application:
     name: payment-service
-
-  datasource:
-    url: "jdbc:postgresql://localhost:5432/payment-db"
-    username: postgres
-    password: test
-
-  jpa:
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        formatsql: true
-        use_sql_comments: true
-    show-sql: true
-
-springdoc:
-  api-docs:
-    enabled: true
-  swagger-ui:
-    enabled: true
-
-server:
-  port: 9050
+  config:
+    import: configserver:http://localhost:8090
+  cloud:
+    config:
+      profile: local
+      uri: http://localhost:8090

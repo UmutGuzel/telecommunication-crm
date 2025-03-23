@@ -5,17 +5,26 @@ spring:
     config:
       server:
         git:
-          uri: "https://github.com/UmutGuzel/crm.microservice.config"
-          default-label: "master"
+          uri: "https://github.com/UmutGuzel/crm.microservice.config.git"
+          default-label: master
+          search-paths: payment-service
+          clone-on-start: true
+          force-pull: true
 
 server:
   port: 8090
+
+logging:
+  level:
+    org.springframework.cloud.config: DEBUG
+    org.springframework.cloud.config.server: DEBUG
+    org.eclipse.jgit: DEBUG
 
 management:
   endpoints:
     web:
       exposure:
-        include: "health"
-    endpoint:
-      health:
-        show-details: always
+        include: "*"
+  endpoint:
+    health:
+      show-details: always 
