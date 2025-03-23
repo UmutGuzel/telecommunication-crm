@@ -1,23 +1,27 @@
 package com.gygy.userservice.application.user.command.ForgotPassword;
 
 import an.awesome.pipelinr.Command;
-import com.gygy.userservice.model.event.PasswordResetEvent;
+
+import com.gygy.userservice.core.configration.ApplicationConfig;
+import com.gygy.userservice.core.event.PasswordResetEvent;
 import com.gygy.userservice.entity.User;
 import com.gygy.userservice.persistance.UserRepository;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.support.SendResult;
+// TODO: Uncomment when implementing Kafka
+// import org.springframework.kafka.core.KafkaTemplate;
+// import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Component;
-import org.springframework.util.concurrent.ListenableFuture;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
+// TODO: Uncomment when implementing Kafka
+// import java.util.concurrent.CompletableFuture;
 
 @Data
 @AllArgsConstructor
@@ -33,10 +37,9 @@ public class ForgotPasswordCommand implements Command<ForgotPasswordResponse> {
 
         private static final String TOPIC_NAME = "password-reset-events";
         private final UserRepository userRepository;
-        private final KafkaTemplate<String, PasswordResetEvent> kafkaTemplate;
-
-        @Value("${server.port}")
-        private int serverPort;
+        // TODO: Uncomment when implementing Kafka
+        // private final KafkaTemplate<String, PasswordResetEvent> kafkaTemplate;
+        private final ApplicationConfig applicationConfig;
 
         @Override
         public ForgotPasswordResponse handle(ForgotPasswordCommand command) {
@@ -57,11 +60,16 @@ public class ForgotPasswordCommand implements Command<ForgotPasswordResponse> {
             user.setResetTokenExpiry(expiryDate);
             userRepository.save(user);
 
-            // Create reset link
-            String resetLink = String.format("http://localhost:%d/api/v1/users/reset-password?token=%s",
-                    serverPort, resetToken);
+            // Create reset link using UriComponentsBuilder for proper URL encoding
+            String resetLink = UriComponentsBuilder
+                    .fromUriString(applicationConfig.getGatewayUrl())
+                    .path(applicationConfig.getResetPasswordPath())
+                    .queryParam("token", resetToken)
+                    .build()
+                    .toUriString();
 
-            // Create and send Kafka event
+            // TODO: Implement Kafka event sending
+            // Create PasswordResetEvent
             PasswordResetEvent event = new PasswordResetEvent(
                     user.getId().toString(),
                     user.getEmail(),
@@ -69,17 +77,22 @@ public class ForgotPasswordCommand implements Command<ForgotPasswordResponse> {
                     expiryDate,
                     resetLink);
 
-            // Send event to Kafka
-            CompletableFuture<SendResult<String, PasswordResetEvent>> future = kafkaTemplate.send(TOPIC_NAME,
-                    user.getId().toString(), event);
+            // TODO: Send event to Kafka
+            // CompletableFuture<SendResult<String, PasswordResetEvent>> future =
+            // kafkaTemplate.send(TOPIC_NAME,
+            // user.getId().toString(), event);
+            //
+            // future.whenComplete((result, ex) -> {
+            // if (ex == null) {
+            // log.info("Password reset event sent successfully for user: {}",
+            // user.getId());
+            // } else {
+            // log.error("Failed to send password reset event for user: {}", user.getId(),
+            // ex);
+            // }
+            // });
 
-            future.whenComplete((result, ex) -> {
-                if (ex == null) {
-                    log.info("Password reset event sent successfully for user: {}", user.getId());
-                } else {
-                    log.error("Failed to send password reset event for user: {}", user.getId(), ex);
-                }
-            });
+            log.info("TODO: Password reset event needs to be sent for user: {}", user.getId());
 
             return new ForgotPasswordResponse(
                     "If the email exists in our system, you will receive a password reset link.",
