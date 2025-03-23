@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: config-server
-        image: umutgu/config-server:latest
+        image: umutgu/config-server:staging
         imagePullPolicy: Always
         ports:
         - containerPort: 8090
