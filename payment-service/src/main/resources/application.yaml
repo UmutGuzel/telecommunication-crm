@@ -1,3 +1,9 @@
+configurl: http://localhost:8090
 spring:
   application:
     name: payment-service
+  cloud:
+    config:
+      profile: local
+  config:
+    import: configserver:${configurl}
