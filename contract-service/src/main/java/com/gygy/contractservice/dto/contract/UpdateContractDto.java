@@ -1,9 +1,6 @@
 package com.gygy.contractservice.dto.contract;
 
-import com.gygy.contractservice.model.enums.ContractStatus;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import com.gygy.contractservice.model.enums.Status;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,5 +16,5 @@ public class UpdateContractDto {
     private String documentUrl;
     private LocalDateTime uploadDate;
     private LocalDateTime signatureDate;
-    private String status;
+    private Status status;
 }

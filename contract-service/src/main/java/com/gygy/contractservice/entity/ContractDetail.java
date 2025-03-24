@@ -1,6 +1,6 @@
 package com.gygy.contractservice.entity;
 import com.gygy.contractservice.model.enums.ContractDetailType;
-import com.gygy.contractservice.model.enums.ContractStatus;
+import com.gygy.contractservice.model.enums.Status;
 import com.gygy.contractservice.model.enums.ServiceType;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -21,6 +21,8 @@ public class ContractDetail {
     @UuidGenerator
     private UUID id;
 
+    private UUID customerId;
+
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
 
@@ -29,7 +31,7 @@ public class ContractDetail {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private ContractStatus status;
+    private Status status;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "service_type", nullable = false)

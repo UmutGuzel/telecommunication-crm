@@ -1,5 +1,6 @@
 package com.gygy.contractservice.dto.contract;
 
+import com.gygy.contractservice.model.enums.Status;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -23,5 +24,5 @@ public class CreateContractDto {
     private LocalDateTime signatureDate;
 
     @NotNull(message = "Status is required")
-    private String status;
+    private Status status;
 }
