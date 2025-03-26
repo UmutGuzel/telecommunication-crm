@@ -10,7 +10,7 @@ import com.gygy.customerservice.persistance.repository.IndividualCustomerReposit
 import lombok.*;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Getter
@@ -22,7 +22,6 @@ public class UpdateIndividualCustomerCommand implements Command<UpdatedIndividua
     private UUID id;
     private String email;
     private String phoneNumber;
-    private UpdateAddressDto address;
 
     private String identityNumber;
     private String name;
@@ -30,7 +29,9 @@ public class UpdateIndividualCustomerCommand implements Command<UpdatedIndividua
     private String fatherName;
     private String motherName;
     private IndividualCustomerGender gender;
-    private Date birthDate;
+    private LocalDate birthDate;
+
+    private UpdateAddressDto address;
 
     @Component
     @RequiredArgsConstructor

@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RestController
+@RequestMapping("api/v1/corporate-customers")
 public class CorporateCustomerController extends BaseController {
     public CorporateCustomerController(Pipeline pipeline) {
         super(pipeline);

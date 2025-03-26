@@ -15,6 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DeleteIndividualCustomerCommand implements Command<DeletedIndividualCustomerResponse> {
+
     private UUID id;
 
     @Component

@@ -1,23 +1,17 @@
 package com.gygy.customerservice.domain.entity;
 
-import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.UUID;
-
-import lombok.*;
-import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.UuidGenerator;
-
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.gygy.customerservice.domain.enums.CustomerType;
 import com.gygy.customerservice.domain.enums.IndividualCustomerGender;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Table;
+import java.time.LocalDate;
 
 @AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
 @Entity
@@ -40,5 +34,11 @@ public class IndividualCustomer extends Customer{
     private IndividualCustomerGender gender;
 
     @Column(name = "birth_date")
-    private Date birthDate;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Temporal(TemporalType.DATE)
+    private LocalDate birthDate;
+
+    public IndividualCustomer() {
+        this.setType(CustomerType.INDIVIDUAL);
+    }
 }

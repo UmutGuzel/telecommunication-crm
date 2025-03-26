@@ -23,10 +23,12 @@ public class CreateCorporateCustomerCommand implements Command<CreatedCorporateC
 
     private String email;
     private String phoneNumber;
+
     private String taxNumber;
     private String companyName;
     private String contactPersonName;
     private String contactPersonSurname;
+
     private CreateAddressDto address;
 
     @Component
@@ -49,11 +51,8 @@ public class CreateCorporateCustomerCommand implements Command<CreatedCorporateC
             Address existingAddress = addressRepository.findByStreetAndDistrictAndCityAndCountry(
             addressDto.getStreet(), addressDto.getDistrict(), addressDto.getCity(), addressDto.getCountry()).orElse(null);
 
-            Address finalAddress;
-            if (existingAddress != null) {
-                finalAddress = existingAddress;
-            } else {
-                finalAddress = addressMapper.convertCreateAddressDtoToAddress(addressDto);
+            Address finalAddress = (existingAddress != null) ? existingAddress : addressMapper.convertCreateAddressDtoToAddress(addressDto);
+            if (existingAddress == null) {
                 addressRepository.save(finalAddress);
             }
 

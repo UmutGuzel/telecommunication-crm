@@ -16,15 +16,17 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UpdateCorporateCustomerCommand implements Command<UpdatedCorporateCustomerResponse> {
+
     private UUID id;
     private String email;
     private String phoneNumber;
-    private UpdateAddressDto address;
 
     private String taxNumber;
     private String companyName;
     private String contactPersonName;
     private String contactPersonSurname;
+
+    private UpdateAddressDto address;
 
     @Component
     @RequiredArgsConstructor

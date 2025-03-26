@@ -9,7 +9,6 @@ import com.gygy.customerservice.domain.entity.Address;
 import com.gygy.customerservice.domain.entity.Customer;
 import com.gygy.customerservice.domain.entity.IndividualCustomer;
 import com.gygy.customerservice.domain.enums.IndividualCustomerGender;
-import com.gygy.customerservice.infrastructure.messaging.CreatedIndividualCustomerEvent;
 import com.gygy.customerservice.infrastructure.messaging.KafkaProducerService;
 import com.gygy.customerservice.persistance.repository.AddressRepository;
 import com.gygy.customerservice.persistance.repository.CustomerRepository;
@@ -17,7 +16,7 @@ import com.gygy.customerservice.persistance.repository.IndividualCustomerReposit
 import lombok.*;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -27,13 +26,15 @@ public class CreateIndividualCustomerCommand implements Command<CreatedIndividua
 
     private String email;
     private String phoneNumber;
+
     private String identityNumber;
     private String name;
     private String surname;
     private String fatherName;
     private String motherName;
     private IndividualCustomerGender gender;
-    private Date birthDate;
+    private LocalDate birthDate;
+
     private CreateAddressDto address;
 
     @Component
@@ -56,11 +57,8 @@ public class CreateIndividualCustomerCommand implements Command<CreatedIndividua
             Address existingAddress = addressRepository.findByStreetAndDistrictAndCityAndCountry(
             addressDto.getStreet(), addressDto.getDistrict(), addressDto.getCity(), addressDto.getCountry()).orElse(null);
 
-            Address finalAddress;
-            if (existingAddress != null) {
-                finalAddress = existingAddress;
-            } else {
-                finalAddress = addressMapper.convertCreateAddressDtoToAddress(addressDto);
+            Address finalAddress = (existingAddress != null) ? existingAddress : addressMapper.convertCreateAddressDtoToAddress(addressDto);
+            if (existingAddress == null) {
                 addressRepository.save(finalAddress);
             }
 
@@ -69,12 +67,12 @@ public class CreateIndividualCustomerCommand implements Command<CreatedIndividua
 
             individualCustomerRepository.save(newIndividualCustomer);
 
-            kafkaProducerService.sendCreatedIndividualCustomerEvent(CreatedIndividualCustomerEvent.builder()
-                    .id(newIndividualCustomer.getId())
-                    .email(newIndividualCustomer.getEmail())
-                    .name(newIndividualCustomer.getName())
-                    .surname(newIndividualCustomer.getSurname())
-                    .build());
+//            kafkaProducerService.sendCreatedIndividualCustomerEvent(CreatedIndividualCustomerEvent.builder()
+//                    .id(newIndividualCustomer.getId())
+//                    .email(newIndividualCustomer.getEmail())
+//                    .name(newIndividualCustomer.getName())
+//                    .surname(newIndividualCustomer.getSurname())
+//                    .build());
 
             return individualCustomerMapper.convertIndividualCustomerToResponse(newIndividualCustomer);
         }
