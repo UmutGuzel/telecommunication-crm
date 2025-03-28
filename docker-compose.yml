@@ -184,7 +184,6 @@ services:
     environment:
       SPRING_CLOUD_CONFIG_PROFILE: "dev"
       CONFIGURL: "http://config-server:8090"
-<<<<<<< HEAD
     depends_on:
       discovery-server:
         condition: service_healthy
@@ -213,13 +212,6 @@ services:
       # EUREKA_CLIENT_SERVICE-URL_DEFAULTZONE: "http://discovery-server:8888/eureka/"
       SPRING_CLOUD_CONFIG_PROFILE: "dev"
       CONFIGURL: "http://config-server:8090"
-=======
-  discovery-server:
-    image: discovery-service
-    build: ./discovery-server
-    container_name: discovery-service-app
-    restart: always
->>>>>>> d7613f24dfbd486cd88b1e04b0a18564af336d0c
     depends_on:
       config-server:
         condition: service_healthy
@@ -275,29 +267,6 @@ services:
     environment:
       SPRING_CLOUD_CONFIG_PROFILE: "dev"
       CONFIGURL: "http://config-server:8090"
-<<<<<<< HEAD
-=======
-
-  config-server:
-    image: config-server
-    build: ./config-server
-    container_name: config-server-app
-    restart: always
-    ports:
-      - "8090:8090"
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://config-server-app:8090/actuator/health" ] #bizim yerimize otomatize spring uygulaması healt check yapmış olur.
-      interval: 10s #kaç saniyede bi çalışsın
-      retries: 5 #kaç tekrar
-      start_period: 10s #ilk healthcheck ne zaman atılsın
-      timeout: 5s #cevap verilemzse başarısız sayılacak süredir.
-
-  analytics-service:
-    image: analytics-service
-    build: ./analytics-service
-    container_name: analytics-service-app
-    restart: always
->>>>>>> d7613f24dfbd486cd88b1e04b0a18564af336d0c
     depends_on:
       discovery-server:
         condition: service_healthy
