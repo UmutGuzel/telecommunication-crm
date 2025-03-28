@@ -14,9 +14,7 @@ import com.gygy.paymentservice.application.bill.query.getbyid.GetBillByIdQuery;
 import com.gygy.paymentservice.application.bill.query.getbyid.dto.BillDetailResponse;
 import com.gygy.paymentservice.application.bill.query.getlist.GetCustomerBillsQuery;
 import com.gygy.paymentservice.application.bill.query.getlist.dto.BillListResponse;
-import com.gygy.paymentservice.domain.entity.bill.Bill;
 import com.gygy.paymentservice.domain.entity.bill.BillStatus;
-import com.gygy.paymentservice.presentation.controllers.BillController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,10 +35,12 @@ import java.util.UUID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+//@WebMvcTest(BillController.class)
 class BillControllerTest {
 
     @Autowired
@@ -49,7 +49,7 @@ class BillControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
+    @MockBean // TODO: araştır
     private Pipeline pipeline;
 
     @BeforeEach

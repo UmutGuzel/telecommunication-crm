@@ -1,9 +1,12 @@
 configurl: http://localhost:8090
 spring:
   application:
-    name: payment-service
+    name: discovery-server
   cloud:
     config:
       profile: local
   config:
-    import: configserver:${configurl}
+      import: configserver:${configurl}
+server:
+    port: 8888
+

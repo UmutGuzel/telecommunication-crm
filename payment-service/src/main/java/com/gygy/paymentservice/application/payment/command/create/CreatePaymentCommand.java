@@ -1,5 +1,9 @@
 package com.gygy.paymentservice.application.payment.command.create;
 import an.awesome.pipelinr.Command;
+import com.gygy.common.constants.KafkaTopics;
+import com.gygy.common.events.paymentservice.payment.PaymentFailedEvent;
+import com.gygy.common.events.paymentservice.payment.PaymentSuccessEvent;
+import com.gygy.common.kafka.producer.EventProducer;
 import com.gygy.paymentservice.application.bill.service.BillService;
 import com.gygy.paymentservice.application.payment.command.create.dto.CreatedPaymentResponse;
 import com.gygy.paymentservice.application.payment.service.PaymentService;
@@ -41,6 +45,7 @@ public class CreatePaymentCommand implements Command<CreatedPaymentResponse> {
 
         private final PaymentService paymentService;
         private final BillService billService;
+        private final EventProducer eventProducer;
 
         @Override
         @Transactional
@@ -61,8 +66,29 @@ public class CreatePaymentCommand implements Command<CreatedPaymentResponse> {
             try {
                 payment.processPayment();
                 paymentService.save(payment);
+
+                // Başarılı ödeme event'i
+                eventProducer.sendEvent(
+                        KafkaTopics.PAYMENT_SUCCESS,
+                        new PaymentSuccessEvent(
+                                bill.getBillId(),
+                                command.getCustomerId(),
+                                command.getPaidAmount(),
+                                command.getPaymentMethod().name()
+                        )
+                );
             } catch (Exception e) {
                 paymentService.save(payment);
+                // Başarısız ödeme event'i
+                eventProducer.sendEvent(
+                        KafkaTopics.PAYMENT_FAILED,
+                        new PaymentFailedEvent(
+                                bill.getBillId(),
+                                command.getCustomerId(),
+                                command.getPaidAmount(),
+                                e.getMessage()
+                        )
+                );
                 throw e;
             }
 

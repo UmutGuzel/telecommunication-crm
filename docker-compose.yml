@@ -115,7 +115,6 @@ services:
     environment:
       SPRING_CLOUD_CONFIG_PROFILE: "dev"
       CONFIGURL: "http://config-server:8090"
-
     restart: always
     depends_on:
       config-server:
@@ -150,9 +149,9 @@ services:
     environment:
       SPRING_CLOUD_CONFIG_PROFILE: "dev"
       CONFIGURL: "http://config-server:8090"
-  discovery-service:
+  discovery-server:
     image: discovery-service
-    build: ./discovery-service
+    build: ./discovery-server
     container_name: discovery-service-app
     restart: always
     depends_on:
@@ -211,7 +210,7 @@ services:
     ports:
       - "8090:8090"
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8090/actuator/health" ] #bizim yerimize otomatize spring uygulaması healt check yapmış olur.
+      test: [ "CMD", "curl", "-f", "http://config-server-app:8090/actuator/health" ] #bizim yerimize otomatize spring uygulaması healt check yapmış olur.
       interval: 10s #kaç saniyede bi çalışsın
       retries: 5 #kaç tekrar
       start_period: 10s #ilk healthcheck ne zaman atılsın
