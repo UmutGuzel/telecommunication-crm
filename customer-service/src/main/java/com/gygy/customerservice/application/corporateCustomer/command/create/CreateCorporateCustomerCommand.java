@@ -1,19 +1,27 @@
 package com.gygy.customerservice.application.corporateCustomer.command.create;
 
-import an.awesome.pipelinr.Command;
+import org.springframework.stereotype.Component;
+
 import com.gygy.customerservice.application.corporateCustomer.mapper.CorporateCustomerMapper;
 import com.gygy.customerservice.application.customer.dto.CreateAddressDto;
 import com.gygy.customerservice.application.customer.mapper.AddressMapper;
 import com.gygy.customerservice.application.customer.rule.CustomerRule;
+import com.gygy.customerservice.application.customer.validation.CustomerValidation;
 import com.gygy.customerservice.domain.entity.Address;
 import com.gygy.customerservice.domain.entity.CorporateCustomer;
 import com.gygy.customerservice.domain.entity.Customer;
-import com.gygy.customerservice.infrastructure.messaging.KafkaProducerService;
+import com.gygy.customerservice.infrastructure.messaging.event.CreatedCorporateCustomerEvent;
+import com.gygy.customerservice.infrastructure.messaging.service.KafkaProducerService;
 import com.gygy.customerservice.persistance.repository.AddressRepository;
 import com.gygy.customerservice.persistance.repository.CorporateCustomerRepository;
 import com.gygy.customerservice.persistance.repository.CustomerRepository;
-import lombok.*;
-import org.springframework.stereotype.Component;
+
+import an.awesome.pipelinr.Command;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -41,9 +49,13 @@ public class CreateCorporateCustomerCommand implements Command<CreatedCorporateC
         private final AddressRepository addressRepository;
         private final AddressMapper addressMapper;
         private final KafkaProducerService kafkaProducerService;
+        private final CustomerValidation customerValidation;
 
         @Override
         public CreatedCorporateCustomerResponse handle(CreateCorporateCustomerCommand command) {
+            // Validate all fields at once
+            customerValidation.validateCreateCorporateCustomer(command);
+
             Customer customer = customerRepository.findByEmail(command.getEmail()).orElse(null);
             customerRule.checkCustomerNotExists(customer);
 
@@ -59,11 +71,18 @@ public class CreateCorporateCustomerCommand implements Command<CreatedCorporateC
             CorporateCustomer corporateCustomer = corporateCustomerMapper.convertCreateCommandToCorporateCustomer(command);
             corporateCustomer.setAddress(finalAddress);
 
-            corporateCustomerRepository.save(corporateCustomer);
+            CorporateCustomer newCorporateCustomer = corporateCustomerRepository.save(corporateCustomer);
 
-//            kafkaProducerService.sendCreatedCorporateCustomerEvent(new CreatedCorporateCustomerEvent(corporateCustomer.getId()));
+            kafkaProducerService.sendCreatedCorporateCustomerEvent(CreatedCorporateCustomerEvent.builder()
+                    .id(newCorporateCustomer.getId())
+                    .email(newCorporateCustomer.getEmail())
+                    .taxNumber(newCorporateCustomer.getTaxNumber())
+                    .companyName(newCorporateCustomer.getCompanyName())
+                    .contactPersonName(newCorporateCustomer.getContactPersonName())
+                    .contactPersonSurname(newCorporateCustomer.getContactPersonSurname())
+                    .build());
 
-            return corporateCustomerMapper.convertCorporateCustomerToResponse(corporateCustomer);
+            return corporateCustomerMapper.convertCorporateCustomerToResponse(newCorporateCustomer);
         }
     }
 }

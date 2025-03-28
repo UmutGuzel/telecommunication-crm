@@ -33,21 +33,21 @@ public class CustomerController extends BaseController {
         return query.execute(pipeline);
     }
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public CreatedCustomerResponse createCustomer(@RequestBody CreateCustomerCommand command) {
-        return command.execute(pipeline);
-    }
-
-    @PutMapping
-    @ResponseStatus(HttpStatus.OK)
-    public UpdatedCustomerResponse updateCustomer(@RequestBody UpdateCustomerCommand command) {
-        return command.execute(pipeline);
-    }
-
-    @DeleteMapping
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public DeletedCustomerResponse deleteCustomer(@RequestBody DeleteCustomerCommand command) {
-        return command.execute(pipeline);
-    }
+//    @PostMapping
+//    @ResponseStatus(HttpStatus.CREATED)
+//    public CreatedCustomerResponse createCustomer(@RequestBody CreateCustomerCommand command) {
+//        return command.execute(pipeline);
+//    }
+//
+//    @PutMapping
+//    @ResponseStatus(HttpStatus.OK)
+//    public UpdatedCustomerResponse updateCustomer(@RequestBody UpdateCustomerCommand command) {
+//        return command.execute(pipeline);
+//    }
+//
+//    @DeleteMapping
+//    @ResponseStatus(HttpStatus.NO_CONTENT)
+//    public DeletedCustomerResponse deleteCustomer(@RequestBody DeleteCustomerCommand command) {
+//        return command.execute(pipeline);
+//    }
 }
