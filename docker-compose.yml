@@ -64,7 +64,7 @@ services:
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
       - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094
       - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092,EXTERNAL://localhost:9094
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092,EXTERNAL://kafka:9094
       - KAFKA_BROKER_ID=1
       - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@127.0.0.1:9093
       - ALLOW_PLAINTEXT_LISTENER=yes
@@ -105,19 +105,24 @@ services:
     environment:
       SPRING_CLOUD_CONFIG_PROFILE: "dev"
       CONFIGURL: "http://config-server:8090"
+
   payment-service:
-    image: payment-service
     build: ./payment-service
+    image: payment-service
     container_name: payment-service-app
-    restart: always
-    depends_on:
-      config-server:
-        condition: service_healthy
     ports:
       - "9050:9050"
     environment:
       SPRING_CLOUD_CONFIG_PROFILE: "dev"
       CONFIGURL: "http://config-server:8090"
+    restart: always
+    depends_on:
+      config-server:
+        condition: service_healthy
+      payment-service-db:
+        condition: service_started
+
+
   notification-service:
     image: notification-service
     build: ./notification-service
@@ -144,9 +149,9 @@ services:
     environment:
       SPRING_CLOUD_CONFIG_PROFILE: "dev"
       CONFIGURL: "http://config-server:8090"
-  discovery-service:
+  discovery-server:
     image: discovery-service
-    build: ./discovery-service
+    build: ./discovery-server
     container_name: discovery-service-app
     restart: always
     depends_on:
@@ -196,6 +201,7 @@ services:
     environment:
       SPRING_CLOUD_CONFIG_PROFILE: "dev"
       CONFIGURL: "http://config-server:8090"
+
   config-server:
     image: config-server
     build: ./config-server
@@ -203,12 +209,16 @@ services:
     restart: always
     ports:
       - "8090:8090"
-    environment:
-      SPRING_CLOUD_CONFIG_PROFILE: "dev"
-      CONFIGURL: "http://config-server:8090"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://config-server-app:8090/actuator/health" ] #bizim yerimize otomatize spring uygulaması healt check yapmış olur.
+      interval: 10s #kaç saniyede bi çalışsın
+      retries: 5 #kaç tekrar
+      start_period: 10s #ilk healthcheck ne zaman atılsın
+      timeout: 5s #cevap verilemzse başarısız sayılacak süredir.
+
   analytics-service:
     image: analytics-service
-    build: .analytics-service/
+    build: ./analytics-service
     container_name: analytics-service-app
     restart: always
     depends_on:
@@ -253,7 +263,7 @@ volumes:
     user-service_data:
     plan-service_data:
     payment-service_data:
-    customer-support-service_data:
     contract-service_data:
-    grafana_data:
+    customer-support-service_data:
     prometheus_data:
+    grafana_data:
