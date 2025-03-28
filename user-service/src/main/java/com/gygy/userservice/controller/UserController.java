@@ -28,7 +28,15 @@ import com.gygy.userservice.application.user.command.ForgotPassword.ForgotPasswo
 import com.gygy.userservice.application.user.command.ForgotPassword.ForgotPasswordResponse;
 import com.gygy.userservice.application.user.command.ResetPassword.ResetPasswordCommand;
 import com.gygy.userservice.application.user.command.ResetPassword.ResetPasswordResponse;
+import com.gygy.userservice.application.user.command.ActivateUser.ActivateUserCommand;
+import com.gygy.userservice.application.user.command.ActivateUser.ActivateUserResponse;
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.RequestParam;
+import com.gygy.userservice.persistance.UserRepository;
+import lombok.AllArgsConstructor;
+import java.time.LocalDateTime;
+import java.util.Optional;
+import com.gygy.userservice.core.configuration.ApplicationConfig;
 
 @RestController
 @RequestMapping("api/auth")
@@ -55,6 +63,13 @@ public class UserController {
         return command.execute(pipeline);
     }
 
+    @GetMapping("/activate")
+    @ResponseStatus(HttpStatus.OK)
+    public ActivateUserResponse activateUser(@RequestParam String token) {
+        ActivateUserCommand command = new ActivateUserCommand(token);
+        return command.execute(pipeline);
+    }
+
     @PutMapping("/user")
     @ResponseStatus(HttpStatus.OK)
     public UpdateUserResponse updateUser(@RequestBody UpdateUserCommand command) {
@@ -75,7 +90,8 @@ public class UserController {
 
     @PostMapping("/reset-password")
     @ResponseStatus(HttpStatus.OK)
-    public ResetPasswordResponse resetPassword(@Valid @RequestBody ResetPasswordCommand command) {
+    public ResetPasswordResponse resetPassword(@RequestParam String token, @RequestBody ResetPasswordCommand command) {
+        command.setToken(token);
         return command.execute(pipeline);
     }
 

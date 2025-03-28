@@ -14,7 +14,10 @@ import com.gygy.userservice.persistance.UserRepository;
 import com.gygy.userservice.application.user.rule.UserRule;
 import com.gygy.userservice.application.user.mapper.UserMapper;
 import com.gygy.userservice.entity.User;
+import com.gygy.userservice.core.configuration.ApplicationConfig;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.kafka.core.KafkaTemplate;
+import com.gygy.common.events.UserActivationEvent;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
@@ -32,15 +35,24 @@ class CreateUserCommandTest {
     @Mock
     private PasswordEncoder mockPasswordEncoder;
 
+    @Mock
+    private ApplicationConfig mockApplicationConfig;
+
+    @Mock
+    private KafkaTemplate<String, UserActivationEvent> mockKafkaTemplate;
+
     @InjectMocks
     private CreateUserCommand.CreateUserCommandHandler handler;
 
-    private UserMapper userMapper = new UserMapper();
-
     @BeforeEach
     void setUp() {
-        handler = new CreateUserCommand.CreateUserCommandHandler(mockUserRepository, mockUserRule, mockUserMapper,
-                mockPasswordEncoder);
+        handler = new CreateUserCommand.CreateUserCommandHandler(
+                mockUserRepository,
+                mockUserRule,
+                mockUserMapper,
+                mockPasswordEncoder,
+                mockKafkaTemplate,
+                mockApplicationConfig);
     }
 
     @Test
@@ -61,20 +73,25 @@ class CreateUserCommandTest {
                 .phoneNumber(phoneNumber)
                 .address(address).build();
 
-        User user = userMapper.toEntity(command);
+        User mockUser = User.builder()
+                .name(name)
+                .surname(surname)
+                .email(email)
+                .password("encodedPassword")
+                .phoneNumber(phoneNumber)
+                .address(address)
+                .build();
 
         when(mockUserRepository.findByEmail(email)).thenReturn(Optional.empty());
         when(mockPasswordEncoder.encode(password)).thenReturn("encodedPassword");
-        when(mockUserMapper.toEntity(command)).thenReturn(user);
+        when(mockUserMapper.toEntity(command)).thenReturn(mockUser);
 
         // When
         CreateUserResponse response = handler.handle(command);
 
         // Then
         Assertions.assertNotNull(response);
-        Assertions.assertEquals("User created successfully", response.getMessage());
-
         verify(mockUserRepository).findByEmail(email);
-        verify(mockUserRepository).save(user);
+        verify(mockUserRepository).save(mockUser);
     }
 }

@@ -15,7 +15,12 @@ import com.gygy.userservice.persistance.UserRepository;
 import com.gygy.userservice.application.user.rule.UserRule;
 import com.gygy.userservice.entity.User;
 import com.gygy.userservice.application.user.mapper.UserMapper;
+import com.gygy.userservice.core.configuration.ApplicationConfig;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.kafka.core.KafkaTemplate;
+import com.gygy.common.events.UserActivationEvent;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -45,15 +50,34 @@ public class CreateUserCommand implements Command<CreateUserResponse> {
         private final UserRule userRule;
         private final UserMapper userMapper;
         private final PasswordEncoder passwordEncoder;
+        private final KafkaTemplate<String, UserActivationEvent> userActivationKafkaTemplate;
+        private final ApplicationConfig applicationConfig;
 
         @Override
         public CreateUserResponse handle(CreateUserCommand command) {
             User user = userRepository.findByEmail(command.getEmail()).orElse(null);
             userRule.checkUserNotExists(user);
             command.setPassword(passwordEncoder.encode(command.getPassword()));
+
+            // User mapper now handles all activation details
             User newUser = userMapper.toEntity(command);
             userRepository.save(newUser);
-            return new CreateUserResponse("User created successfully");
+
+            // Get activation link from mapper
+            String activationLink = userMapper.generateActivationLink(newUser);
+
+            // Publish user activation event
+            UserActivationEvent event = UserActivationEvent.builder()
+                    .email(newUser.getEmail())
+                    .name(newUser.getName())
+                    .activationDate(LocalDateTime.now())
+                    .activationLink(activationLink)
+                    .build();
+
+            userActivationKafkaTemplate.send(applicationConfig.getUserActivationTopic(), event);
+
+            return new CreateUserResponse(newUser.getId(),
+                    "User created successfully. Please check your email to activate your account.");
         }
     }
 }

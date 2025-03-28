@@ -5,12 +5,26 @@ import com.gygy.userservice.entity.User;
 import com.gygy.userservice.application.user.command.CreateUser.CreateUserCommand;
 import com.gygy.userservice.application.user.command.UpdateUser.UpdateUserCommand;
 import com.gygy.userservice.application.user.command.ChangePassword.ChangePasswordCommand;
+import com.gygy.userservice.core.configuration.ApplicationConfig;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
+
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Component
 @Data
+@RequiredArgsConstructor
 public class UserMapper {
+    private final ApplicationConfig applicationConfig;
+
     public User toEntity(CreateUserCommand command) {
+        // Generate activation token
+        String activationToken = UUID.randomUUID().toString();
+
         return User.builder()
                 .name(command.getName())
                 .surname(command.getSurname())
@@ -18,7 +32,16 @@ public class UserMapper {
                 .password(command.getPassword())
                 .phoneNumber(command.getPhoneNumber())
                 .address(command.getAddress())
+                .active(false)
+                .activationToken(activationToken)
+                .activationTokenExpiry(LocalDateTime.now().plusHours(applicationConfig.getActivationTokenExpiryHours()))
                 .build();
+    }
+
+    public String generateActivationLink(User user) {
+        return applicationConfig.getGatewayUrl() +
+                applicationConfig.getActivationPath() +
+                "?token=" + user.getActivationToken();
     }
 
     public User toEntity(ChangePasswordCommand command) {
@@ -46,4 +69,67 @@ public class UserMapper {
         }
     }
 
+    public com.gygy.common.entity.User toCommonUser(com.gygy.userservice.entity.User user) {
+        if (user == null) {
+            return null;
+        }
+
+        com.gygy.common.entity.User commonUser = new com.gygy.common.entity.User();
+        commonUser.setId(user.getId());
+        commonUser.setEmail(user.getEmail());
+
+        Set<com.gygy.common.entity.Role> commonRoles = new HashSet<>();
+        if (user.getRoles() != null) {
+            commonRoles = user.getRoles().stream()
+                    .map(this::toCommonRole)
+                    .collect(Collectors.toSet());
+        }
+        commonUser.setRoles(commonRoles);
+
+        Set<com.gygy.common.entity.Permission> commonPermissions = new HashSet<>();
+        if (user.getPermissions() != null) {
+            commonPermissions = user.getPermissions().stream()
+                    .map(this::toCommonPermission)
+                    .collect(Collectors.toSet());
+        }
+        commonUser.setPermissions(commonPermissions);
+
+        return commonUser;
+    }
+
+    private com.gygy.common.entity.Role toCommonRole(com.gygy.userservice.entity.Role role) {
+        if (role == null) {
+            return null;
+        }
+
+        com.gygy.common.entity.Role commonRole = new com.gygy.common.entity.Role();
+        commonRole.setName(role.getName());
+
+        Set<com.gygy.common.entity.Permission> commonPermissions = new HashSet<>();
+        if (role.getPermissions() != null) {
+            commonPermissions = role.getPermissions().stream()
+                    .map(this::toCommonPermission)
+                    .collect(Collectors.toSet());
+        }
+        commonRole.setPermissions(commonPermissions);
+
+        return commonRole;
+    }
+
+    private com.gygy.common.entity.Permission toCommonPermission(com.gygy.userservice.entity.Permission permission) {
+        if (permission == null) {
+            return null;
+        }
+
+        com.gygy.common.entity.Permission commonPermission = new com.gygy.common.entity.Permission();
+        commonPermission.setName(permission.getName());
+        return commonPermission;
+    }
+
+    public User activateUser(User user) {
+        user.setActive(true);
+        user.setActivationToken(null);
+        user.setActivationTokenExpiry(null);
+        return user;
+    }
 }

@@ -1,4 +1,4 @@
-package com.gygy.userservice.core.event;
+package com.gygy.common.events;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

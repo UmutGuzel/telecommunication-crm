@@ -1,4 +1,4 @@
-package com.gygy.userservice.core.configration;
+package com.gygy.userservice.core.configuration;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.beans.factory.ObjectProvider;

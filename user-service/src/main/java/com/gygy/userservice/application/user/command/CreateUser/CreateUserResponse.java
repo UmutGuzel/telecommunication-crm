@@ -1,14 +1,14 @@
 package com.gygy.userservice.application.user.command.CreateUser;
 
 import lombok.Data;
-import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import lombok.Builder;
+import java.util.UUID;
+import lombok.AllArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class CreateUserResponse {
+    private UUID id;
     private String message;
 }

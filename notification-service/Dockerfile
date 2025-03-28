@@ -1,14 +1,15 @@
-// ================== DOCKERFILE ==================
-// Docker, Java uygulamasını çalıştırmak için OpenJDK kullanıyor.
-// Önce bağımlılıkları yükleyip, uygulamayı çalıştıracak.
+# Build this Dockerfile from the root project directory with:
+# docker build -f notification-service/Dockerfile -t notification-service .
 
-/**
- * Dockerfile, Notification Service uygulamasını bir Docker konteyneri içinde çalıştırmak için gereklidir.
- * - OpenJDK 17 kullanılmaktadır.
- * - Uygulama, "notification-service.jar" olarak çalıştırılır.
- */
-FROM openjdk:21-jdk-slim
+FROM maven:3.9.6-eclipse-temurin-21 AS build
+
+# Build notification service
 WORKDIR /app
-COPY target/notification-service.jar notification-service.jar
+COPY . /app/
+RUN mvn clean package -DskipTests
+
+# -----------------------------------
+FROM eclipse-temurin:21-jdk
+COPY --from=build /app/target/notification-service-0.0.1-SNAPSHOT.jar /app/app.jar
 EXPOSE 9080
-CMD ["java", "-jar", "notification-service.jar"]
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]

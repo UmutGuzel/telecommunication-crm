@@ -1,22 +1,19 @@
-package com.gygy.userservice.core.security;
+package com.gygy.common.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.util.StringUtils;
-
-import com.gygy.userservice.core.jwt.JwtService;
+import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -25,19 +22,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
 
     @Override
-    protected void doFilterInternal(
-            @NonNull HttpServletRequest request,
-            @NonNull HttpServletResponse response,
-            @NonNull FilterChain filterChain) throws ServletException, IOException {
-        final String authHeader = request.getHeader("Authorization");
-        final String jwt;
-
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
+        String authHeader = request.getHeader("Authorization");
         if (!StringUtils.hasText(authHeader) || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        jwt = authHeader.substring(7);
+        String jwt = authHeader.substring(7);
 
         if (jwtService.verifyToken(jwt) && SecurityContextHolder.getContext().getAuthentication() == null) {
             String userId = jwtService.extractId(jwt);
@@ -45,24 +38,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             List<String> roles = jwtService.extractRoles(jwt);
             List<String> permissions = jwtService.extractPermissions(jwt);
 
-            // Create authorities from roles and permissions
             List<SimpleGrantedAuthority> authorities = roles.stream()
-                    .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
-                    .collect(Collectors.toList());
+                    .map(SimpleGrantedAuthority::new)
+                    .toList();
 
             authorities.addAll(permissions.stream()
                     .map(SimpleGrantedAuthority::new)
-                    .collect(Collectors.toList()));
+                    .toList());
 
-            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     email,
-                    null, // No credentials in token
+                    null,
                     authorities);
+            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-            // Store userId and other info in authentication details
-            authToken.setDetails(userId);
-
-            SecurityContextHolder.getContext().setAuthentication(authToken);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
         }
 
         filterChain.doFilter(request, response);
