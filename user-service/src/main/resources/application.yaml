@@ -6,15 +6,33 @@ spring:
     config:
       profile: local
   config:
-      import: configserver:${configurl}
+    import: configserver:${configurl}
+  kafka:
+    bootstrap-servers: localhost:9092
 
 
-jwt:
-  expiration: 7200000
-  secret: "KRbQDv3hU8U9BOF0kjynHH35tpPiOoiBEJVooJ9Z1yTZZXaqlha0xHXx1DOlVvU"
+app-config:
+  gateway-url: ${GATEWAY_URL:http://localhost:8080}
+  reset-password-path: /api/auth/reset-password
+  activation-path: /api/users/activate
+  activation-token-expiry-hours: 24
+  kafka:
+    topics:
+      password-reset-events: password-reset-events
+      user-activation-events: user-activation-events
 
-# Error
-# Warning
-# Info
-# Debug
-# Trace
+# Remove old kafka topics config
+# kafka:
+#  topics:
+#    passwordResetEvents: password-reset-events
+#    userActivation: user-activation-events
+
+# Add logging configuration:
+logging:
+  level:
+    root: INFO
+    com.gygy.userservice: DEBUG
+    org.springframework: INFO
+  file:
+    path: ${user.dir}/logs
+    name: ${user.dir}/logs/user-service.log

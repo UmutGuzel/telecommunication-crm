@@ -27,10 +27,9 @@ public class DeleteCustomerCommand implements Command<DeletedCustomerResponse> {
         @Override
         public DeletedCustomerResponse handle(DeleteCustomerCommand command) {
             Customer customer = customerRepository.findById(command.getId()).orElse(null);
-            customerRule.checkUserExists(customer);
+            customerRule.checkCustomerExists(customer);
             customerRepository.delete(customer);
-            return customerMapper.converCustomerToDeletedCustomerResponse(customer);
+            return customerMapper.convertCustomerToDeletedCustomerResponse(customer);
         }
     }
-
 }

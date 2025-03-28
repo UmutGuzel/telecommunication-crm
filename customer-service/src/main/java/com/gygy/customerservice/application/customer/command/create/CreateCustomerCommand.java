@@ -1,7 +1,5 @@
 package com.gygy.customerservice.application.customer.command.create;
 
-import java.time.LocalDateTime;
-
 import an.awesome.pipelinr.Command;
 
 import com.gygy.customerservice.application.customer.dto.CreateAddressDto;
@@ -40,7 +38,7 @@ public class CreateCustomerCommand implements Command<CreatedCustomerResponse> {
         @Override
         public CreatedCustomerResponse handle(CreateCustomerCommand command) {
             Customer customer = customerRepository.findByEmail(command.getEmail()).orElse(null);
-            customerRule.checkUserNotExists(customer);
+            customerRule.checkCustomerNotExists(customer);
 
             CreateAddressDto addressDto = command.getAddress();
             Address existingAddress = addressRepository.findByStreetAndDistrictAndCityAndCountry(
@@ -53,6 +51,10 @@ public class CreateCustomerCommand implements Command<CreatedCustomerResponse> {
                 finalAddress = addressMapper.convertCreateAddressDtoToAddress(addressDto);
                 addressRepository.save(finalAddress);
             }
+//            Address finalAddress = (existingAddress != null) ? existingAddress : addressMapper.convertCreateAddressDtoToAddress(addressDto);
+//            if (existingAddress == null) {
+//                addressRepository.save(finalAddress);
+//            }
 
             Customer newCustomer = customerMapper.convertCreateCommandToCustomer(command);
             newCustomer.setAddress(finalAddress);
