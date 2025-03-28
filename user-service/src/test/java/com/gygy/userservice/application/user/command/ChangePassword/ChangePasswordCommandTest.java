@@ -34,8 +34,6 @@ class ChangePasswordCommandTest {
     @InjectMocks
     private ChangePasswordCommand.ChangePasswordCommandHandler handler;
 
-    private UserMapper userMapper = new UserMapper();
-
     @BeforeEach
     void setUp() {
         handler = new ChangePasswordCommand.ChangePasswordCommandHandler(mockUserRepository, mockUserRule,
@@ -50,7 +48,10 @@ class ChangePasswordCommandTest {
         String newPassword = "NewPassword1!";
         ChangePasswordCommand command = new ChangePasswordCommand(email, oldPassword, newPassword);
 
-        User user = userMapper.toEntity(command);
+        User user = User.builder()
+                .email(email)
+                .password("encodedOldPassword")
+                .build();
 
         when(mockUserRepository.findByEmail(email)).thenReturn(Optional.of(user));
         when(mockPasswordEncoder.encode(newPassword)).thenReturn("encodedNewPassword");

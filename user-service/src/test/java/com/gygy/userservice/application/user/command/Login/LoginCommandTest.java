@@ -1,57 +1,69 @@
 package com.gygy.userservice.application.user.command.Login;
 
+import com.gygy.common.security.JwtService;
+import com.gygy.userservice.application.user.mapper.UserMapper;
+import com.gygy.userservice.persistance.UserRepository;
+import com.gygy.userservice.application.user.rule.UserRule;
+import com.gygy.userservice.entity.User;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.junit.jupiter.api.extension.ExtendWith;
-import static org.mockito.Mockito.*;
-import org.junit.jupiter.api.Assertions;
+import org.mockito.MockitoAnnotations;
 
-import com.gygy.userservice.persistance.UserRepository;
-import com.gygy.userservice.application.user.rule.UserRule;
-import com.gygy.userservice.core.jwt.JwtService;
-import com.gygy.userservice.entity.User;
 import java.util.Optional;
 import java.util.UUID;
 
-@ExtendWith(MockitoExtension.class)
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
 class LoginCommandTest {
 
     @Mock
-    private UserRepository mockUserRepository;
+    private UserRepository userRepository;
 
     @Mock
-    private UserRule mockUserRule;
+    private UserRule userRule;
 
     @Mock
-    private JwtService mockJwtService;
+    private JwtService jwtService;
+
+    @Mock
+    private UserMapper userMapper;
 
     @InjectMocks
     private LoginCommand.LoginCommandHandler handler;
 
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
+
     @Test
-    void givenValidCredentials_whenHandleLogin_thenReturnToken() {
-        // Given
-        String email = "john.doe@example.com";
-        String password = "Password1!";
-        LoginCommand command = new LoginCommand(email, password);
+    void handle_ValidCredentials_ReturnsToken() {
+        // Arrange
+        User user = new User();
+        user.setId(UUID.randomUUID());
+        user.setEmail("test@example.com");
+        user.setPassword("hashedPassword");
 
-        User user = User.builder().id(UUID.randomUUID()).email(email).build();
+        LoginCommand command = new LoginCommand("test@example.com", "password");
 
-        when(mockUserRepository.findByEmail(email)).thenReturn(Optional.of(user));
-        when(mockJwtService.generateToken(user)).thenReturn("token123");
+        when(userRepository.findByEmail(any())).thenReturn(Optional.of(user));
+        doNothing().when(userRule).checkUserExists(any());
+        doNothing().when(userRule).checkPassword(any(), any());
+        when(jwtService.generateToken(any())).thenReturn("token123");
 
-        // When
+        // Act
         LoginResponse response = handler.handle(command);
 
-        // Then
-        Assertions.assertNotNull(response);
-        Assertions.assertEquals("token123", response.getToken());
-        Assertions.assertEquals(email, response.getEmail());
-
-        verify(mockUserRepository).findByEmail(email);
-        verify(mockUserRule).checkUserExists(user);
-        verify(mockUserRule).checkPassword(user, password);
+        // Assert
+        assertNotNull(response);
+        assertEquals("token123", response.getToken());
+        verify(userRepository).findByEmail("test@example.com");
+        verify(userRule).checkUserExists(user);
+        verify(userRule).checkPassword(user, "password");
+        verify(jwtService).generateToken(any());
     }
 }

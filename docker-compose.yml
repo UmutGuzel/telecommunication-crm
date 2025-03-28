@@ -54,11 +54,28 @@ services:
       - POSTGRES_DB=postgres
     volumes:
       - contract-service_data:/var/lib/postgresql/data
-  kafka:
-    image: bitnami/kafka
+  kafka-1:
+    image: wurstmeister/kafka:latest
+    container_name: "kafka-1"
     ports:
       - "9092:9092"
     environment:
+<<<<<<< HEAD
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-1:9092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_HOST://0.0.0.0:29092
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+      KAFKA_CREATE_TOPICS: "notification-topic:1:1,password-reset-events:1:1"
+    depends_on:
+      - zookeeper
+  zookeeper:
+    image: wurstmeister/zookeeper
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+=======
       - KAFKA_ENABLE_KRAFT=yes
       - KAFKA_CFG_PROCESS_ROLES=broker,controller
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
@@ -72,49 +89,65 @@ services:
       - KAFKA_AUTO_CREATE_TOPICS_ENABLE=true
       - BITNAMI_DEBUG=yes
       - KAFKA_CFG_NUM_PARTITIONS=2
+>>>>>>> d7613f24dfbd486cd88b1e04b0a18564af336d0c
   papercut-smtp:
     image: jijiechen/papercut
     container_name: papercut-smtp
     ports:
       - "25:25"      # SMTP portu
       - "37408:37408" # Web arayüzü portu
-    restart: always
   user-service:
     image: user-service
     build: ./user-service
-    container_name: user-service-app
-    restart: always
-    depends_on:
-      config-server:
-        condition: service_healthy
+    container_name: user-service
     ports:
       - "9010:9010"
     environment:
-      SPRING_CLOUD_CONFIG_PROFILE: "dev"
+      SPRING_CLOUD_CONFIG_PROFILE: dev
       CONFIGURL: "http://config-server:8090"
+    depends_on:
+      discovery-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
   plan-service:
     image: plan-service
     build: ./plan-service
-    container_name: plan-service-app
-    restart: always
-    depends_on:
-      config-server:
-        condition: service_healthy
+    container_name: plan-service
     ports:
       - "9040:9040"
     environment:
       SPRING_CLOUD_CONFIG_PROFILE: "dev"
       CONFIGURL: "http://config-server:8090"
+<<<<<<< HEAD
+    depends_on:
+      discovery-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+=======
 
+>>>>>>> d7613f24dfbd486cd88b1e04b0a18564af336d0c
   payment-service:
     build: ./payment-service
+<<<<<<< HEAD
+    container_name: payment-service
+=======
     image: payment-service
     container_name: payment-service-app
+>>>>>>> d7613f24dfbd486cd88b1e04b0a18564af336d0c
     ports:
       - "9050:9050"
     environment:
       SPRING_CLOUD_CONFIG_PROFILE: "dev"
       CONFIGURL: "http://config-server:8090"
+<<<<<<< HEAD
+    depends_on:
+      discovery-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+=======
     restart: always
     depends_on:
       config-server:
@@ -123,112 +156,136 @@ services:
         condition: service_started
 
 
+>>>>>>> d7613f24dfbd486cd88b1e04b0a18564af336d0c
   notification-service:
     image: notification-service
     build: ./notification-service
-    container_name: notification-service-app
-    restart: always
-    depends_on:
-      config-server:
-        condition: service_healthy
+    container_name: notification-service
     ports:
       - "9080:9080"
     environment:
       SPRING_CLOUD_CONFIG_PROFILE: "dev"
       CONFIGURL: "http://config-server:8090"
-  gateway-service:
-    image: gateway-service
-    build: ./gateway-service
-    container_name: gateway-service-app
-    restart: always
     depends_on:
+      kafka-1:
+        condition: service_started
+      zookeeper:
+        condition: service_started
       config-server:
         condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+  gateway-server:
+    image: gateway-server
+    build: ./gateway-server
+    container_name: gateway-server
     ports:
       - "8080:8080"
     environment:
       SPRING_CLOUD_CONFIG_PROFILE: "dev"
       CONFIGURL: "http://config-server:8090"
+    depends_on:
+      discovery-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
   discovery-server:
-    image: discovery-service
+    image: discovery-server
     build: ./discovery-server
-    container_name: discovery-service-app
-    restart: always
+    container_name: discovery-server
+    ports:
+      - "8888:8888"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8888/actuator/health"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 5s
+    environment:
+      # SPRING_APPLICATION_NAME: "discovery-server"
+      # SERVER_PORT: "8888"
+      # SPRING_CLOUD_CONFIG_ENABLED: "false"
+      # SPRING_CONFIG_IMPORT: "optional:"
+      # EUREKA_INSTANCE_HOSTNAME: "discovery-server"
+      # EUREKA_CLIENT_REGISTER-WITH-EUREKA: "false"
+      # EUREKA_CLIENT_FETCH-REGISTRY: "false"
+      # EUREKA_CLIENT_SERVICE-URL_DEFAULTZONE: "http://discovery-server:8888/eureka/"
+      SPRING_CLOUD_CONFIG_PROFILE: "dev"
+      CONFIGURL: "http://config-server:8090"
     depends_on:
       config-server:
         condition: service_healthy
+  config-server:
+    image: config-server
+    build: ./config-server
+    container_name: config-server
     ports:
-      - "8888:8888"
+      - "8090:8090"
     environment:
-      SPRING_CLOUD_CONFIG_PROFILE: "dev"
-      CONFIGURL: "http://config-server:8090"
+
+      EUREKA_CLIENT_SERVICE-URL_DEFAULTZONE: "http://discovery-server:8888/eureka/"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8090/actuator/health"]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+      timeout: 5s
   customer-support-service:
     image: customer-support-service
     build: ./customer-support-service
-    container_name: customer-support-service-app
-    restart: always
-    depends_on:
-      config-server:
-        condition: service_healthy
+    container_name: customer-support-service
     ports:
       - "9060:9060"
     environment:
       SPRING_CLOUD_CONFIG_PROFILE: "dev"
       CONFIGURL: "http://config-server:8090"
+    depends_on:
+      discovery-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
   customer-service:
     image: customer-service
     build: ./customer-service
-    container_name: customer-service-app
-    restart: always
-    depends_on:
-      config-server:
-        condition: service_healthy
+    container_name: customer-service
     ports:
       - "9020:9020"
     environment:
       SPRING_CLOUD_CONFIG_PROFILE: "dev"
       CONFIGURL: "http://config-server:8090"
+    depends_on:
+      discovery-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
   contract-service:
     image: contract-service
     build: ./contract-service
-    container_name: contract-service-app
-    restart: always
-    depends_on:
-      config-server:
-        condition: service_healthy
+    container_name: contract-service
     ports:
       - "9030:9030"
     environment:
       SPRING_CLOUD_CONFIG_PROFILE: "dev"
       CONFIGURL: "http://config-server:8090"
-
-  config-server:
-    image: config-server
-    build: ./config-server
-    container_name: config-server-app
-    restart: always
-    ports:
-      - "8090:8090"
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://config-server-app:8090/actuator/health" ] #bizim yerimize otomatize spring uygulaması healt check yapmış olur.
-      interval: 10s #kaç saniyede bi çalışsın
-      retries: 5 #kaç tekrar
-      start_period: 10s #ilk healthcheck ne zaman atılsın
-      timeout: 5s #cevap verilemzse başarısız sayılacak süredir.
-
+    depends_on:
+      discovery-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
   analytics-service:
     image: analytics-service
     build: ./analytics-service
-    container_name: analytics-service-app
-    restart: always
-    depends_on:
-      config-server:
-        condition: service_healthy
+    container_name: analytics-service
     ports:
       - "9070:9070"
     environment:
       SPRING_CLOUD_CONFIG_PROFILE: "dev"
       CONFIGURL: "http://config-server:8090"
+    depends_on:
+      discovery-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
   prometheus:
     image: prom/prometheus
     ports:

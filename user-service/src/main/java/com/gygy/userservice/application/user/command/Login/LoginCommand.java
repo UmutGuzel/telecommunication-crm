@@ -8,10 +8,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 import com.gygy.userservice.persistance.UserRepository;
-import com.gygy.userservice.core.jwt.JwtService;
+import com.gygy.common.security.JwtService;
 import com.gygy.userservice.application.user.rule.UserRule;
 import com.gygy.userservice.entity.User;
 import lombok.RequiredArgsConstructor;
+import com.gygy.userservice.application.user.mapper.UserMapper;
 
 @Data
 @AllArgsConstructor
@@ -29,15 +30,16 @@ public class LoginCommand implements Command<LoginResponse> {
         private final UserRepository userRepository;
         private final UserRule userRule;
         private final JwtService jwtService;
+        private final UserMapper userMapper;
 
         @Override
         public LoginResponse handle(LoginCommand command) {
-            User user = userRepository.findByEmail(command.getEmail()).orElse(null);
-            userRule.checkUserExists(user);
+            User user = userRepository.findByEmail(command.getEmail())
+                    .orElseThrow(() -> new RuntimeException("Invalid email or password"));
+
             userRule.checkPassword(user, command.getPassword());
 
-            // Generate JWT token
-            String token = jwtService.generateToken(user);
+            String token = jwtService.generateToken(userMapper.toCommonUser(user));
 
             return LoginResponse.builder()
                     .token(token)

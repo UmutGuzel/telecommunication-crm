@@ -1,5 +1,8 @@
-package com.gygy.userservice.core.jwt;
+package com.gygy.common.security;
 
+import com.gygy.common.entity.User;
+import com.gygy.common.entity.Role;
+import com.gygy.common.entity.Permission;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import io.jsonwebtoken.Jwts;
@@ -16,17 +19,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
-import com.gygy.userservice.entity.User;
-import com.gygy.userservice.entity.Role;
-import com.gygy.userservice.entity.Permission;
 
 @Service
 public class JwtService {
-    @Value("${jwt.expiration}")
-    private long ExpirationTime;
-
-    @Value("${jwt.secret}")
-    private String SecretKey;
+    private long ExpirationTime = 7200000;
+    private String SecretKey = "KRbQDv3hU8U9BOF0kjynHH35tpPiOoiBEJVooJ9Z1yTZZXaqlha0xHXx1DOlVvU";
 
     public String generateToken(User user) {
         return Jwts.builder()
@@ -124,5 +121,4 @@ public class JwtService {
 
         return claims;
     }
-
 }
