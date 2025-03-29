@@ -14,7 +14,7 @@ import java.util.Map;
 
 @RestControllerAdvice
 @Slf4j
-public class GlobalExceptionHandler extends com.gygy.common.exception.GlobalExceptionHandler {
+public class UserExceptionHandler extends com.gygy.common.exception.GlobalExceptionHandler {
 
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<ErrorResponse> handleServiceValidationException(
@@ -33,6 +33,20 @@ public class GlobalExceptionHandler extends com.gygy.common.exception.GlobalExce
                 .build();
 
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleGenericException(Exception ex, HttpServletRequest request) {
+        log.error("Unhandled exception: {}", ex.getMessage(), ex);
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .errorCode("INTERNAL_SERVER_ERROR")
+                .message(ex.getMessage())
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .path(request.getRequestURI())
+                .build();
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }

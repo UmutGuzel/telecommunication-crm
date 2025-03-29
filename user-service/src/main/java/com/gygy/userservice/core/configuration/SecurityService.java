@@ -17,8 +17,6 @@ public class SecurityService {
 
     private static final String[] USER_SERVICE_WHITELIST = {
             "/api/v1/auth/**",
-            "/api/v1/users/activate/**",
-            "/api/v1/users/reset-password/**",
             "/actuator/**"
     };
 
