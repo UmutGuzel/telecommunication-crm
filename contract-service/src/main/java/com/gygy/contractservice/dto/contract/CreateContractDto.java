@@ -19,6 +19,8 @@ public class CreateContractDto {
 
     private String documentUrl;
 
+    private LocalDateTime createDate;
+
     private LocalDateTime uploadDate;
 
     private LocalDateTime signatureDate;

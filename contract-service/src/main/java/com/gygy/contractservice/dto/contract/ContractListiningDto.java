@@ -4,10 +4,12 @@ import com.gygy.contractservice.model.enums.Status;
 import lombok.Getter;
 import lombok.Setter;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Setter
 public class ContractListiningDto {
+    private UUID id;
     private String contractNumber;
     private String documentType;
     private String documentUrl;
@@ -26,5 +28,9 @@ public class ContractListiningDto {
         this.status = status;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
+    }
+
+    public ContractListiningDto() {
+
     }
 }

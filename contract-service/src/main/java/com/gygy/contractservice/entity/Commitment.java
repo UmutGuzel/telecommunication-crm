@@ -1,9 +1,9 @@
 package com.gygy.contractservice.entity;
 
 import com.gygy.contractservice.model.enums.BillingCycleType;
+import com.gygy.contractservice.model.enums.Status;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.math.BigDecimal;
@@ -15,6 +15,9 @@ import java.util.UUID;
 @Table(name="commitments")
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+
 public class Commitment {
     @Id
     @UuidGenerator
@@ -24,6 +27,9 @@ public class Commitment {
 
     @Column(name = "duration_months", nullable = false)
     private Integer durationMonths;
+    @Column(name = "billing_day", nullable = false)
+    private Integer billingDay;
+
 
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
@@ -32,10 +38,11 @@ public class Commitment {
     private LocalDate endDate;
 
     @Column(name = "early_termination_fee", nullable = false)
-    private BigDecimal earlyTerminationFee;
+    private Double earlyTerminationFee;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private String status;
+    private Status status;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -51,6 +58,10 @@ public class Commitment {
     @ManyToOne
     @JoinColumn(name="contract_detail_id", nullable = false)
     private ContractDetail contractDetail;
+
+    public Commitment() {
+
+    }
 
     @PrePersist
     protected void onCreate() {

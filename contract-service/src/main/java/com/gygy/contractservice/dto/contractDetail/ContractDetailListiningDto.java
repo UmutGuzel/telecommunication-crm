@@ -12,6 +12,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class ContractDetailListiningDto {
+    private UUID id;
     private UUID contractId;
     private UUID customerId;
     private LocalDate startDate;
@@ -36,5 +37,9 @@ public class ContractDetailListiningDto {
         this.endDate=endDate;
         this.contractId=id;
         this.status=status;
+    }
+
+    public ContractDetailListiningDto() {
+
     }
 }

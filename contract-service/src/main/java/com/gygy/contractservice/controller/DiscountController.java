@@ -39,7 +39,7 @@ public class DiscountController {
     public List<DiscountListiningDto> getActiveDiscounts(){
         return discountService.getActiveDiscounts();
     }
-    @GetMapping("/getActiveDiscountsByCustomerId")
+    @GetMapping("/get-active-discountsByCustomerId")
     public List<DiscountListiningDto> getActiveDiscountsByCustomerId(@RequestParam UUID id){
         return discountService.getActiveDiscountsByCustomerId(id);
     }
