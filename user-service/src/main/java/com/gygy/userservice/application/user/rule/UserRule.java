@@ -2,6 +2,10 @@ package com.gygy.userservice.application.user.rule;
 
 import org.springframework.stereotype.Component;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import com.gygy.common.exception.BadRequestException;
+import com.gygy.common.exception.ConflictException;
+import com.gygy.common.exception.NotFoundException;
+import com.gygy.userservice.core.exception.UserServiceException;
 import com.gygy.userservice.entity.User;
 import lombok.RequiredArgsConstructor;
 
@@ -14,29 +18,35 @@ public class UserRule {
 
     public void checkUserNotExists(User user) {
         if (user != null) {
-            throw new RuntimeException("User already exists");
+            throw ConflictException.duplicateValue("User", "email", user.getEmail());
         }
     }
 
     public void checkUserExists(User user) {
         if (user == null) {
-            throw new RuntimeException("User not found");
+            throw NotFoundException.forResource("User", "id");
         }
     }
 
     public void checkPassword(User user, String password) {
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new RuntimeException("Invalid password");
+            throw new BadRequestException("Invalid password");
         }
     }
 
     public void checkActivationTokenNotExpired(User user) {
         if (user.getActivationTokenExpiry() == null) {
-            throw new IllegalArgumentException("Activation token not found");
+            throw UserServiceException.invalidActivationToken("token not found");
         }
 
         if (user.getActivationTokenExpiry().isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException("Activation token has expired");
+            throw UserServiceException.invalidActivationToken("expired");
+        }
+    }
+
+    public void checkUserActive(User user) {
+        if (!user.isActive()) {
+            throw UserServiceException.accountInactive(user.getEmail());
         }
     }
 }

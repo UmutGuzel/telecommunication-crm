@@ -1,6 +1,7 @@
 package com.gygy.contractservice.dto.commitment;
 
 import com.gygy.contractservice.model.enums.BillingCycleType;
+import com.gygy.contractservice.model.enums.Status;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,9 +24,9 @@ public class CreateCommitmentDto {
 
     private Integer billingDay;
 
-    private BigDecimal earlyTerminationFee;
+    private Double earlyTerminationFee;
     @NotNull(message = "Status is required")
-    private String status;
+    private Status status;
     @NotNull(message = "Contract detail ID is required")
     private UUID contractDetailId;
 

@@ -1,15 +1,17 @@
 package com.gygy.userservice.core.pipelines.Exception;
 
-import java.util.List;
+import com.gygy.common.exception.BaseException;
 import lombok.Getter;
-import lombok.Setter;
+import org.springframework.http.HttpStatus;
+
+import java.util.List;
 
 @Getter
-@Setter
-public class ValidationException extends RuntimeException {
-    private List<String> errors;
+public class ValidationException extends BaseException {
+    private final List<String> errors;
 
     public ValidationException(List<String> errors) {
+        super("Validation failed", HttpStatus.BAD_REQUEST, "VALIDATION_ERROR");
         this.errors = errors;
     }
 }

@@ -1,46 +1,38 @@
 package com.gygy.userservice.core.exception;
 
+import com.gygy.common.exception.ErrorResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.gygy.userservice.core.pipelines.Exception.ValidationException;
-
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.validation.FieldError;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-@ControllerAdvice
-public class GlobalExceptionHandler {
+@RestControllerAdvice
+@Slf4j
+public class GlobalExceptionHandler extends com.gygy.common.exception.GlobalExceptionHandler {
 
     @ExceptionHandler(ValidationException.class)
-    public ResponseEntity<Map<String, List<String>>> handleValidationException(ValidationException ex) {
-        Map<String, List<String>> errorMap = new HashMap<>();
-        errorMap.put("errors", ex.getErrors());
-        return new ResponseEntity<>(errorMap, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ErrorResponse> handleServiceValidationException(
+            ValidationException ex, HttpServletRequest request) {
+        log.error("User service validation error: {}", ex.getMessage());
+
+        Map<String, Object> details = new HashMap<>();
+        details.put("validationErrors", ex.getErrors());
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .errorCode("USER_VALIDATION_ERROR")
+                .message("User service validation failed")
+                .status(HttpStatus.BAD_REQUEST.value())
+                .path(request.getRequestURI())
+                .details(details)
+                .build();
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, List<String>>> handleValidationErrors(MethodArgumentNotValidException ex) {
-        List<String> errors = ex.getBindingResult().getFieldErrors()
-                .stream()
-                .map(FieldError::getDefaultMessage)
-                .collect(Collectors.toList());
-
-        Map<String, List<String>> errorMap = new HashMap<>();
-        errorMap.put("errors", errors);
-        return new ResponseEntity<>(errorMap, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, String>> handleGenericException(Exception ex) {
-        Map<String, String> errorMap = new HashMap<>();
-        errorMap.put("error", ex.getMessage());
-        return new ResponseEntity<>(errorMap, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
 }

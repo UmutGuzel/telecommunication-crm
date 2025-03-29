@@ -2,6 +2,8 @@ package com.gygy.contractservice.entity;
 
 import com.gygy.contractservice.model.enums.Status;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
@@ -14,6 +16,8 @@ import java.util.UUID;
 @Table(name = "contracts")
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 public class Contract {
 
     @Id
@@ -47,6 +51,9 @@ public class Contract {
     @OneToMany(mappedBy = "contract")
     private Set<ContractDetail> contractDetails;
 
+    public Contract() {
+
+    }
 
     @PrePersist
     protected void onCreate() {
