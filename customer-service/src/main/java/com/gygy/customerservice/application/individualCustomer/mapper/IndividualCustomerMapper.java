@@ -13,6 +13,8 @@ import com.gygy.customerservice.domain.entity.IndividualCustomer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 @RequiredArgsConstructor
 @Component
 public class IndividualCustomerMapper {
@@ -25,6 +27,8 @@ public class IndividualCustomerMapper {
         individualCustomer.setEmail(command.getEmail());
         individualCustomer.setPhoneNumber(command.getPhoneNumber());
         individualCustomer.setAddress(address);
+        individualCustomer.setCreatedAt(LocalDateTime.now());
+        individualCustomer.setUpdatedAt(LocalDateTime.now());
 
         individualCustomer.setIdentityNumber(command.getIdentityNumber());
         individualCustomer.setName(command.getName());
@@ -66,19 +70,19 @@ public class IndividualCustomerMapper {
             Address updatedAddress = addressMapper.convertUpdateAddressDtoToAddress(individualCustomer.getAddress(), command.getAddress());
             individualCustomer.setAddress(updatedAddress);
         }
-        if (command.getIdentityNumber() != null) {
+        if (command.getIdentityNumber() != null && !command.getIdentityNumber().isEmpty()) {
             individualCustomer.setIdentityNumber(command.getIdentityNumber());
         }
-        if (command.getName() != null) {
+        if (command.getName() != null && !command.getName().isEmpty()) {
             individualCustomer.setName(command.getName());
         }
-        if (command.getSurname() != null) {
+        if (command.getSurname() != null && !command.getSurname().isEmpty()) {
             individualCustomer.setSurname(command.getSurname());
         }
-        if (command.getFatherName() != null) {
+        if (command.getFatherName() != null && !command.getFatherName().isEmpty()) {
             individualCustomer.setFatherName(command.getFatherName());
         }
-        if (command.getMotherName() != null) {
+        if (command.getMotherName() != null && !command.getMotherName().isEmpty()) {
             individualCustomer.setMotherName(command.getMotherName());
         }
         if (command.getGender() != null) {
@@ -87,6 +91,7 @@ public class IndividualCustomerMapper {
         if (command.getBirthDate() != null) {
             individualCustomer.setBirthDate(command.getBirthDate());
         }
+        individualCustomer.setUpdatedAt(LocalDateTime.now());
     }
 
     public UpdatedIndividualCustomerResponse convertIndividualCustomerToUpdatedIndividualCustomerResponse(IndividualCustomer individualCustomer) {
@@ -115,6 +120,11 @@ public class IndividualCustomerMapper {
         return GetListIndividualCustomerItemDto.builder()
                 .id(individualCustomer.getId())
                 .email(individualCustomer.getEmail())
+                .phoneNumber(individualCustomer.getPhoneNumber())
+                .name(individualCustomer.getName())
+                .surname(individualCustomer.getSurname())
+                .gender(individualCustomer.getGender() != null ? individualCustomer.getGender().name() : null)
+                .birthDate(individualCustomer.getBirthDate())
                 .build();
     }
 }

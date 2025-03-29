@@ -18,7 +18,7 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
-        spring.json.type.mapping: createdIndividualCustomerEvent:com.gygy.customerservice.infrastructure.messaging.CreatedIndividualCustomerEvent
+        spring.json.type.mapping: createdIndividualCustomerEvent:com.gygy.customerservice.infrastructure.messaging.event.CreatedIndividualCustomerEvent,createdCorporateCustomerEvent:com.gygy.customerservice.infrastructure.messaging.event.CreatedCorporateCustomerEvent,updatedIndividualCustomerEvent:com.gygy.customerservice.infrastructure.messaging.event.UpdatedIndividualCustomerEvent,updatedCorporateCustomerEvent:com.gygy.customerservice.infrastructure.messaging.event.UpdatedCorporateCustomerEvent
 
 server:
   port: 9020

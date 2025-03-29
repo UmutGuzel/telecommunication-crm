@@ -32,8 +32,10 @@ public class Address {
 
     private String street;
     private String district;
+    private String apartmentNumber;
     private String city;
     private String country;
+    private String postalCode;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 

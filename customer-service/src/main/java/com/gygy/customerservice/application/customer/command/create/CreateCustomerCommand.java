@@ -44,17 +44,10 @@ public class CreateCustomerCommand implements Command<CreatedCustomerResponse> {
             Address existingAddress = addressRepository.findByStreetAndDistrictAndCityAndCountry(
             addressDto.getStreet(), addressDto.getDistrict(), addressDto.getCity(), addressDto.getCountry()).orElse(null);
 
-            Address finalAddress;
-            if (existingAddress != null) {
-                finalAddress = existingAddress;
-            } else {
-                finalAddress = addressMapper.convertCreateAddressDtoToAddress(addressDto);
+            Address finalAddress = (existingAddress != null) ? existingAddress : addressMapper.convertCreateAddressDtoToAddress(addressDto);
+            if (existingAddress == null) {
                 addressRepository.save(finalAddress);
             }
-//            Address finalAddress = (existingAddress != null) ? existingAddress : addressMapper.convertCreateAddressDtoToAddress(addressDto);
-//            if (existingAddress == null) {
-//                addressRepository.save(finalAddress);
-//            }
 
             Customer newCustomer = customerMapper.convertCreateCommandToCustomer(command);
             newCustomer.setAddress(finalAddress);
