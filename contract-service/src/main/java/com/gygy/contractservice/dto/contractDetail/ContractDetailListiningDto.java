@@ -29,12 +29,20 @@ public class ContractDetailListiningDto {
 
     }
 
-    public ContractDetailListiningDto(ContractDetailType contractDetailType, ServiceType serviceType, LocalDate startDate, UUID id, LocalDate endDate, Status status) {
+
+    public ContractDetailListiningDto() {
+
+    }
+
+
+    public ContractDetailListiningDto(ContractDetailType contractDetailType, UUID id, Status status, LocalDate endDate, LocalDate startDate, UUID customerId, ServiceType serviceType) {
         this.contractDetailType=contractDetailType;
-        this.serviceType=serviceType;
-        this.startDate=startDate;
-        this.endDate=endDate;
         this.contractId=id;
         this.status=status;
+        this.endDate=endDate;
+        this.startDate=startDate;
+        this.customerId=customerId;
+        this.serviceType=serviceType;
+
     }
 }

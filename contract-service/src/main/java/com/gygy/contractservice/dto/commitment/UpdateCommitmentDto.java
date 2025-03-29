@@ -1,6 +1,7 @@
 package com.gygy.contractservice.dto.commitment;
 
 import com.gygy.contractservice.model.enums.BillingCycleType;
+import com.gygy.contractservice.model.enums.Status;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -22,9 +23,9 @@ public class UpdateCommitmentDto {
     private LocalDate endDate;
     @NotNull(message = "Early termination fee is required")
     @DecimalMin(value = "0.0", inclusive = true, message = "Early termination fee must be at least 0")
-    private BigDecimal earlyTerminationFee;
+    private Double earlyTerminationFee;
     @NotNull(message = "Status is required")
-    private String status;
+    private Status status;
     @NotNull(message = "Contract detail ID is required")
     private UUID contractDetailId;
     private BillingCycleType cycleType;

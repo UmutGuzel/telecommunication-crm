@@ -1,6 +1,8 @@
 package com.gygy.contractservice.dto.contractDetail;
 
+import com.gygy.contractservice.model.enums.ContractDetailType;
 import com.gygy.contractservice.model.enums.ServiceType;
+import com.gygy.contractservice.model.enums.Status;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,10 +15,13 @@ public class UpdateContractDetailDto {
     private UUID id;
     private LocalDate startDate;
     private LocalDate endDate;
-    private String status;
+    private Status status;
     private ServiceType serviceType;
-    private String type;
     @NotNull(message = "Contract ID is required")
     private UUID contractId;
+    private UUID customerId;
+    @NotNull(message = "Contract detail type is required")
+    private ContractDetailType contractDetailType;
+
 
 }
