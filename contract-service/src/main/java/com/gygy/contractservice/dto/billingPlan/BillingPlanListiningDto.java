@@ -15,7 +15,6 @@ import java.util.UUID;
 @Getter
 @Setter
 public class BillingPlanListiningDto {
-    private UUID id;
     private String name;
     private String description;
     private BillingCycleType cycleType;
@@ -27,9 +26,9 @@ public class BillingPlanListiningDto {
     private Status status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-     private ContractDetail contractDetail;
+     private UUID contractDetailId;
 
-    public BillingPlanListiningDto(String name, String description, Integer billingDay, BillingCycleType cycleType,LocalDateTime createdAt,LocalDateTime updatedAt, Integer baseAmount, ContractDetail contractDetail, Integer paymentDueDays, Status status, Double taxRate) {
+    public BillingPlanListiningDto(String name, String description, Integer billingDay, BillingCycleType cycleType,LocalDateTime createdAt,LocalDateTime updatedAt, Integer baseAmount, ContractDetail contractDetail, Integer paymentDueDays, Status status, Double taxRate,PaymentMethod paymentMethod) {
         this.name = name;
         this.description = description;
         this.billingDay = billingDay;
@@ -40,13 +39,15 @@ public class BillingPlanListiningDto {
         this.taxRate = taxRate;
         this.paymentDueDays = paymentDueDays;
         this.status = status;
-        this.contractDetail = contractDetail;
+        this.contractDetailId = contractDetail.getId();
+        this.paymentMethod=paymentMethod;
     }
 
 
     public BillingPlanListiningDto() {
 
     }
+
 
 
 }

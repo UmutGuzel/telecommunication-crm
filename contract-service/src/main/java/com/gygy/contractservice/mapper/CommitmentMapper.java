@@ -40,6 +40,19 @@ public class CommitmentMapper {
                 .name(updateCommitmentDto.getName())
                 .build();
     }
+    public CommitmentListiningDto toCommitmentListiningDto(Commitment commitment){
+        return new CommitmentListiningDto(
+                commitment.getName(),
+                commitment.getStatus(),
+                commitment.getBillingDay(),
+                commitment.getCycleType(),
+                commitment.getStartDate(),
+                commitment.getEndDate(),
+                commitment.getDurationMonths(),
+                commitment.getEarlyTerminationFee(),
+                commitment.getContractDetail()
+        );
+    }
 
 
 

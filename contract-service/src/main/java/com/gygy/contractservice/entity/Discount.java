@@ -24,6 +24,7 @@ public class Discount {
     @Id
     @UuidGenerator
     private UUID id;
+    private String name;
 
     @Enumerated(EnumType.STRING)
     @Column(name="billing_cycle_type")

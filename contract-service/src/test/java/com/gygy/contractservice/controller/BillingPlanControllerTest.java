@@ -51,10 +51,8 @@ import static org.mockito.Mockito.*;
     }
     @Test
     void getAllBillingPlan() {
-        id= UUID.randomUUID();
         BillingPlanListiningDto billingPlanListiningDto=new BillingPlanListiningDto();
         billingPlanListiningDto.setBillingDay(12);
-        billingPlanListiningDto.setId(id);
         billingPlanListiningDto.setName("Test Name");
         billingPlanListiningDto.setDescription("Test Description");
         billingPlanListiningDto.setBaseAmount(1000);
@@ -64,7 +62,7 @@ import static org.mockito.Mockito.*;
         billingPlanListiningDto.setTaxRate(0.1);
         billingPlanListiningDto.setUpdatedAt(LocalDateTime.now());
         billingPlanListiningDto.setPaymentMethod(CREDIT_CARD);
-        billingPlanListiningDto.setContractDetail(contractDetail);
+        billingPlanListiningDto.setContractDetailId(contractDetail.getId());
 
 
         List<BillingPlanListiningDto> billingPlanListiningDtos= List.of(billingPlanListiningDto);
@@ -78,15 +76,13 @@ import static org.mockito.Mockito.*;
         assertEquals(12,response.get(0).getPaymentDueDays());
         assertEquals(0.1,response.get(0).getTaxRate());
         assertEquals(CREDIT_CARD,response.get(0).getPaymentMethod());
-        assertEquals(contractDetail,response.get(0).getContractDetail());
+        assertEquals(contractDetail.getId(),response.get(0).getContractDetailId());
         assertEquals(LocalDateTime.now().toLocalDate(),response.get(0).getCreatedAt().toLocalDate());
         assertEquals(LocalDateTime.now().toLocalDate(),response.get(0).getUpdatedAt().toLocalDate());
         assertEquals("Test Name",response.get(0).getName());
         assertEquals("Test Description",response.get(0).getDescription());
         assertEquals(MONTHLY,response.get(0).getCycleType());
         assertEquals(1000,response.get(0).getBaseAmount());
-
-        assertNotNull(response.get(0).getId());
 
         verify(billingPlanService,times(1)).getAll();
     }

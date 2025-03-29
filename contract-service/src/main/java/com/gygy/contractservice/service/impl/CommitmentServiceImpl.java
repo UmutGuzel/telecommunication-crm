@@ -12,10 +12,14 @@ import com.gygy.contractservice.repository.CommitmentRepository;
 import com.gygy.contractservice.rules.CommitmentBusinessRules;
 import com.gygy.contractservice.service.CommitmentService;
 import com.gygy.contractservice.service.ContractDetailService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import static com.gygy.contractservice.constant.GeneralConstant.FETCHING_ALL_COMMITMENTS;
 
 @Service
 
@@ -24,6 +28,8 @@ public class CommitmentServiceImpl implements CommitmentService {
     private final ContractDetailService contractDetailService;
     private final CommitmentBusinessRules commitmentBusinessRules;
     private final CommitmentMapper commitmentMapper;
+    private static final Logger logger = LoggerFactory.getLogger(CommitmentServiceImpl.class);
+
 
     public CommitmentServiceImpl(CommitmentRepository commitmentRepository,
                                  @Lazy ContractDetailService contractDetailService, CommitmentBusinessRules commitmentBusinessRules, CommitmentMapper commitmentMapper) {
@@ -35,8 +41,15 @@ public class CommitmentServiceImpl implements CommitmentService {
 
     @Override
     public Commitment findById(UUID id) {
-        return commitmentRepository.findById(id)
-                .orElseThrow(() -> new BusinessException("Commitment not found with id: " + id));
+        logger.debug("Searching for commitment with ID: {}", id);
+        Commitment commitment = commitmentRepository.findById(id).orElseThrow(
+                () -> new BusinessException("Commitment not found with id: " + id));
+        if (commitment != null) {
+            logger.info("Commitment found with ID: {}", id);
+        } else {
+            logger.warn("Commitment not found with ID: {}", id);
+        }
+        return commitment;
     }
 
     @Override
@@ -57,20 +70,27 @@ public class CommitmentServiceImpl implements CommitmentService {
         // Check if the customer can make a new commitment
         commitmentBusinessRules.checkIfCustomerCanMakeNewCommitment(contractDetail.getCustomerId());
 
-        Commitment commitment=commitmentMapper.createCommitmentFromCreateCommitmentDto(createCommitmentDto);
-        commitment.setContractDetail(contractDetail);
-        commitmentRepository.save(commitment);
+        logger.info("Creating new commitment with name: {}", createCommitmentDto.getName());
+        try {
+            Commitment commitment=commitmentMapper.createCommitmentFromCreateCommitmentDto(createCommitmentDto);
+            commitment.setContractDetail(contractDetail);
+            commitmentRepository.save(commitment);
+            logger.info("Successfully created commitment with ID: {}", commitment.getId());
+        } catch (Exception e) {
+            logger.error("Error creating commitment: {}", e.getMessage(), e);
+            throw e;
+        }
     }
 
     @Override
     public List<CommitmentListiningDto> getAll() {
-        List<CommitmentListiningDto> commitmentListiningDtos = commitmentRepository
-                .findAll()
-                .stream()
-                .map(commitment -> new CommitmentListiningDto(commitment.getStatus(), commitment.getStartDate(),
-                        commitment.getEndDate(), commitment.getDurationMonths(), commitment.getContractDetail(),
-                        commitment.getEarlyTerminationFee()))
-                .toList();
+
+        logger.debug(FETCHING_ALL_COMMITMENTS);
+        List<Commitment> commitments = commitmentRepository.findAll();
+        List<CommitmentListiningDto> commitmentListiningDtos = commitments.stream()
+                .map(commitmentMapper::toCommitmentListiningDto)
+                .collect(Collectors.toList());
+        logger.info("Found {} commitment", commitmentListiningDtos.size());
         return commitmentListiningDtos;
     }
 
@@ -93,10 +113,19 @@ public class CommitmentServiceImpl implements CommitmentService {
                     updateCommitmentDto.getEndDate());
         }
 
-        Commitment commitment=commitmentMapper.updateCommitmentFromUpdateCommitmentDto(updateCommitmentDto);
-          commitment.setContractDetail(contractDetail);
-        commitment.setId(updateCommitmentDto.getId());
-        return commitmentRepository.save(commitment);
+
+        logger.info("Updating contract with ID: {}", updateCommitmentDto.getId());
+        try {
+            Commitment commitment = commitmentMapper.updateCommitmentFromUpdateCommitmentDto(updateCommitmentDto);
+            commitment.setId(updateCommitmentDto.getId());
+            commitment.setContractDetail(contractDetail);
+            Commitment updatedCommitment = commitmentRepository.save(commitment);
+            logger.info("Successfully updated contract with ID: {}", updatedCommitment.getId());
+            return updatedCommitment;
+        } catch (Exception e) {
+            logger.error("Error updating commitment: {}", e.getMessage(), e);
+            throw e;
+        }
 
 
 
@@ -104,8 +133,19 @@ public class CommitmentServiceImpl implements CommitmentService {
 
     @Override
     public void delete(DeleteCommitmentDto deleteCommitmentDto) {
-        Commitment commitment = commitmentRepository.findById(deleteCommitmentDto.getId()).orElseThrow(
-                () -> new BusinessException("Commitment not found with id: " + deleteCommitmentDto.getId()));
+
+      logger.info("Attempting to delete contract with ID: {}", deleteCommitmentDto.getId());
+        try {
+        Commitment commitment = commitmentRepository.findById(deleteCommitmentDto.getId())
+                .orElseThrow(() -> {
+                    logger.error("Commitment not found for deletion with ID: {}", deleteCommitmentDto.getId());
+                    return new RuntimeException("Commitment not found");
+                });
         commitmentRepository.delete(commitment);
+        logger.info("Successfully deleted commitment with ID: {}", deleteCommitmentDto.getId());
+    } catch (Exception e) {
+        logger.error("Error deleting commitment: {}", e.getMessage(), e);
+        throw e;
     }
+}
 }

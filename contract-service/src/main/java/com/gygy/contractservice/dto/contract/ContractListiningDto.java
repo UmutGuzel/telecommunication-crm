@@ -9,7 +9,6 @@ import java.util.UUID;
 @Getter
 @Setter
 public class ContractListiningDto {
-    private UUID id;
     private String contractNumber;
     private String documentType;
     private String documentUrl;
@@ -33,4 +32,6 @@ public class ContractListiningDto {
     public ContractListiningDto() {
 
     }
+
+
 }

@@ -1,5 +1,6 @@
 package com.gygy.contractservice.service.impl;
 
+import com.gygy.contractservice.core.exception.type.BusinessException;
 import com.gygy.contractservice.dto.discount.CreateDiscountDto;
 import com.gygy.contractservice.dto.discount.DeleteDiscountDto;
 import com.gygy.contractservice.dto.discount.DiscountListiningDto;
@@ -24,8 +25,9 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
-import static com.gygy.contractservice.constant.GeneralConstant.SEND_DISCOUNT_ERROR;
+import static com.gygy.contractservice.constant.GeneralConstant.*;
 import static com.gygy.contractservice.model.enums.EventType.DISCOUNT_APPLIED;
 
 @Service
@@ -34,7 +36,7 @@ public class DiscountServiceImpl implements DiscountService {
     private final BillingPlanService billingPlanService;
     private final ContractDetailService contractDetailService;
     private final StreamBridge streamBridge;
-    private static final Logger log = LoggerFactory.getLogger(DiscountServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(DiscountServiceImpl.class);
     private final DiscountMapper discountMapper;
 
     public DiscountServiceImpl(DiscountRepository discountRepository, BillingPlanService billingPlanService,
@@ -48,37 +50,47 @@ public class DiscountServiceImpl implements DiscountService {
 
     @Override
     public List<Discount> findAllById(List<UUID> ids) {
-        return discountRepository.findAllById(ids);
+        logger.debug(FETCHING_ALL_DISCOUNT);
+        List<Discount> discounts = discountRepository.findAllById(ids);
+        if (discounts.isEmpty()) {
+            logger.warn("No Discount found with ID: {}", ids);
+        } else {
+            logger.info("Discount  found with ID: {}", ids);
+        }
+        return discounts;
     }
 
     @Override
     public Discount findById(UUID id) {
-        return discountRepository.findById(id).orElse(null);
+        logger.debug("Searching for billing plan with ID: {}", id);
+        Discount discount = discountRepository.findById(id).orElseThrow(
+                () -> new BusinessException("Discount not found with id: " + id));
+        if (discount != null) {
+            logger.info("Discount found with ID: {}", id);
+        } else {
+            logger.warn("Discount not found with ID: {}", id);
+        }
+        return discount;
     }
 
     @Override
     public void add(CreateDiscountDto createDiscountDto) {
         List<BillingPlan> billingPlan = billingPlanService.findAll(createDiscountDto.getBillingPlanId());
         ContractDetail contractDetail = contractDetailService.findById(createDiscountDto.getContractDetailId());
+
+
+        logger.info("Creating new billing plan with name: {}", createDiscountDto.getName());
+        try {
+            Discount discount=discountMapper.createDiscountFromCreateDiscountDto(createDiscountDto);
+            discount.setBillingPlans(billingPlan);
+            discount.setContractDetail(contractDetail);
+            discountRepository.save(discount);
+            logger.info("Successfully created discount with ID: {}", discount.getId());
+        } catch (Exception e) {
+            logger.error("Error creating discount: {}", e.getMessage(), e);
+            throw e;
+        }
         /*
-        Discount discount = new Discount();
-        discount.setDiscountType(createDiscountDto.getDiscountType());
-        discount.setAmount(createDiscountDto.getAmount());
-        discount.setBillingPlans(billingPlan);
-        discount.setPercentage(createDiscountDto.getPercentage());
-        discount.setStartDate(createDiscountDto.getStartDate());
-        discount.setEndDate(createDiscountDto.getEndDate());
-        discount.setContractDetail(contractDetail);
-        discount.setStatus(createDiscountDto.getStatus());
-        discount.setCustomerId(createDiscountDto.getCustomerId());
-
-         */
-        Discount discount=discountMapper.createDiscountFromCreateDiscountDto(createDiscountDto);
-        discount.setBillingPlans(billingPlan);
-        discount.setContractDetail(contractDetail);
-        discountRepository.save(discount);
-
-
         // Send discount event to Kafka
         DiscountEvent event = new DiscountEvent();
         event.setDiscountId(discount.getId());
@@ -91,9 +103,11 @@ public class DiscountServiceImpl implements DiscountService {
         try {
             streamBridge.send("discount-events-out-0", event);
         } catch (Exception e) {
-            log.error("Failed to send discount event: {}", e.getMessage());
+            logger.error("Failed to send discount event: {}", e.getMessage());
             // Continue execution even if Kafka is unavailable
         }
+
+         */
 
         // Send notification event to Kafka
         NotificationEvent notification = new NotificationEvent();
@@ -108,67 +122,93 @@ public class DiscountServiceImpl implements DiscountService {
         try {
             streamBridge.send("notification-events-out-0", notification);
         } catch (Exception e) {
-            log.error("Failed to send notification event: {}", e.getMessage());
+            logger.error("Failed to send notification event: {}", e.getMessage());
             // Continue execution even if Kafka is unavailable
         }
     }
 
     @Override
     public List<DiscountListiningDto> getAll() {
-        List<DiscountListiningDto> discountListiningDtos = discountRepository
-                .findAll()
-                .stream()
-                .map(discount -> new DiscountListiningDto(discount.getDiscountType(), discount.getAmount(),
-                        discount.getPercentage(), discount.getContractDetail(), discount.getEndDate(),
-                        discount.getStartDate(), discount.getBillingPlans(), discount.getCreatedAt(),
-                        discount.getUpdatedAt()))
-                .toList();
+        logger.debug(FETCHING_ALL_DISCOUNT);
+        List<Discount>  discounts = discountRepository.findAll();
+        List<DiscountListiningDto> discountListiningDtos = discounts.stream()
+                .map(discountMapper::toDiscountListiningDto )
+                .collect(Collectors.toList());
+        logger.info("Found {}  discount", discountListiningDtos.size());
         return discountListiningDtos;
     }
 
     @Override
     public Discount update(UpdateDiscountDto updateDiscountDto) {
-        ContractDetail contractDetail = contractDetailService.findById(updateDiscountDto.getContractDetailId());
-        List<BillingPlan> billingPlan = billingPlanService.findAll(updateDiscountDto.getBillingPlanId());
+        logger.info("Updating discount  with ID: {}", updateDiscountDto.getId());
+        try {
+            ContractDetail contractDetail = contractDetailService.findById(updateDiscountDto.getContractDetailId());
+            List<BillingPlan> billingPlan = billingPlanService.findAll(updateDiscountDto.getBillingPlanId());
+            Discount discount=discountMapper.updateDiscountFromUpdateDiscountDto(updateDiscountDto);
+            discount.setId(updateDiscountDto.getId());
+            discount.setContractDetail(contractDetail);
+            discount.setBillingPlans(billingPlan);
+            Discount updatedDiscount=discountRepository.save(discount);
+            logger.info("Successfully updated billing plan with ID: {}", updatedDiscount.getId());
+            return updatedDiscount;
+        } catch (Exception e) {
+            logger.error("Error updating billing plan: {}", e.getMessage(), e);
+            throw e;
+        }
 
-        /*
-        discount.setDiscountType(updateDiscountDto.getDiscountType());
-        discount.setAmount(updateDiscountDto.getAmount());
-        discount.setPercentage(updateDiscountDto.getPercentage());
-        discount.setStartDate(updateDiscountDto.getStartDate());
-        discount.setEndDate(updateDiscountDto.getEndDate());
-        discount.setAmount(updateDiscountDto.getAmount());
-        discount.setContractDetail(contractDetail);
-
-         */
-        Discount discount=discountMapper.updateDiscountFromUpdateDiscountDto(updateDiscountDto);
-        discount.setId(updateDiscountDto.getId());
-        discount.setContractDetail(contractDetail);
-        discount.setBillingPlans(billingPlan);
-        return discountRepository.save(discount);
     }
 
     @Override
     public void delete(DeleteDiscountDto deleteDiscountDto) {
-        Discount discount = discountRepository.findById(deleteDiscountDto.getId())
-                .orElseThrow(() -> new RuntimeException("Discount not found"));
-        discountRepository.delete(discount);
+        logger.info("Attempting to delete discount  with ID: {}", deleteDiscountDto.getId());
+        try {
+            Discount discount = discountRepository.findById(deleteDiscountDto.getId())
+                    .orElseThrow(() -> {
+                        logger.error("Discount  not found for deletion with ID: {}", deleteDiscountDto.getId());
+                        return new BusinessException("Billing Plan not found");
+                    });
+            discountRepository.delete(discount);
+            logger.info("Successfully deleted discount  with ID: {}", deleteDiscountDto.getId());
+        } catch (Exception e) {
+            logger.error("Error deleting  discount: {}", e.getMessage(), e);
+            throw e;
+        }
     }
+
+
+//TODO: BİLLİNGPLAN BAK
 
     @Override
     public List<DiscountListiningDto> getActiveDiscounts() {
         return discountRepository.findAll().stream()
                 .filter(discounts -> "ACTIVE".equals(discounts.getStatus().toString()))
-                .map(discount -> new DiscountListiningDto(discount.getDiscountType(), discount.getAmount(),
-                        discount.getPercentage(), discount.getContractDetail(), discount.getEndDate(),
-                        discount.getStartDate(), discount.getBillingPlans(), discount.getCreatedAt(),
-                        discount.getUpdatedAt()))
+                .map(discount -> new DiscountListiningDto(      discount.getDiscountType()
+                        ,discount.getAmount()
+                        ,discount.getPercentage()
+                        ,discount.getContractDetail()
+                        ,discount.getEndDate()
+                        ,discount.getStartDate()
+                        ,discount.getCreatedAt(),
+                        discount.getUpdatedAt()
+                        ,discount.getCustomerId()
+                        ,discount.getStatus()
+                        ,discount.getDescription()))
                 .toList();
     }
 
     @Override
     public List<DiscountListiningDto> getActiveDiscountsByCustomerId(UUID customerId) {
-        return discountRepository.findAll().stream()
+        logger.debug(FETCHING_ALL_DISCOUNT);
+        List<Discount> discounts = discountRepository.findAll();
+        List<DiscountListiningDto> discountListiningDtos = discounts.stream()
+                .filter(discount -> "ACTIVE".equals(discount.getStatus().toString())
+                        && discount.getCustomerId().equals(customerId))
+                .map(discountMapper::toDiscountListiningDto)
+                .collect(Collectors.toList());
+        logger.info("Found {} active contracts", discounts.size());
+        return discountListiningDtos;
+        /*
+             return discountRepository.findAll().stream()
                 .filter(discount -> "ACTIVE".equals(discount.getStatus().toString())
                         && discount.getCustomerId().equals(customerId))
                 .map(discount -> new DiscountListiningDto(discount.getDiscountType(), discount.getAmount(),
@@ -176,17 +216,32 @@ public class DiscountServiceImpl implements DiscountService {
                         discount.getStartDate(), discount.getBillingPlans(), discount.getCreatedAt(),
                         discount.getUpdatedAt()))
                 .toList();
+         */
+
+
     }
 
     @Override
     public List<DiscountListiningDto> getDiscountsByContractId(UUID contractId) {
-        return discountRepository.findAll().stream()
+        logger.debug(FETCHING_ALL_DISCOUNT);
+        List<Discount> discounts = discountRepository.findAll();
+        List<DiscountListiningDto> discountListiningDtos = discounts.stream()
+                .filter(discount -> discount.getContractDetail().getId().equals(contractId))
+                .map(discountMapper::toDiscountListiningDto)
+                .collect(Collectors.toList());
+        logger.info("Found {} active contracts", discounts.size());
+        return discountListiningDtos;
+
+        /*
+         return discountRepository.findAll().stream()
                 .filter(discount -> discount.getContractDetail().getId().equals(contractId))
                 .map(discount -> new DiscountListiningDto(discount.getDiscountType(), discount.getAmount(),
                         discount.getPercentage(), discount.getContractDetail(), discount.getEndDate(),
                         discount.getStartDate(), discount.getBillingPlans(), discount.getCreatedAt(),
                         discount.getUpdatedAt()))
                 .toList();
+         */
+
     }
 
     @Override
@@ -218,7 +273,7 @@ public class DiscountServiceImpl implements DiscountService {
             try {
                 streamBridge.send("discount-events-out-0", event);
             } catch (Exception e) {
-                log.error(SEND_DISCOUNT_ERROR, e.getMessage()); //ENUM VERİLSİN FAİL MESSAGE OLABİLİR
+                logger.error(SEND_DISCOUNT_ERROR, e.getMessage()); //ENUM VERİLSİN FAİL MESSAGE OLABİLİR
                 // Continue execution even if Kafka is unavailable
             }
 
@@ -234,7 +289,7 @@ public class DiscountServiceImpl implements DiscountService {
             try {
                 streamBridge.send("notification-events-out-0", notification);
             } catch (Exception e) {
-                log.error("Failed to send notification event: {}", e.getMessage());
+                logger.error("Failed to send notification event: {}", e.getMessage());
                 // Continue execution even if Kafka is unavailable
             }
 

@@ -1,5 +1,6 @@
 package com.gygy.contractservice.mapper;
 
+import com.gygy.contractservice.dto.billingPlan.BillingPlanListiningDto;
 import com.gygy.contractservice.dto.billingPlan.CreateBillingPlanDto;
 import com.gygy.contractservice.dto.billingPlan.UpdateBillingPlanDto;
 import com.gygy.contractservice.entity.BillingPlan;
@@ -42,5 +43,21 @@ public class BillingPlanMapper {
                 .createdAt(LocalDateTime.now())
                 .paymentMethod(updateBillingPlanDto.getPaymentMethod())
                 .build();
+    }
+    public BillingPlanListiningDto toBillingPlanListiningDto(BillingPlan billingPlan){
+        return new BillingPlanListiningDto(
+                billingPlan.getName()
+                ,billingPlan.getDescription()
+                ,billingPlan.getBillingDay()
+                ,billingPlan.getCycleType()
+                ,billingPlan.getCreatedAt(),
+                billingPlan.getUpdatedAt()
+                ,billingPlan.getBaseAmount()
+                ,billingPlan.getContractDetail()
+                ,billingPlan.getPaymentDueDays()
+                ,billingPlan.getStatus()
+                ,billingPlan.getTaxRate()
+                ,billingPlan.getPaymentMethod()
+        );
     }
 }
