@@ -6,24 +6,34 @@ import com.gygy.contractservice.dto.contractDetail.DeleteContractDetailDto;
 import com.gygy.contractservice.dto.contractDetail.UpdateContractDetailDto;
 import com.gygy.contractservice.entity.Contract;
 import com.gygy.contractservice.entity.ContractDetail;
+import com.gygy.contractservice.event.NotificationEvent;
+import com.gygy.contractservice.mapper.ContractDetailMapper;
 import com.gygy.contractservice.repository.ContractDetailRepository;
 import com.gygy.contractservice.service.ContractDetailService;
 import com.gygy.contractservice.service.ContractService;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class ContractDetailServiceImpl implements ContractDetailService {
 
     private final ContractDetailRepository contractDetailRepository;
     private final ContractService contractService;
+    private final StreamBridge streamBridge;
+    private final ContractDetailMapper contractDetailMapper;
+    //private static final Logger log = LoggerFactory.getLogger(ContractDetailServiceImpl.class);
 
-    public ContractDetailServiceImpl(ContractDetailRepository contractDetailRepository, ContractService contractService) {
+    public ContractDetailServiceImpl(ContractDetailRepository contractDetailRepository, ContractService contractService, StreamBridge streamBridge, ContractDetailMapper contractDetailMapper) {
         this.contractDetailRepository = contractDetailRepository;
         this.contractService = contractService;
+        this.streamBridge = streamBridge;
+        this.contractDetailMapper = contractDetailMapper;
     }
 
     @Override
@@ -32,8 +42,9 @@ public class ContractDetailServiceImpl implements ContractDetailService {
 
     @Override
     public void add(CreateContractDetailDto createContractDetailDto) {
-        Contract contract=contractService.findById(createContractDetailDto.getContractId()).orElseThrow(()-> new RuntimeException("Contract not found"));
-        ContractDetail contractDetail = new ContractDetail();
+       Contract contract=contractService.findById(createContractDetailDto.getContractId()).orElseThrow(()-> new RuntimeException("Contract not found"));
+       /*
+       ContractDetail contractDetail = new ContractDetail();
         contractDetail.setContract(contract);
         contractDetail.setCustomerId(createContractDetailDto.getCustomerId());
         contractDetail.setContractDetailType(createContractDetailDto.getContractDetailType());
@@ -43,6 +54,29 @@ public class ContractDetailServiceImpl implements ContractDetailService {
         contractDetail.setStartDate(createContractDetailDto.getStartDate());
         contractDetail.setEndDate(createContractDetailDto.getEndDate());
         contractDetailRepository.save(contractDetail);
+
+        */
+
+        ContractDetail contractDetail=contractDetailMapper.createContractDetailFromCreateContractDetailDto(createContractDetailDto);
+        contractDetail.setContract(contract);
+        contractDetailRepository.save(contractDetail);
+        // Send notification event to Kafka
+        NotificationEvent notification = new NotificationEvent();
+        notification.setCustomerId(createContractDetailDto.getCustomerId());
+        notification.setTitle("Contract Detail Created");
+        notification.setMessage("A new contract detail has been created for your contract.");
+        notification.setType("CONTRACT_DETAIL");
+        notification.setStatus("SUCCESS");
+        notification.setEventType("NOTIFICATION");
+        notification.setEventDate(LocalDate.now().toString());
+
+        try {
+            streamBridge.send("notification-events-out-0", notification);
+        } catch (Exception e) {
+           // log.error("Failed to send notification event: {}", e.getMessage());
+            System.out.println("deneme");
+            // Continue execution even if Kafka is unavailable
+        }
 
     }
 
@@ -61,12 +95,17 @@ public class ContractDetailServiceImpl implements ContractDetailService {
     @Override
     public ContractDetail update(UpdateContractDetailDto updateContractDetailDto) {
         Contract contract=contractService.findById(updateContractDetailDto.getContractId()).orElseThrow(()-> new RuntimeException("Contract not found"));
-        ContractDetail contractDetail=contractDetailRepository.findById(updateContractDetailDto.getId()).orElseThrow(()->new RuntimeException("Contract detail not found"));
+        /*
         contractDetail.setServiceType(updateContractDetailDto.getServiceType());
         contractDetail.setContract(contract);
         contractDetail.setStartDate(updateContractDetailDto.getStartDate());
         contractDetail.setEndDate(updateContractDetailDto.getEndDate());
         contractDetail.setUpdatedAt(LocalDateTime.now());
+
+         */
+        ContractDetail contractDetail=contractDetailMapper.updateContractDetailFromUpdateContractDetailDto(updateContractDetailDto);
+        contractDetail.setId(contractDetail.getId());
+        contractDetail.setContract(contract);
         return contractDetailRepository.save(contractDetail);
     }
 

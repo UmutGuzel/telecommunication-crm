@@ -5,6 +5,7 @@ import com.gygy.contractservice.dto.contract.CreateContractDto;
 import com.gygy.contractservice.dto.contract.DeleteContractDto;
 import com.gygy.contractservice.dto.contract.UpdateContractDto;
 import com.gygy.contractservice.entity.Contract;
+import com.gygy.contractservice.mapper.ContractMapper;
 import com.gygy.contractservice.repository.ContractRepository;
 import com.gygy.contractservice.service.ContractService;
 import org.springframework.stereotype.Service;
@@ -16,9 +17,11 @@ import java.util.UUID;
 @Service
 public class ContractServiceImpl implements ContractService {
     private final ContractRepository contractRepository;
+    private final ContractMapper contractMapper;
 
-    public ContractServiceImpl(ContractRepository contractRepository) {
+    public ContractServiceImpl(ContractRepository contractRepository, ContractMapper contractMapper) {
         this.contractRepository = contractRepository;
+        this.contractMapper = contractMapper;
     }
 
     @Override
@@ -28,6 +31,7 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     public void add(CreateContractDto createContractDto) {
+        /*
         Contract contract = new Contract();
         contract.setContractNumber(createContractDto.getContractNumber());
         contract.setStatus(createContractDto.getStatus());
@@ -37,6 +41,10 @@ public class ContractServiceImpl implements ContractService {
         contract.setSignatureDate(createContractDto.getSignatureDate());
         contract.setUploadDate(createContractDto.getUploadDate());
         contract.setDocumentUrl(createContractDto.getDocumentUrl());
+        contractRepository.save(contract);
+
+         */
+        Contract contract=contractMapper.createContractFromCreateContractDto(createContractDto);
         contractRepository.save(contract);
 
     }
@@ -57,7 +65,7 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     public Contract update(UpdateContractDto updateContractDto) {
-        Contract contract = contractRepository.findById(updateContractDto.getId()).orElseThrow(() -> new RuntimeException("Contract not found"));
+        /*
         contract.setContractNumber(updateContractDto.getContractNumber());
         contract.setStatus(updateContractDto.getStatus());
         contract.setDocumentUrl(updateContractDto.getDocumentUrl());
@@ -65,6 +73,9 @@ public class ContractServiceImpl implements ContractService {
         contract.setUploadDate(updateContractDto.getUploadDate());
         contract.setDocumentType(updateContractDto.getDocumentType());
 
+         */
+        Contract contract=contractMapper.updateContractFromUpdateContractDto(updateContractDto);
+        contract.setId(updateContractDto.getId());
         return contractRepository.save(contract);
     }
 
@@ -72,7 +83,6 @@ public class ContractServiceImpl implements ContractService {
     public void delete(DeleteContractDto deleteContractDto) {
         Contract contract = contractRepository.findById(deleteContractDto.getId()).orElseThrow(() -> new RuntimeException("Contract not found"));
         contractRepository.delete(contract);
-
     }
 
     @Override
@@ -99,6 +109,5 @@ public class ContractServiceImpl implements ContractService {
                         contract.getDocumentUrl(),
                         contract.getSignatureDate()))
                 .toList();
-
     }
 }

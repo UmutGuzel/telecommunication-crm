@@ -53,7 +53,7 @@ services:
       - POSTGRES_PASSWORD=test
       - POSTGRES_DB=postgres
     volumes:
-      - notification-service_data:/var/lib/postgresql/data
+      - contract-service_data:/var/lib/postgresql/data
   kafka:
     image: bitnami/kafka
     ports:
@@ -201,14 +201,16 @@ services:
     build: ./config-server
     container_name: config-server-app
     restart: always
-    depends_on:
-      config-server:
-        condition: service_healthy
     ports:
       - "8090:8090"
     environment:
       SPRING_CLOUD_CONFIG_PROFILE: "dev"
       CONFIGURL: "http://config-server:8090"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8090/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   analytics-service:
     image: analytics-service
     build: .analytics-service/
@@ -258,3 +260,5 @@ volumes:
     payment-service_data:
     customer-support-service_data:
     contract-service_data:
+    prometheus_data:
+    grafana_data:

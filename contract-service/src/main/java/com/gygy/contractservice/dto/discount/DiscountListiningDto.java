@@ -13,6 +13,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class DiscountListiningDto {
+    private UUID id;
     private UUID customerId;
     private UUID contractDetailId;
     private UUID billingPlanId;
@@ -38,6 +39,10 @@ public class DiscountListiningDto {
         this.billingPlanList = billingPlans;
         this.createDate = createdAt;
         this.updateDate = updatedAt;
+
+    }
+
+    public DiscountListiningDto() {
 
     }
 }

@@ -7,6 +7,8 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
+import static com.gygy.contractservice.model.enums.Status.ACTIVE;
+
 @Component
 public class CommitmentBusinessRules {
     
@@ -240,7 +242,7 @@ public class CommitmentBusinessRules {
     
 
     public void checkIfCustomerCanMakeNewCommitment(UUID customerId) {
-        if (commitmentRepository.existsByContractDetail_CustomerIdAndStatus(customerId, "ACTIVE")) {
+        if (commitmentRepository.existsByContractDetail_CustomerIdAndStatus(customerId, ACTIVE)) {
             throw new BusinessException("Customer already has an active commitment");
         }
 

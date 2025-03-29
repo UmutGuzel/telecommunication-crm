@@ -7,6 +7,7 @@ import com.gygy.contractservice.dto.billingPlan.UpdateBillingPlanDto;
 import com.gygy.contractservice.entity.BillingPlan;
 import com.gygy.contractservice.entity.ContractDetail;
 import com.gygy.contractservice.entity.Discount;
+import com.gygy.contractservice.mapper.BillingPlanMapper;
 import com.gygy.contractservice.repository.BillingPlanRepository;
 import com.gygy.contractservice.rules.BillingPlanBusinessRules;
 import com.gygy.contractservice.service.BillingPlanService;
@@ -15,7 +16,6 @@ import com.gygy.contractservice.service.DiscountService;
 import com.gygy.contractservice.core.exception.type.BusinessException;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,16 +25,18 @@ public class BillingPlanServiceImpl implements BillingPlanService {
     private final ContractDetailService contractDetailService;
     private final DiscountService discountService;
     private final BillingPlanBusinessRules billingPlanBusinessRules;
+    private final BillingPlanMapper billingPlanMapper;
 
     public BillingPlanServiceImpl(
-            BillingPlanRepository billingPlanRepository, 
-            ContractDetailService contractDetailService, 
-            @Lazy DiscountService discountService, 
-            BillingPlanBusinessRules billingPlanBusinessRules) {
+            BillingPlanRepository billingPlanRepository,
+            ContractDetailService contractDetailService,
+            @Lazy DiscountService discountService,
+            BillingPlanBusinessRules billingPlanBusinessRules, BillingPlanMapper billingPlanMapper) {
         this.billingPlanRepository = billingPlanRepository;
         this.contractDetailService = contractDetailService;
         this.discountService = discountService;
         this.billingPlanBusinessRules = billingPlanBusinessRules;
+        this.billingPlanMapper = billingPlanMapper;
     }
 
     @Override
@@ -67,13 +69,13 @@ public class BillingPlanServiceImpl implements BillingPlanService {
         
         // 4. Temel ücret ve vergi oranı kontrolü
         billingPlanBusinessRules.checkIfBaseAmountAndTaxRateAreValid(
-            createBillingPlanDto.getBaseAmount(),
+            createBillingPlanDto.getBaseAmount() ,
             createBillingPlanDto.getTaxRate()
         );
         
         List<Discount> discounts = discountService.findAllById(createBillingPlanDto.getDiscountIds());
         ContractDetail contractDetail = contractDetailService.findById(createBillingPlanDto.getContractDetailId());
-        
+        /*
         BillingPlan billingPlan = new BillingPlan();
         billingPlan.setName(createBillingPlanDto.getName());
         billingPlan.setDescription(createBillingPlanDto.getDescription());
@@ -87,6 +89,12 @@ public class BillingPlanServiceImpl implements BillingPlanService {
         billingPlan.setStatus(createBillingPlanDto.getStatus());
         billingPlan.setTaxRate(createBillingPlanDto.getTaxRate());
         billingPlanRepository.save(billingPlan);
+
+         */
+        BillingPlan billingPlan=billingPlanMapper.createBillingPlanFromCreateBillingPlanDto(createBillingPlanDto);
+        billingPlan.setContractDetail(contractDetail);
+        billingPlan.setDiscounts(discounts);
+        billingPlanRepository.save(billingPlan);
     }
 
     @Override
@@ -95,6 +103,8 @@ public class BillingPlanServiceImpl implements BillingPlanService {
                                         ,billingPlan.getDescription()
                                         ,billingPlan.getBillingDay()
                                         ,billingPlan.getCycleType()
+                                        ,billingPlan.getCreatedAt(),
+                                        billingPlan.getUpdatedAt()
                                         ,billingPlan.getBaseAmount()
                                         ,billingPlan.getContractDetail()
                                         ,billingPlan.getPaymentDueDays()
@@ -104,36 +114,25 @@ public class BillingPlanServiceImpl implements BillingPlanService {
 
     @Override
     public BillingPlan update(UpdateBillingPlanDto updateBillingPlanDto) {
-        BillingPlan billingPlan = billingPlanRepository.findById(updateBillingPlanDto.getId())
-                .orElseThrow(() -> new BusinessException("Billing Plan not found with id: " + updateBillingPlanDto.getId()));
-        
-        // İş kurallarını tek tek kontrol et
-        // 1. İsim benzersizliği kontrolü (güncelleme için)
+
         billingPlanBusinessRules.checkIfBillingPlanNameExistsForUpdate(
             updateBillingPlanDto.getId(),
             updateBillingPlanDto.getName()
         );
         
-        // 2. Döngü tipi ve faturalama günü tutarlılığı
         billingPlanBusinessRules.checkIfCycleTypeAndBillingDayAreConsistent(
             updateBillingPlanDto.getCycleType().toString(),
             updateBillingPlanDto.getBillingDay()
         );
-        
-        // 3. Ödeme yöntemi ve vade tutarlılığı
         billingPlanBusinessRules.checkIfPaymentMethodAndDueDaysAreConsistent(
             updateBillingPlanDto.getPaymentMethod().toString(),
             updateBillingPlanDto.getPaymentDueDays()
         );
-        
-        // 4. Temel ücret ve vergi oranı kontrolü
         billingPlanBusinessRules.checkIfBaseAmountAndTaxRateAreValid(
             updateBillingPlanDto.getBaseAmount(),
             updateBillingPlanDto.getTaxRate()
         );
-        
-        ContractDetail contractDetail = contractDetailService.findById(updateBillingPlanDto.getContractDetailId());
-
+        /*
         billingPlan.setDescription(updateBillingPlanDto.getDescription());
         billingPlan.setBaseAmount(updateBillingPlanDto.getBaseAmount());
         billingPlan.setCycleType(updateBillingPlanDto.getCycleType());
@@ -145,7 +144,21 @@ public class BillingPlanServiceImpl implements BillingPlanService {
         billingPlan.setContractDetail(contractDetail);
         billingPlan.setPaymentMethod(updateBillingPlanDto.getPaymentMethod());
         billingPlan.setUpdatedAt(LocalDateTime.now());
+        billingPlan.setCreatedAt(LocalDateTime.now());
         return billingPlanRepository.save(billingPlan);
+         */
+        ContractDetail contractDetail = contractDetailService.findById(updateBillingPlanDto.getContractDetailId());
+        List<Discount> discounts = discountService.findAllById(updateBillingPlanDto.getDiscountIds());
+
+        BillingPlan billingPlan1 =billingPlanMapper.updateBillingPlanFromUpdateBillingPlanDto(updateBillingPlanDto);
+         billingPlan1.setContractDetail(contractDetail);
+         billingPlan1.setId(updateBillingPlanDto.getId());
+         billingPlan1.setDiscounts(discounts);
+
+         return billingPlanRepository.save(billingPlan1);
+
+
+
     }
 
     @Override
