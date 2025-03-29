@@ -27,7 +27,7 @@ class UserRuleTest {
 
         // When & Then
         RuntimeException exception = assertThrows(RuntimeException.class, () -> userRule.checkUserNotExists(user));
-        assertEquals("User already exists", exception.getMessage());
+        assertEquals("User with email 'test@example.com' already exists", exception.getMessage());
     }
 
     @Test
@@ -46,7 +46,7 @@ class UserRuleTest {
 
         // When & Then
         RuntimeException exception = assertThrows(RuntimeException.class, () -> userRule.checkUserExists(user));
-        assertEquals("User not found", exception.getMessage());
+        assertEquals("User with identifier 'id' not found", exception.getMessage());
     }
 
     @Test
