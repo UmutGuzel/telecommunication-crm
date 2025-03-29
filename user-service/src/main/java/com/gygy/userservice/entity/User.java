@@ -37,20 +37,21 @@ public class User {
     private String email;
     @Column(nullable = false)
     private String password;
+    @Column(name = "phone_number")
     private String phoneNumber;
+    @Column(name = "address")
     private String address;
-    private String city;
-    private String country;
+    @Column(name = "birth_date")
     private LocalDate birthDate;
     @Column(nullable = false)
     private boolean active = false;
-    @Column
+    @Column(name = "activation_token")
     private String activationToken;
-    @Column
+    @Column(name = "activation_token_expiry")
     private LocalDateTime activationTokenExpiry;
-    @Column
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
-    @Column
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
     @ManyToMany
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
