@@ -21,8 +21,4 @@ public class ErrorResponse {
     private String path;
 
     private Map<String, Object> details;
-
-    public static ErrorResponseBuilder builder() {
-        return new ErrorResponseBuilder().timestamp(LocalDateTime.now());
-    }
 }
