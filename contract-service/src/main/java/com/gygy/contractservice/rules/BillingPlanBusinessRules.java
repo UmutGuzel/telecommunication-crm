@@ -54,16 +54,17 @@ public class BillingPlanBusinessRules {
         }
     }
     
-    public void checkIfBaseAmountAndTaxRateAreValid(BigDecimal baseAmount, BigDecimal taxRate) {
+    public void checkIfBaseAmountAndTaxRateAreValid(Integer baseAmount, Double taxRate) {
 
         // Özel iş kuralı: Belirli bir tutarın altındaki faturalarda vergi istisnası olabilir
-        if (baseAmount.compareTo(new BigDecimal("50.0")) < 0 && taxRate.compareTo(BigDecimal.ZERO) > 0) {
+        if (baseAmount < 50 && taxRate > 0) {
             throw new BusinessException("Tax exemption applies for amounts below 50.0");
         }
-        
+
         // Özel iş kuralı: Çok yüksek tutarlı faturalarda özel vergi uygulaması
-        if (baseAmount.compareTo(new BigDecimal("10000.0")) > 0 && taxRate.compareTo(new BigDecimal("18.0")) != 0) {
+        if (baseAmount > 10000 && taxRate != 18.0) {
             throw new BusinessException("Special tax rate of 18% applies for amounts above 10000.0");
         }
     }
+
 }

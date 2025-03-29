@@ -5,100 +5,121 @@ import com.gygy.contractservice.dto.contract.CreateContractDto;
 import com.gygy.contractservice.dto.contract.DeleteContractDto;
 import com.gygy.contractservice.dto.contract.UpdateContractDto;
 import com.gygy.contractservice.entity.Contract;
+import com.gygy.contractservice.mapper.ContractMapper;
 import com.gygy.contractservice.repository.ContractRepository;
 import com.gygy.contractservice.service.ContractService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
+import static com.gygy.contractservice.constant.GeneralConstant.*;
 
 @Service
 public class ContractServiceImpl implements ContractService {
     private final ContractRepository contractRepository;
+    private final ContractMapper contractMapper;
+    private static final Logger logger = LoggerFactory.getLogger(ContractServiceImpl.class);
 
-    public ContractServiceImpl(ContractRepository contractRepository) {
+    public ContractServiceImpl(ContractRepository contractRepository, ContractMapper contractMapper) {
         this.contractRepository = contractRepository;
+        this.contractMapper = contractMapper;
     }
 
     @Override
     public Optional<Contract> findById(UUID id) {
-        return contractRepository.findById(id);
+        logger.debug("Searching for contract with ID: {}", id);
+        Optional<Contract> contract = contractRepository.findById(id);
+        if (contract.isPresent()) {
+            logger.info("Contract found with ID: {}", id);
+        } else {
+            logger.warn("Contract not found with ID: {}", id);
+        }
+        return contract;
     }
 
     @Override
     public void add(CreateContractDto createContractDto) {
-        Contract contract = new Contract();
-        contract.setContractNumber(createContractDto.getContractNumber());
-        contract.setStatus(createContractDto.getStatus());
-        contract.setCreatedAt(LocalDateTime.now());
-        contract.setUpdatedAt(LocalDateTime.now());
-        contract.setDocumentType(createContractDto.getDocumentType());
-        contract.setSignatureDate(createContractDto.getSignatureDate());
-        contract.setUploadDate(createContractDto.getUploadDate());
-        contract.setDocumentUrl(createContractDto.getDocumentUrl());
-        contractRepository.save(contract);
-
+        logger.info("Creating new contract with number: {}", createContractDto.getContractNumber());
+        try {
+            Contract contract = contractMapper.createContractFromCreateContractDto(createContractDto);
+            contractRepository.save(contract);
+            logger.info("Successfully created contract with ID: {}", contract.getId());
+        } catch (Exception e) {
+            logger.error("Error creating contract: {}", e.getMessage(), e);
+            throw e;
+        }
     }
 
     @Override
     public List<ContractListiningDto> getAll() {
-        List<ContractListiningDto> contractListiningDtos =
-                contractRepository
-                        .findAll()
-                        .stream()
-                        .map(contract -> new ContractListiningDto(contract.getContractNumber()
-                                , contract.getStatus()
-                                , contract.getDocumentType()
-                                , contract.getDocumentUrl()
-                                , contract.getSignatureDate())).toList();
-        return contractListiningDtos;
+            logger.debug(FETCHING_ALL_CONTRACTS);
+            List<Contract> contracts = contractRepository.findAll();
+            List<ContractListiningDto> contractDtos = contracts.stream()
+                    .map(contractMapper::toContractListiningDto)
+                    .collect(Collectors.toList());
+            logger.info("Found {} contracts", contractDtos.size());
+            return contractDtos;
+
     }
 
     @Override
     public Contract update(UpdateContractDto updateContractDto) {
-        Contract contract = contractRepository.findById(updateContractDto.getId()).orElseThrow(() -> new RuntimeException("Contract not found"));
-        contract.setContractNumber(updateContractDto.getContractNumber());
-        contract.setStatus(updateContractDto.getStatus());
-        contract.setDocumentUrl(updateContractDto.getDocumentUrl());
-        contract.setSignatureDate(updateContractDto.getSignatureDate());
-        contract.setUploadDate(updateContractDto.getUploadDate());
-        contract.setDocumentType(updateContractDto.getDocumentType());
-
-        return contractRepository.save(contract);
+        logger.info("Updating contract with ID: {}", updateContractDto.getId());
+        try {
+            Contract contract = contractMapper.updateContractFromUpdateContractDto(updateContractDto);
+            contract.setId(updateContractDto.getId());
+            Contract updatedContract = contractRepository.save(contract);
+            logger.info("Successfully updated contract with ID: {}", updatedContract.getId());
+            return updatedContract;
+        } catch (Exception e) {
+            logger.error("Error updating contract: {}", e.getMessage(), e);
+            throw e;
+        }
     }
 
     @Override
     public void delete(DeleteContractDto deleteContractDto) {
-        Contract contract = contractRepository.findById(deleteContractDto.getId()).orElseThrow(() -> new RuntimeException("Contract not found"));
-        contractRepository.delete(contract);
-
+        logger.info("Attempting to delete contract with ID: {}", deleteContractDto.getId());
+        try {
+            Contract contract = contractRepository.findById(deleteContractDto.getId())
+                    .orElseThrow(() -> {
+                        logger.error("Contract not found for deletion with ID: {}", deleteContractDto.getId());
+                        return new RuntimeException("Contract not found");
+                    });
+            contractRepository.delete(contract);
+            logger.info("Successfully deleted contract with ID: {}", deleteContractDto.getId());
+        } catch (Exception e) {
+            logger.error("Error deleting contract: {}", e.getMessage(), e);
+            throw e;
+        }
     }
 
     @Override
     public List<ContractListiningDto> getActiveContracts() {
-        return contractRepository.findAll().stream()
-                .filter(contract -> "ACTIVE".equals(contract.getStatus().toString()))
-                .map(contract -> new ContractListiningDto(
-                        contract.getContractNumber(),
-                        contract.getStatus(),
-                        contract.getDocumentType(),
-                        contract.getDocumentUrl(),
-                        contract.getSignatureDate()))
-                .toList();
+           logger.debug(FETCHING_ALL_CONTRACTS);
+            List<Contract> contracts = contractRepository.findAll();
+            List<ContractListiningDto> contractDtos = contracts.stream()
+            .filter(contract -> STATUS_ACTIVE.equals(contract.getStatus().toString()))
+                    .map(contractMapper::toContractListiningDto)
+                    .collect(Collectors.toList());
+            logger.info("Found {} active contracts", contractDtos.size());
+            return contractDtos;
     }
 
     @Override
     public List<ContractListiningDto> getSuspendedContracts() {
-        return contractRepository.findAll().stream()
-                .filter(contract -> "SUSPENDED".equals(contract.getStatus().toString()))
-                .map(contract -> new ContractListiningDto(
-                        contract.getContractNumber(),
-                        contract.getStatus(),
-                        contract.getDocumentType(),
-                        contract.getDocumentUrl(),
-                        contract.getSignatureDate()))
-                .toList();
+           logger.debug(FETCHING_ALL_CONTRACTS);
+            List<Contract> contracts = contractRepository.findAll();
+            List<ContractListiningDto> suspendedContracts = contracts.stream()
+                    .filter(contract -> STATUS_SUSPENDED.equals(contract.getStatus().toString()))
+                    .map(contractMapper::toContractListiningDto)
+                    .collect(Collectors.toList());
+        logger.info("Found {} suspended contracts", suspendedContracts.size());
+            return suspendedContracts;
 
     }
 }

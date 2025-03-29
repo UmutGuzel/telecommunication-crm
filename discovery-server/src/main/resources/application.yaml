@@ -6,7 +6,7 @@ spring:
     config:
       profile: local
   config:
-      import: configserver:${configurl}
+    import: configserver:${configurl}
 server:
     port: 8888
 

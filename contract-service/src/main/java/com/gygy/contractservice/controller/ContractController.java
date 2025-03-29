@@ -32,11 +32,11 @@ public class ContractController {
     public void delete(@RequestBody DeleteContractDto deleteContractDto) {
         contractService.delete(deleteContractDto);
     }
-    @GetMapping("/getActiveContracts")
+    @GetMapping("/get-active-contracts")
     public List<ContractListiningDto> getActiveContracts(){
         return contractService.getActiveContracts();
     }
-    @GetMapping("/getSuspendedContracts")
+    @GetMapping("/get-suspended-contracts")
     public List<ContractListiningDto> getSuspendedContracts(){
         return contractService.getSuspendedContracts();
     }

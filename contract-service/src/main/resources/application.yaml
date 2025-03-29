@@ -2,9 +2,55 @@ configurl: http://localhost:8090
 spring:
   application:
     name: contract-service
+  datasource:
+    url: "jdbc:postgresql://localhost:5436/contract_service"
+    username: postgres
+    password: test
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    showSql: true
+    hibernate:
+      ddlAuto: update
   cloud:
+    function:
+      enabled: false
+    stream:
+      default-binder: kafka
+      function:
+        definition: processPlanEvent
+      bindings:
+        processPlanEvent-in-0:
+          destination: plan-requests
+          group: contract-group
+          binder: kafka
+        discount-events-out-0:
+          destination: discount-events
+          binder: kafka
+        notification-events-out-0:
+          destination: notification-events
+          binder: kafka
+      kafka:
+        binder:
+          brokers: localhost:9092
+          auto-create-topics: true
+          autoStartup: false
+          required: false
+          enabled: false
+          configuration:
+            key.serializer: org.apache.kafka.common.serialization.StringSerializer
+            value.serializer: org.springframework.kafka.support.serializer.JsonSerializer
+            key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+            value.deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+            spring.json.trusted.packages: "com.gygy.contractservice.event"
+            max.block.ms: 1000
+            reconnect.backoff.ms: 1000
+            reconnect.backoff.max.ms: 5000
+            request.timeout.ms: 5000
     config:
       profile: local
   config:
-      import: configserver:${configurl}
-
+    import: configserver:${configurl}
+server:
+  port: 9030

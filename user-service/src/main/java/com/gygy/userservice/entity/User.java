@@ -18,6 +18,8 @@ import lombok.Builder;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.Column;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 
 @Entity
 @Table(name = "users")
@@ -31,7 +33,7 @@ public class User {
     private UUID id;
     private String name;
     private String surname;
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
     @Column(nullable = false)
     private String password;
@@ -40,7 +42,15 @@ public class User {
     private String city;
     private String country;
     private LocalDate birthDate;
+    @Column(nullable = false)
+    private boolean active = false;
+    @Column
+    private String activationToken;
+    @Column
+    private LocalDateTime activationTokenExpiry;
+    @Column
     private LocalDateTime createdAt;
+    @Column
     private LocalDateTime updatedAt;
     @ManyToMany
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
@@ -52,4 +62,15 @@ public class User {
     private String resetToken;
     @Column(name = "reset_token_expiry")
     private LocalDateTime resetTokenExpiry;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 }

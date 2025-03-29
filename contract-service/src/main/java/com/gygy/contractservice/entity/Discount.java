@@ -6,6 +6,7 @@ import com.gygy.contractservice.model.enums.DiscountType;
 import com.gygy.contractservice.model.enums.Status;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UuidGenerator;
@@ -18,10 +19,12 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Discount {
     @Id
     @UuidGenerator
     private UUID id;
+    private String name;
 
     @Enumerated(EnumType.STRING)
     @Column(name="billing_cycle_type")
@@ -35,10 +38,12 @@ public class Discount {
     private double amount;
     private double percentage;
 
+    @Column(nullable = false, columnDefinition = "varchar(255) default 'ACTIVE'")
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
     private Status status;
+
     private UUID customerId;
+    private String description;
 
 
     @Column(name="start_date")

@@ -5,9 +5,9 @@ spring:
     config:
       server:
         git:
-          uri: "http://github.com/UmutGuzel/crm.microservice.config"
+          uri: "http://github.com/UmutGuzel/crm.microservice.config.git"
           default-label: "master"
-          searchPaths: user-service,contract-service,notification-service,gateway-server,payment-service,order-service,product-service,discovery-server,customer-support-service
+          searchPaths: user-service, contract-service, notification-service, gateway-server, payment-service, order-service, product-service, discovery-server, customer-support-service, plan-service, customer-service, analytics-service
 
 server:
   port: 8090
@@ -17,6 +17,6 @@ management:
     web:
       exposure:
         include: "health"
-    endpoint:
-      health:
-        show-details: always
+  endpoint:
+    health:
+      show-details: always
