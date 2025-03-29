@@ -1,6 +1,5 @@
-package com.gygy.customerservice.application.corporateCustomer.command.update;
+package com.gygy.customerservice.infrastructure.messaging.event;
 
-import com.gygy.customerservice.application.customer.dto.AddressResponse;
 import lombok.*;
 
 import java.util.UUID;
@@ -10,15 +9,12 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UpdatedCorporateCustomerResponse {
+public class UpdatedCorporateCustomerEvent {
     private UUID id;
     private String email;
     private String phoneNumber;
-
     private String taxNumber;
     private String companyName;
     private String contactPersonName;
     private String contactPersonSurname;
-
-    private AddressResponse address;
-}
+} 
