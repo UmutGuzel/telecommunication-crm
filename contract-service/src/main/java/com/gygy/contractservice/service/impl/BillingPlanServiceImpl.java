@@ -14,10 +14,15 @@ import com.gygy.contractservice.service.BillingPlanService;
 import com.gygy.contractservice.service.ContractDetailService;
 import com.gygy.contractservice.service.DiscountService;
 import com.gygy.contractservice.core.exception.type.BusinessException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
+import static com.gygy.contractservice.constant.GeneralConstant.FETCHING_ALL_BILLING_PLANS;
 
 @Service
 public class BillingPlanServiceImpl implements BillingPlanService {
@@ -26,6 +31,8 @@ public class BillingPlanServiceImpl implements BillingPlanService {
     private final DiscountService discountService;
     private final BillingPlanBusinessRules billingPlanBusinessRules;
     private final BillingPlanMapper billingPlanMapper;
+    private static final Logger logger = LoggerFactory.getLogger(BillingPlanServiceImpl.class);
+
 
     public BillingPlanServiceImpl(
             BillingPlanRepository billingPlanRepository,
@@ -38,16 +45,31 @@ public class BillingPlanServiceImpl implements BillingPlanService {
         this.billingPlanBusinessRules = billingPlanBusinessRules;
         this.billingPlanMapper = billingPlanMapper;
     }
-
     @Override
     public List<BillingPlan> findAll(List<UUID> billingPlanId) {
-        return billingPlanRepository.findAllById(billingPlanId);
+        logger.debug(FETCHING_ALL_BILLING_PLANS);
+        List<BillingPlan> billingPlans = billingPlanRepository.findAllById(billingPlanId);
+        if (billingPlans.isEmpty()) {
+            logger.warn("No Billing Plans found with ID: {}", billingPlanId);
+        } else {
+            logger.info("Billing Plans found with ID: {}", billingPlanId);
+        }
+
+        return billingPlans;
     }
+
 
     @Override
     public BillingPlan findById(UUID id) {
-       return billingPlanRepository.findById(id)
-               .orElseThrow(() -> new BusinessException("Billing plan not found with id: " + id));
+        logger.debug("Searching for billing plan with ID: {}", id);
+        BillingPlan billingPlan = billingPlanRepository.findById(id).orElseThrow(
+                () -> new BusinessException("Billing plan not found with id: " + id));
+        if (billingPlan != null) {
+            logger.info("Billing Plan found with ID: {}", id);
+        } else {
+            logger.warn("Billing Plan not found with ID: {}", id);
+        }
+        return billingPlan;
     }
 
     @Override
@@ -75,41 +97,32 @@ public class BillingPlanServiceImpl implements BillingPlanService {
         
         List<Discount> discounts = discountService.findAllById(createBillingPlanDto.getDiscountIds());
         ContractDetail contractDetail = contractDetailService.findById(createBillingPlanDto.getContractDetailId());
-        /*
-        BillingPlan billingPlan = new BillingPlan();
-        billingPlan.setName(createBillingPlanDto.getName());
-        billingPlan.setDescription(createBillingPlanDto.getDescription());
-        billingPlan.setBaseAmount(createBillingPlanDto.getBaseAmount());
-        billingPlan.setContractDetail(contractDetail);
-        billingPlan.setCycleType(createBillingPlanDto.getCycleType());
-        billingPlan.setDiscounts(discounts);
-        billingPlan.setBillingDay(createBillingPlanDto.getBillingDay());
-        billingPlan.setPaymentDueDays(createBillingPlanDto.getPaymentDueDays());
-        billingPlan.setPaymentMethod(createBillingPlanDto.getPaymentMethod());
-        billingPlan.setStatus(createBillingPlanDto.getStatus());
-        billingPlan.setTaxRate(createBillingPlanDto.getTaxRate());
-        billingPlanRepository.save(billingPlan);
 
-         */
-        BillingPlan billingPlan=billingPlanMapper.createBillingPlanFromCreateBillingPlanDto(createBillingPlanDto);
-        billingPlan.setContractDetail(contractDetail);
-        billingPlan.setDiscounts(discounts);
-        billingPlanRepository.save(billingPlan);
+
+        logger.info("Creating new billing plan with name: {}", createBillingPlanDto.getName());
+        try {
+            BillingPlan billingPlan=billingPlanMapper.createBillingPlanFromCreateBillingPlanDto(createBillingPlanDto);
+            billingPlan.setContractDetail(contractDetail);
+            billingPlan.setDiscounts(discounts);
+            billingPlanRepository.save(billingPlan);
+            logger.info("Successfully created billing plan with ID: {}", billingPlan.getId());
+        } catch (Exception e) {
+            logger.error("Error creating billing plan: {}", e.getMessage(), e);
+            throw e;
+        }
+
     }
 
     @Override
     public List<BillingPlanListiningDto> getAll() {
-        return billingPlanRepository.findAll().stream().map(billingPlan-> new BillingPlanListiningDto(billingPlan.getName()
-                                        ,billingPlan.getDescription()
-                                        ,billingPlan.getBillingDay()
-                                        ,billingPlan.getCycleType()
-                                        ,billingPlan.getCreatedAt(),
-                                        billingPlan.getUpdatedAt()
-                                        ,billingPlan.getBaseAmount()
-                                        ,billingPlan.getContractDetail()
-                                        ,billingPlan.getPaymentDueDays()
-                                        ,billingPlan.getStatus()
-                                        ,billingPlan.getTaxRate())).toList();
+
+        logger.debug(FETCHING_ALL_BILLING_PLANS);
+        List<BillingPlan>  billingPlans = billingPlanRepository.findAll();
+        List<BillingPlanListiningDto> billingPlanListiningDtos = billingPlans.stream()
+                .map(billingPlanMapper::toBillingPlanListiningDto )
+                .collect(Collectors.toList());
+        logger.info("Found {} billing plan", billingPlanListiningDtos.size());
+        return billingPlanListiningDtos;
     }
 
     @Override
@@ -132,39 +145,41 @@ public class BillingPlanServiceImpl implements BillingPlanService {
             updateBillingPlanDto.getBaseAmount(),
             updateBillingPlanDto.getTaxRate()
         );
-        /*
-        billingPlan.setDescription(updateBillingPlanDto.getDescription());
-        billingPlan.setBaseAmount(updateBillingPlanDto.getBaseAmount());
-        billingPlan.setCycleType(updateBillingPlanDto.getCycleType());
-        billingPlan.setBillingDay(updateBillingPlanDto.getBillingDay());
-        billingPlan.setDiscounts(updateBillingPlanDto.getDiscount());
-        billingPlan.setPaymentDueDays(updateBillingPlanDto.getPaymentDueDays());
-        billingPlan.setStatus(updateBillingPlanDto.getStatus());
-        billingPlan.setTaxRate(updateBillingPlanDto.getTaxRate());
-        billingPlan.setContractDetail(contractDetail);
-        billingPlan.setPaymentMethod(updateBillingPlanDto.getPaymentMethod());
-        billingPlan.setUpdatedAt(LocalDateTime.now());
-        billingPlan.setCreatedAt(LocalDateTime.now());
-        return billingPlanRepository.save(billingPlan);
-         */
+
         ContractDetail contractDetail = contractDetailService.findById(updateBillingPlanDto.getContractDetailId());
         List<Discount> discounts = discountService.findAllById(updateBillingPlanDto.getDiscountIds());
 
-        BillingPlan billingPlan1 =billingPlanMapper.updateBillingPlanFromUpdateBillingPlanDto(updateBillingPlanDto);
-         billingPlan1.setContractDetail(contractDetail);
-         billingPlan1.setId(updateBillingPlanDto.getId());
-         billingPlan1.setDiscounts(discounts);
-
-         return billingPlanRepository.save(billingPlan1);
 
 
-
+        logger.info("Updating billing plan with ID: {}", updateBillingPlanDto.getId());
+        try {
+            BillingPlan billingPlan1 =billingPlanMapper.updateBillingPlanFromUpdateBillingPlanDto(updateBillingPlanDto);
+            billingPlan1.setContractDetail(contractDetail);
+            billingPlan1.setId(updateBillingPlanDto.getId());
+            billingPlan1.setDiscounts(discounts);
+            BillingPlan updatedBillingPlan=billingPlanRepository.save(billingPlan1);
+            logger.info("Successfully updated billing plan with ID: {}", updatedBillingPlan.getId());
+            return updatedBillingPlan;
+        } catch (Exception e) {
+            logger.error("Error updating billing plan: {}", e.getMessage(), e);
+            throw e;
+        }
     }
-
     @Override
     public void delete(DeleteBillingPlanDto deleteBillingPlanDto) {
-        BillingPlan billingPlan = billingPlanRepository.findById(deleteBillingPlanDto.getId())
-                .orElseThrow(() -> new BusinessException("Billing Plan not found with id: " + deleteBillingPlanDto.getId()));
-        billingPlanRepository.delete(billingPlan);
+        logger.info("Attempting to delete billing plan with ID: {}", deleteBillingPlanDto.getId());
+        try {
+            BillingPlan billingPlan = billingPlanRepository.findById(deleteBillingPlanDto.getId())
+                    .orElseThrow(() -> {
+                        logger.error("Billing Plan not found for deletion with ID: {}", deleteBillingPlanDto.getId());
+                        return new BusinessException("Billing Plan not found");
+                    });
+            billingPlanRepository.delete(billingPlan);
+            logger.info("Successfully deleted billing plan with ID: {}", deleteBillingPlanDto.getId());
+        } catch (Exception e) {
+            logger.error("Error deleting billing plan: {}", e.getMessage(), e);
+            throw e;
+        }
     }
+
 }

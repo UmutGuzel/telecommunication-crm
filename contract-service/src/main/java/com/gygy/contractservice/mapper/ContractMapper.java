@@ -1,5 +1,6 @@
 package com.gygy.contractservice.mapper;
 
+import com.gygy.contractservice.dto.contract.ContractListiningDto;
 import com.gygy.contractservice.dto.contract.CreateContractDto;
 import com.gygy.contractservice.dto.contract.UpdateContractDto;
 import com.gygy.contractservice.entity.Contract;
@@ -34,4 +35,14 @@ public class ContractMapper {
                 .id(updateContractDto.getId())
                 .build();
     }
+    public ContractListiningDto toContractListiningDto(Contract contract){
+        return new ContractListiningDto(
+            contract.getContractNumber(),
+            contract.getStatus(),
+            contract.getDocumentType(),
+            contract.getDocumentUrl(),
+            contract.getSignatureDate()
+                );
+    }
+    
 }

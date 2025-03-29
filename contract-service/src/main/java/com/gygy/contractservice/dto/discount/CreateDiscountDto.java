@@ -15,6 +15,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class CreateDiscountDto {
+    private String name;
     @NotNull(message = "Contract detail ID is required")
     private UUID contractDetailId;
     @NotNull(message = "Billing Plan  ID is required")

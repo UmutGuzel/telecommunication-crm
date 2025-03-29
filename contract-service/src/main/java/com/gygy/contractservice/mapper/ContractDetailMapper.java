@@ -1,5 +1,6 @@
 package com.gygy.contractservice.mapper;
 
+import com.gygy.contractservice.dto.contractDetail.ContractDetailListiningDto;
 import com.gygy.contractservice.dto.contractDetail.CreateContractDetailDto;
 import com.gygy.contractservice.dto.contractDetail.UpdateContractDetailDto;
 import com.gygy.contractservice.entity.ContractDetail;
@@ -34,6 +35,17 @@ public class ContractDetailMapper {
                 .serviceType(updateContractDetailDto.getServiceType())
                 .customerId(updateContractDetailDto.getCustomerId())
                 .build();
+    }
+    public ContractDetailListiningDto toContractDetailListiningDto(ContractDetail contractDetail){
+        return new ContractDetailListiningDto(
+                contractDetail.getContractDetailType()
+                ,contractDetail.getContract().getId()
+                ,contractDetail.getStatus()
+                ,contractDetail.getEndDate()
+                ,contractDetail.getStartDate()
+                ,contractDetail.getCustomerId()
+                ,contractDetail.getServiceType()
+        );
     }
 
 }

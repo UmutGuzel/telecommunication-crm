@@ -1,6 +1,7 @@
 package com.gygy.contractservice.mapper;
 
 import com.gygy.contractservice.dto.discount.CreateDiscountDto;
+import com.gygy.contractservice.dto.discount.DiscountListiningDto;
 import com.gygy.contractservice.dto.discount.UpdateDiscountDto;
 import com.gygy.contractservice.entity.Discount;
 import lombok.Data;
@@ -40,6 +41,21 @@ public class DiscountMapper {
               .customerId(updateDiscountDto.getCustomerId())
               .billingCycleType(updateDiscountDto.getBillingCycleType())
               .build();
+    }
+    public DiscountListiningDto toDiscountListiningDto(Discount discount){
+        return new DiscountListiningDto(
+                discount.getDiscountType()
+                ,discount.getAmount()
+                ,discount.getPercentage()
+                ,discount.getContractDetail()
+                ,discount.getEndDate()
+                ,discount.getStartDate()
+                ,discount.getCreatedAt(),
+                discount.getUpdatedAt()
+                ,discount.getCustomerId()
+                ,discount.getStatus()
+                ,discount.getDescription()
+        );
     }
 
 }
