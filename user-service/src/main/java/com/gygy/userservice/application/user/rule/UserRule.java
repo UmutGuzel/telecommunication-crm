@@ -5,6 +5,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import com.gygy.userservice.entity.User;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Component
 @RequiredArgsConstructor
 public class UserRule {
@@ -25,6 +27,16 @@ public class UserRule {
     public void checkPassword(User user, String password) {
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new RuntimeException("Invalid password");
+        }
+    }
+
+    public void checkActivationTokenNotExpired(User user) {
+        if (user.getActivationTokenExpiry() == null) {
+            throw new IllegalArgumentException("Activation token not found");
+        }
+
+        if (user.getActivationTokenExpiry().isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("Activation token has expired");
         }
     }
 }

@@ -1,3 +1,4 @@
+configurl: http://localhost:8090
 spring:
   application:
     name: contract-service
@@ -47,5 +48,9 @@ spring:
             reconnect.backoff.ms: 1000
             reconnect.backoff.max.ms: 5000
             request.timeout.ms: 5000
+    config:
+      profile: local
+  config:
+    import: configserver:${configurl}
 server:
   port: 9030

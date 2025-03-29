@@ -1,21 +1,38 @@
+configurl: http://localhost:8090
 spring:
   application:
     name: user-service
-  datasource:
-    url: "jdbc:postgresql://localhost:5432/user-service"
-    username: postgres
-    password: test
-  jpa:
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-    showSql: true
-    hibernate:
-      ddlAuto: update
+  cloud:
+    config:
+      profile: local
+  config:
+    import: configserver:${configurl}
+  kafka:
+    bootstrap-servers: localhost:9092
 
-server:
-  port: 9010
 
-jwt:
-  expiration: 7200000
-  secret: "KRbQDv3hU8U9BOF0kjynHH35tpPiOoiBEJVooJ9Z1yTZZXaqlha0xHXx1DOlVvU"
+app-config:
+  gateway-url: ${GATEWAY_URL:http://localhost:8080}
+  reset-password-path: /api/auth/reset-password
+  activation-path: /api/users/activate
+  activation-token-expiry-hours: 24
+  kafka:
+    topics:
+      password-reset-events: password-reset-events
+      user-activation-events: user-activation-events
+
+# Remove old kafka topics config
+# kafka:
+#  topics:
+#    passwordResetEvents: password-reset-events
+#    userActivation: user-activation-events
+
+# Add logging configuration:
+logging:
+  level:
+    root: INFO
+    com.gygy.userservice: DEBUG
+    org.springframework: INFO
+  file:
+    path: ${user.dir}/logs
+    name: ${user.dir}/logs/user-service.log

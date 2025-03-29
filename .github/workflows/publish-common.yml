@@ -1,0 +1,40 @@
+name: Publish Common Library to Maven Central
+
+on:
+  push:
+    branches: [ common ]
+    paths:
+      - 'common/**'
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          server-id: central
+          settings-path: ${{ github.workspace }}
+      
+      - name: Configure GPG Key
+        run: |
+          echo "${{ secrets.GPG_PRIVATE_KEY }}" > private-key.asc
+          gpg --batch --import private-key.asc
+          gpg --list-secret-keys --keyid-format LONG
+          rm private-key.asc
+        
+      - name: Publish to Maven Central
+        env:
+          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run: |
+          cd common
+          mvn clean deploy -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }} --settings ${{ github.workspace }}/.github/workflows/settings.xml

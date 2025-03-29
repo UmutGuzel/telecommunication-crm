@@ -36,7 +36,7 @@ public class UpdateCustomerCommand implements Command<UpdatedCustomerResponse> {
         @Override
         public UpdatedCustomerResponse handle(UpdateCustomerCommand command) {
             Customer customer = customerRepository.findById(command.getId()).orElse(null);
-            customerRule.checkUserExists(customer);
+            customerRule.checkCustomerExists(customer);
 
             customerMapper.updateCustomer(customer, command);
             customerRepository.save(customer);
