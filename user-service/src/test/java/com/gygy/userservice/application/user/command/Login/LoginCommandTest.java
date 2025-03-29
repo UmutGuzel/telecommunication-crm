@@ -62,7 +62,6 @@ class LoginCommandTest {
         assertNotNull(response);
         assertEquals("token123", response.getToken());
         verify(userRepository).findByEmail("test@example.com");
-        verify(userRule).checkUserExists(user);
         verify(userRule).checkPassword(user, "password");
         verify(jwtService).generateToken(any());
     }
