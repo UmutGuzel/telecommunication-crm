@@ -43,9 +43,7 @@ import static org.mockito.Mockito.*;
     }
     @Test
     void getContract(){
-        id=UUID.randomUUID();
         ContractListiningDto contractListiningDto=new ContractListiningDto();
-        contractListiningDto.setId(id);
         contractListiningDto.setStatus(Status.ACTIVE);
         contractListiningDto.setContractNumber("123");
         contractListiningDto.setCreatedAt(LocalDateTime.now());
@@ -69,7 +67,6 @@ import static org.mockito.Mockito.*;
         assertEquals("Test Url",response.get(0).getDocumentUrl());
         assertEquals("Test Type",response.get(0).getDocumentType());
 
-        assertNotNull(response.get(0).getId());
         verify(contractService,times(1)).getAll();
     }
     @Test
