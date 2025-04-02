@@ -2,6 +2,7 @@ package com.gygy.contractservice.service;
 
 import com.gygy.contractservice.dto.contract.CreateContractDto;
 import com.gygy.contractservice.entity.Contract;
+import com.gygy.contractservice.mapper.ContractMapper;
 import com.gygy.contractservice.repository.ContractRepository;
 import com.gygy.contractservice.service.impl.ContractServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,6 +26,8 @@ class ContractServiceImplTest {
     private ContractRepository contractRepository;
     @InjectMocks
     private ContractServiceImpl contractService;
+    @Mock
+    private ContractMapper contractMapper;
 
     private UUID id;
     private Contract contract;
@@ -55,14 +58,17 @@ class ContractServiceImplTest {
     @Test
     void whenAddCalledWithValidRequest_itShouldSaveContractToRepository(){
         //Arrange
+        when(contractMapper.createContractFromCreateContractDto(createContractDto)).thenReturn(contract);
         when(contractRepository.save(any(Contract.class))).thenReturn(contract);
 
         //Act
         contractService.add(createContractDto);
 
         // Assert - Beklenen sonuçları doğruluyoruz
+        verify(contractMapper,times(1)).createContractFromCreateContractDto(createContractDto);
         verify(contractRepository, times(1)).save(any(Contract.class));
     }
+
     @Test
     void whenFindByIdCalledWithValidId_itShouldReturnContract() {
         // Arrange

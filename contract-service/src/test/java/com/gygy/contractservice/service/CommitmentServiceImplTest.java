@@ -1,8 +1,10 @@
 package com.gygy.contractservice.service;
 
+import com.gygy.contractservice.dto.billingPlan.CreateBillingPlanDto;
 import com.gygy.contractservice.dto.commitment.CreateCommitmentDto;
 import com.gygy.contractservice.entity.Commitment;
 import com.gygy.contractservice.entity.ContractDetail;
+import com.gygy.contractservice.mapper.CommitmentMapper;
 import com.gygy.contractservice.repository.CommitmentRepository;
 import com.gygy.contractservice.rules.CommitmentBusinessRules;
 import com.gygy.contractservice.service.impl.CommitmentServiceImpl;
@@ -31,6 +33,8 @@ import static org.mockito.Mockito.*;
 
     @Mock
     private ContractDetailService contractDetailService;
+    @Mock
+    private CommitmentMapper commitmentMapper;
 
     @Mock
     private CommitmentBusinessRules commitmentBusinessRules;
@@ -84,10 +88,13 @@ import static org.mockito.Mockito.*;
         doNothing().when(commitmentBusinessRules).checkIfCommitmentNameExists(any(String.class));
         doNothing().when(commitmentBusinessRules).checkIfCycleTypeAndBillingDayAreConsistent(any(String.class), any(Integer.class));
         doNothing().when(commitmentBusinessRules).checkIfCommitmentDatesAreValid(any(LocalDate.class), any(LocalDate.class));
-        doNothing().when(commitmentBusinessRules).checkIfCustomerCanMakeNewCommitment(any(UUID.class));
+        doNothing().when(commitmentBusinessRules).checkIfCustomerCanMakeNewCommitment(any());
 
         // ContractDetail'ı mock'lıyoruz
         when(contractDetailService.findById(contractDetailId)).thenReturn(contractDetail);
+
+        when(commitmentMapper.createCommitmentFromCreateCommitmentDto(any(CreateCommitmentDto.class)))
+                .thenReturn(commitment);
 
         // Commitment Repository'sini mock'lıyoruz
         when(commitmentRepository.save(any(Commitment.class))).thenReturn(commitment);
@@ -102,7 +109,7 @@ import static org.mockito.Mockito.*;
         verify(commitmentBusinessRules, times(1)).checkIfCommitmentNameExists(any(String.class));
         verify(commitmentBusinessRules, times(1)).checkIfCycleTypeAndBillingDayAreConsistent(any(String.class), any(Integer.class));
         verify(commitmentBusinessRules, times(1)).checkIfCommitmentDatesAreValid(any(LocalDate.class), any(LocalDate.class));
-        verify(commitmentBusinessRules, times(1)).checkIfCustomerCanMakeNewCommitment(any(UUID.class));
+        verify(commitmentBusinessRules, times(1)).checkIfCustomerCanMakeNewCommitment(any());
     }
 
     @Test

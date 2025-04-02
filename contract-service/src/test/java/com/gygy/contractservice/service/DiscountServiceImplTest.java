@@ -2,11 +2,13 @@ package com.gygy.contractservice.service;
 
 import com.gygy.contractservice.dto.discount.CreateDiscountDto;
 import com.gygy.contractservice.entity.Discount;
+import com.gygy.contractservice.mapper.DiscountMapper;
 import com.gygy.contractservice.repository.DiscountRepository;
 import com.gygy.contractservice.service.impl.DiscountServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -25,13 +27,20 @@ import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
- class DiscountServiceImplTest {
+class DiscountServiceImplTest {
+
     @Mock
-    private  DiscountRepository discountRepository;
+    private DiscountRepository discountRepository;
+
     @Mock
-    private  BillingPlanService billingPlanService;
+    private BillingPlanService billingPlanService;
+
     @Mock
-    private  ContractDetailService contractDetailService;
+    private ContractDetailService contractDetailService;
+
+    @Mock
+    private DiscountMapper discountMapper;
+
     @InjectMocks
     private DiscountServiceImpl discountService;
 
@@ -40,9 +49,9 @@ import static org.mockito.Mockito.*;
     private Discount discount;
 
     @BeforeEach
-    void setup(){
-        discountId =UUID.randomUUID();
-        discount=new Discount();
+    void setup() {
+        discountId = UUID.randomUUID();
+        discount = new Discount();
         discount.setId(discountId);
         discount.setStartDate(LocalDate.now());
         discount.setEndDate(LocalDate.now());
@@ -50,23 +59,28 @@ import static org.mockito.Mockito.*;
         discount.setDescription("Test Description");
         discount.setAmount(12.22);
 
-        createDiscountDto=new CreateDiscountDto();
+        createDiscountDto = new CreateDiscountDto();
         createDiscountDto.setDescription("Test Description");
         createDiscountDto.setAmount(12.22);
         createDiscountDto.setStartDate(LocalDate.now());
         createDiscountDto.setEndDate(LocalDate.now());
     }
+
     @Test
-     void whenAddCalledWithValidRequest_itShouldSaveDiscountToRepository(){
-        //Arrange
+    void whenAddCalledWithValidRequest_itShouldSaveDiscountToRepository() {
+        when(discountMapper.createDiscountFromCreateDiscountDto(createDiscountDto)).thenReturn(discount);
         when(discountRepository.save(any(Discount.class))).thenReturn(discount);
 
-        //Act
+        // Act: Calling the add method
         discountService.add(createDiscountDto);
 
-        // Assert - Beklenen sonuçları doğruluyoruz
+        // Assert: Verifying the interactions
         verify(discountRepository, times(1)).save(any(Discount.class));
+        verify(discountMapper, times(1)).createDiscountFromCreateDiscountDto(createDiscountDto);
     }
+
+
+
     @Test
      void whenFindByIdCalledWithValidId_itShouldReturnDiscount() {
         // Arrange
