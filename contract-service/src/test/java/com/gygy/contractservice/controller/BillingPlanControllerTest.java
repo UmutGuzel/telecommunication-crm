@@ -51,6 +51,8 @@ import static org.mockito.Mockito.*;
     }
     @Test
     void getAllBillingPlan() {
+        contractDetail=new ContractDetail();
+        contractDetail.setId(UUID.randomUUID());
         BillingPlanListiningDto billingPlanListiningDto=new BillingPlanListiningDto();
         billingPlanListiningDto.setBillingDay(12);
         billingPlanListiningDto.setName("Test Name");

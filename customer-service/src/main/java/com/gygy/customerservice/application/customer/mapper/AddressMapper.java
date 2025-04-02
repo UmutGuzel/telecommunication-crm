@@ -18,8 +18,10 @@ public class AddressMapper {
         return Address.builder()
                 .street(addressDto.getStreet())
                 .district(addressDto.getDistrict())
+                .apartmentNumber(addressDto.getApartmentNumber())
                 .city(addressDto.getCity())
                 .country(addressDto.getCountry())
+                .postalCode(addressDto.getPostalCode())
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
@@ -29,8 +31,10 @@ public class AddressMapper {
         return AddressResponse.builder()
                 .street(address.getStreet())
                 .district(address.getDistrict())
+                .apartmentNumber(address.getApartmentNumber())
                 .city(address.getCity())
                 .country(address.getCountry())
+                .postalCode(address.getPostalCode())
                 .build();
     }
 
@@ -38,8 +42,10 @@ public class AddressMapper {
         
         existingAddress.setStreet(addressDto.getStreet() != null ? addressDto.getStreet() : existingAddress.getStreet());
         existingAddress.setDistrict(addressDto.getDistrict() != null ? addressDto.getDistrict() : existingAddress.getDistrict());
+        existingAddress.setApartmentNumber(addressDto.getApartmentNumber() != null ? addressDto.getApartmentNumber() : existingAddress.getApartmentNumber());
         existingAddress.setCity(addressDto.getCity() != null ? addressDto.getCity() : existingAddress.getCity());
         existingAddress.setCountry(addressDto.getCountry() != null ? addressDto.getCountry() : existingAddress.getCountry());
+        existingAddress.setPostalCode(addressDto.getPostalCode() != null ? addressDto.getPostalCode() : existingAddress.getPostalCode());
         existingAddress.setUpdatedAt(LocalDateTime.now());
     
         return existingAddress;

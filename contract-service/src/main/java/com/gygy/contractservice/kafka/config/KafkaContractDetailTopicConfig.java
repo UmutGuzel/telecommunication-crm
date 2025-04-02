@@ -1,4 +1,4 @@
-package com.gygy.customerservice.infrastructure.messaging;
+package com.gygy.contractservice.kafka.config;
 
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.context.annotation.Bean;
@@ -6,14 +6,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.TopicBuilder;
 
 @Configuration
-public class KafkaCustomerTopicConfig {
-
+public class KafkaContractDetailTopicConfig {
     @Bean
-    public NewTopic customerCreatedTopic() {
+    public NewTopic contractdetailTopic(){
         return TopicBuilder
-                .name("customer-created-topic")
+                .name("contract-detail-created-topic")
                 .build();
     }
-
-
 }

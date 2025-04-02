@@ -1,4 +1,4 @@
-package com.gygy.customerservice.infrastructure.messaging;
+package com.gygy.customerservice.infrastructure.messaging.event;
 
 import lombok.*;
 

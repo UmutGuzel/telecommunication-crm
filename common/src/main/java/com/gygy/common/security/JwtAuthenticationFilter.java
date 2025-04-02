@@ -13,6 +13,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -38,9 +39,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             List<String> roles = jwtService.extractRoles(jwt);
             List<String> permissions = jwtService.extractPermissions(jwt);
 
-            List<SimpleGrantedAuthority> authorities = roles.stream()
+            List<SimpleGrantedAuthority> authorities = new ArrayList<>(roles.stream()
                     .map(SimpleGrantedAuthority::new)
-                    .toList();
+                    .toList());
 
             authorities.addAll(permissions.stream()
                     .map(SimpleGrantedAuthority::new)

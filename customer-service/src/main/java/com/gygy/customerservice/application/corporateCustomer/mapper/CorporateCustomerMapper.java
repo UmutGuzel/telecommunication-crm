@@ -13,6 +13,8 @@ import com.gygy.customerservice.domain.entity.CorporateCustomer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 @RequiredArgsConstructor
 @Component
 public class CorporateCustomerMapper {
@@ -25,6 +27,8 @@ public class CorporateCustomerMapper {
         corporateCustomer.setEmail(command.getEmail());
         corporateCustomer.setPhoneNumber(command.getPhoneNumber());
         corporateCustomer.setAddress(address);
+        corporateCustomer.setCreatedAt(LocalDateTime.now());
+        corporateCustomer.setUpdatedAt(LocalDateTime.now());
 
         corporateCustomer.setTaxNumber(command.getTaxNumber());
         corporateCustomer.setCompanyName(command.getCompanyName());
@@ -72,6 +76,7 @@ public class CorporateCustomerMapper {
         if (command.getContactPersonSurname() != null && !command.getContactPersonSurname().isEmpty()) {
             corporateCustomer.setContactPersonSurname(command.getContactPersonSurname());
         }
+        corporateCustomer.setUpdatedAt(LocalDateTime.now());
     }
 
     public UpdatedCorporateCustomerResponse convertCorporateCustomerToUpdatedCorporateCustomerResponse(CorporateCustomer corporateCustomer) {
@@ -98,7 +103,12 @@ public class CorporateCustomerMapper {
     public GetListCorporateCustomerItemDto convertCorporateCustomerToGetListCorporateCustomerItemDto(CorporateCustomer corporateCustomer) {
         return GetListCorporateCustomerItemDto.builder()
                 .id(corporateCustomer.getId())
+                .email(corporateCustomer.getEmail())
+                .phoneNumber(corporateCustomer.getPhoneNumber())
+                .taxNumber(corporateCustomer.getTaxNumber())
                 .companyName(corporateCustomer.getCompanyName())
+                .contactPersonName(corporateCustomer.getContactPersonName())
+                .contactPersonSurname(corporateCustomer.getContactPersonSurname())
                 .build();
     }
 }

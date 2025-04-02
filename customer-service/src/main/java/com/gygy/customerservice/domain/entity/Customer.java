@@ -1,15 +1,17 @@
 package com.gygy.customerservice.domain.entity;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
-
-import lombok.*;
+import com.gygy.customerservice.domain.enums.CustomerStatus;
+import com.gygy.customerservice.domain.enums.CustomerType;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.UuidGenerator;
 
-import com.gygy.customerservice.domain.enums.CustomerStatus;
-
-import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -31,7 +33,11 @@ public class Customer {
     private String phoneNumber;
 
     @Enumerated(EnumType.STRING)
-    private CustomerStatus status;
+    private CustomerStatus status = CustomerStatus.ACTIVE;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "customer_type")
+    private CustomerType type;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

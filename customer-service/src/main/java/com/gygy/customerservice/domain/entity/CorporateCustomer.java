@@ -1,15 +1,14 @@
 package com.gygy.customerservice.domain.entity;
 
+import com.gygy.customerservice.domain.enums.CustomerType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
 @Entity
@@ -26,4 +25,8 @@ public class CorporateCustomer extends Customer {
 
     @Column(name = "contact_person_surname")
     private String contactPersonSurname;
+
+    public CorporateCustomer() {
+        this.setType(CustomerType.CORPORATE);
+    }
 }

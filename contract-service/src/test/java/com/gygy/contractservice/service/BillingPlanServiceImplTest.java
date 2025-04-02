@@ -5,6 +5,7 @@ import com.gygy.contractservice.dto.billingPlan.CreateBillingPlanDto;
 import com.gygy.contractservice.entity.BillingPlan;
 import com.gygy.contractservice.entity.ContractDetail;
 import com.gygy.contractservice.entity.Discount;
+import com.gygy.contractservice.mapper.BillingPlanMapper;
 import com.gygy.contractservice.repository.BillingPlanRepository;
 import com.gygy.contractservice.rules.BillingPlanBusinessRules;
 import com.gygy.contractservice.service.impl.BillingPlanServiceImpl;
@@ -17,7 +18,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -36,6 +36,8 @@ import static org.mockito.Mockito.*;
 
     @Mock
     private BillingPlanBusinessRules billingPlanBusinessRules;
+    @Mock
+    private BillingPlanMapper billingPlanMapper;
 
     @Mock
     private DiscountService discountService;
@@ -111,6 +113,9 @@ import static org.mockito.Mockito.*;
 
         // BillingPlan Repository'sini mock'lıyoruz
         when(billingPlanRepository.save(any(BillingPlan.class))).thenReturn(billingPlan);
+        // 🛠 Eksik olan `billingPlanMapper` mock'lanıyor
+        when(billingPlanMapper.createBillingPlanFromCreateBillingPlanDto(any(CreateBillingPlanDto.class)))
+                .thenReturn(billingPlan);
 
         // Act: add metodu çağrılıyor
         billingPlanService.add(createBillingPlanDto);

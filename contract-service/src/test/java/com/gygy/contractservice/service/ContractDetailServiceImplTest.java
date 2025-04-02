@@ -1,7 +1,10 @@
 package com.gygy.contractservice.service;
 
+import com.gygy.contractservice.dto.billingPlan.CreateBillingPlanDto;
 import com.gygy.contractservice.dto.contractDetail.CreateContractDetailDto;
+import com.gygy.contractservice.entity.Contract;
 import com.gygy.contractservice.entity.ContractDetail;
+import com.gygy.contractservice.mapper.ContractDetailMapper;
 import com.gygy.contractservice.repository.ContractDetailRepository;
 import com.gygy.contractservice.service.impl.ContractDetailServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,7 +31,11 @@ import static org.mockito.Mockito.*;
 class ContractDetailServiceImplTest {
 
     @Mock
-    private ContractDetailRepository contractDetailRepository; // Sadece ContractDetailRepository mock'ı
+    private ContractDetailRepository contractDetailRepository;
+    @Mock
+    private ContractService contractService;
+    @Mock
+    private ContractDetailMapper contractDetailMapper;
 
     @InjectMocks
     private ContractDetailServiceImpl contractDetailServiceImpl;
@@ -38,6 +45,7 @@ class ContractDetailServiceImplTest {
     private UUID customer_id;
     private ContractDetail contractDetail;
     private CreateContractDetailDto createContractDetailDto;
+    private Contract contract;
 
     @BeforeEach
     void setup() {
@@ -63,18 +71,24 @@ class ContractDetailServiceImplTest {
         createContractDetailDto.setContractDetailType(INDIVIDUAL);
         createContractDetailDto.setServiceType(INTERNET);
         createContractDetailDto.setCustomerId(customer_id);
+        contract= new Contract();
+        contract.setId(contract_id);
     }
 
     @Test
     void whenAddCalledWithValidRequest_itShouldSaveContractDetailToRepository() {
-        // Arrange: save metodu mock'lanıyor
+        // Arrange: save metodunu mock'lıyoruz
         when(contractDetailRepository.save(any(ContractDetail.class))).thenReturn(contractDetail);
+        when(contractService.findById(contract_id)).thenReturn(Optional.of(contract)); // Mocklama yapılmalı
 
-        // Act: service metodu çağrılır
+        when(contractDetailMapper.createContractDetailFromCreateContractDetailDto(any(CreateContractDetailDto.class)))
+                .thenReturn(contractDetail);
+
         contractDetailServiceImpl.add(createContractDetailDto);
 
-        // Assert: Beklenen işlemler doğrulanır
         verify(contractDetailRepository, times(1)).save(any(ContractDetail.class));
+
+        verify(contractDetailMapper, times(1)).createContractDetailFromCreateContractDetailDto(any(CreateContractDetailDto.class));
     }
     @Test
     void whenFindByIdCalledWithValidId_itShouldReturnCommitment() {

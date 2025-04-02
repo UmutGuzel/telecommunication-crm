@@ -14,9 +14,11 @@ public class CreatedCorporateCustomerResponse {
     private UUID id;
     private String email;
     private String phoneNumber;
+
     private String taxNumber;
     private String companyName;
     private String contactPersonName;
     private String contactPersonSurname;
+
     private AddressResponse address;
 }

@@ -11,7 +11,7 @@ public class ApplicationConfig {
     @Value("${app-config.gateway-url}")
     private String gatewayUrl;
 
-    @Value("${app-config.activation-path:/api/users/activate}")
+    @Value("${app-config.activation-path:/api/v1/auth/activate}")
     private String activationPath;
 
     @Value("${app-config.activation-token-expiry-hours:24}")
