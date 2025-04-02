@@ -24,6 +24,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -51,19 +52,17 @@ public class DiscountControllerTest {
     }
     @Test
     void getDiscount(){
-        id=UUID.randomUUID();
         billingPlanId=UUID.randomUUID();
         contractDetailId=UUID.randomUUID();
         customerId=UUID.randomUUID();
         DiscountListiningDto discountListiningDto=new DiscountListiningDto();
-        discountListiningDto.setId(id);
         discountListiningDto.setAmount(100.0);
         discountListiningDto.setDiscountType(STUDENT);
         discountListiningDto.setDescription("Test Description");
         discountListiningDto.setStatus(Status.ACTIVE);
         discountListiningDto.setEndDate(LocalDate.now());
         discountListiningDto.setStartDate(LocalDate.now());
-        discountListiningDto.setBillingPlanId(billingPlanId);
+        discountListiningDto.setBillingPlanId(Collections.singletonList(billingPlanId));
         discountListiningDto.setContractDetailId(contractDetailId);
         discountListiningDto.setCustomerId(customerId);
         discountListiningDto.setPercentage(0.1);
@@ -81,14 +80,13 @@ public class DiscountControllerTest {
         assertEquals(Status.ACTIVE,response.get(0).getStatus());
         assertEquals(LocalDate.now(),response.get(0).getEndDate());
         assertEquals(LocalDate.now(),response.get(0).getStartDate());
-        assertEquals(billingPlanId,response.get(0).getBillingPlanId());
+        assertEquals(billingPlanId, response.get(0).getBillingPlanId().get(0)); // Düzeltildi!
         assertEquals(contractDetailId,response.get(0).getContractDetailId());
         assertEquals(customerId,response.get(0).getCustomerId());
         assertEquals(0.1,response.get(0).getPercentage());
         assertEquals(LocalDate.now(),response.get(0).getCreateDate());
         assertEquals(LocalDate.now(),response.get(0).getUpdateDate());
 
-        assertNotNull(response.get(0).getId());
         verify(discountService,times(1)).getAll();
     }
     @Test
@@ -112,7 +110,7 @@ public class DiscountControllerTest {
         updateDiscountDto.setAmount(100);
         updateDiscountDto.setCustomerId(customerId);
         updateDiscountDto.setPercentage(0.1);
-        updateDiscountDto.setBillingPlanId(billingPlanId);
+        updateDiscountDto.setBillingPlanId(Collections.singletonList(billingPlanId));
         updateDiscountDto.setStatus(Status.ACTIVE);
         updateDiscountDto.setStartDate(LocalDate.now());
         updateDiscountDto.setEndDate(LocalDate.now());

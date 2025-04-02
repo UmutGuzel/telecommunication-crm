@@ -15,6 +15,11 @@ public class CreateContractDetailDto {
     @NotNull(message = "Contract ID is required")
     private UUID contractId;
     private UUID customerId;
+    private String name;
+    private String email;
+    private String customerName;
+    private String phoneNumber;
+
 
     @NotNull(message = "Start date is required")
     private LocalDate startDate;
