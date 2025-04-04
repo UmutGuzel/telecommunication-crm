@@ -1,7 +1,9 @@
 package com.gygy.contractservice.entity;
 
-import com.gygy.contractservice.model.enums.ContractStatus;
+import com.gygy.contractservice.model.enums.Status;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
@@ -14,6 +16,8 @@ import java.util.UUID;
 @Table(name = "contracts")
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 public class Contract {
 
     @Id
@@ -37,7 +41,7 @@ public class Contract {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private ContractStatus status;
+    private Status status;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -47,6 +51,9 @@ public class Contract {
     @OneToMany(mappedBy = "contract")
     private Set<ContractDetail> contractDetails;
 
+    public Contract() {
+
+    }
 
     @PrePersist
     protected void onCreate() {

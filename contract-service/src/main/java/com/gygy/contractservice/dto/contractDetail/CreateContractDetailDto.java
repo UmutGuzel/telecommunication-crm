@@ -1,5 +1,7 @@
 package com.gygy.contractservice.dto.contractDetail;
 
+import com.gygy.contractservice.model.enums.ContractDetailType;
+import com.gygy.contractservice.model.enums.Status;
 import com.gygy.contractservice.model.enums.ServiceType;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -12,9 +14,12 @@ import java.util.UUID;
 public class CreateContractDetailDto {
     @NotNull(message = "Contract ID is required")
     private UUID contractId;
-
-    @NotNull(message = "Customer ID is required")
     private UUID customerId;
+    private String name;
+    private String email;
+    private String customerName;
+    private String phoneNumber;
+
 
     @NotNull(message = "Start date is required")
     private LocalDate startDate;
@@ -22,13 +27,14 @@ public class CreateContractDetailDto {
     private LocalDate endDate;
 
     @NotNull(message = "Status is required")
-    private String status;
+    private Status status;
 
     @NotNull(message = "Contract detail type is required")
-    private String contractDetailType;
+    private ContractDetailType contractDetailType;
 
     @NotNull(message = "Service type is required")
-    private String serviceType;
+    private ServiceType serviceType;
+
 
 }
 

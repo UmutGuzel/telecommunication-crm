@@ -1,13 +1,15 @@
 package com.gygy.contractservice.dto.billingPlan;
 
+import com.gygy.contractservice.model.enums.BillingCycleType;
+import com.gygy.contractservice.model.enums.PaymentMethod;
+import com.gygy.contractservice.model.enums.Status;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -17,13 +19,16 @@ public class UpdateBillingPlanDto {
     @NotNull(message = "Contract detail ID is required")
     private UUID contractDetailId;
 
+    private List<UUID> discountIds;
+
     @NotBlank(message = "Name is required")
     private String name;
 
     private String description;
 
     @NotNull(message = "Cycle type is required")
-    private String cycleType;
+    private BillingCycleType cycleType;
+
 
     @NotNull(message = "Billing day is required")
     @Min(value = 1, message = "Billing day must be at least 1")
@@ -35,15 +40,15 @@ public class UpdateBillingPlanDto {
 
     @NotNull(message = "Base amount is required")
     @DecimalMin(value = "0.0", inclusive = true, message = "Base amount must be at least 0")
-    private BigDecimal baseAmount;
+    private Integer baseAmount;
 
     @NotNull(message = "Tax rate is required")
     @DecimalMin(value = "0.0", inclusive = true, message = "Tax rate must be at least 0")
-    private BigDecimal taxRate;
+    private Double taxRate;
 
     @NotNull(message = "Payment method is required")
-    private String paymentMethod;
+    private PaymentMethod paymentMethod;
 
     @NotNull(message = "Status is required")
-    private String status;
+    private Status status;
 }

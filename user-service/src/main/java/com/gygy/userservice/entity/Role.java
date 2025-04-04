@@ -12,6 +12,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.JoinColumn;
 import lombok.Data;
 import lombok.Builder;
+import jakarta.persistence.Column;
 
 @Entity
 @Table(name = "roles")
@@ -22,7 +23,9 @@ public class Role {
     private UUID id;
     private String name;
     private String description;
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
     @ManyToMany
     @JoinTable(name = "role_permission", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "permission_id"))

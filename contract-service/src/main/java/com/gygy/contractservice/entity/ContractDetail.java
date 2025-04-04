@@ -1,8 +1,12 @@
 package com.gygy.contractservice.entity;
 import com.gygy.contractservice.model.enums.ContractDetailType;
-import com.gygy.contractservice.model.enums.ContractStatus;
+import com.gygy.contractservice.model.enums.Status;
 import com.gygy.contractservice.model.enums.ServiceType;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
@@ -16,10 +20,21 @@ import java.util.UUID;
 @Table(name="contract_details")
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 public class ContractDetail {
     @Id
     @UuidGenerator
     private UUID id;
+
+    private String name;
+    @Column(name="customer_name")
+    private String customerName;
+
+    private UUID customerId;
+
+    private String phoneNumber;
+
 
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
@@ -29,7 +44,7 @@ public class ContractDetail {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private ContractStatus status;
+    private Status status;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "service_type", nullable = false)
@@ -41,6 +56,11 @@ public class ContractDetail {
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
+
+    @Email(message = "Email is not in proper format", regexp = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")
+    @NotBlank(message = "Email field cannot be left blank.")
+    private String email;
+
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
@@ -57,15 +77,9 @@ public class ContractDetail {
     @OneToMany(mappedBy = "contractDetail")
     private Set<Discount> discounts;
 
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
+    public ContractDetail() {
+
     }
 
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
 
 }

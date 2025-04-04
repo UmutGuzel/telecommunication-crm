@@ -1,0 +1,279 @@
+services:
+  user-service-db:
+    image: postgres
+    container_name: "user-service-db"
+    ports:
+      - "5434:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=test
+      - POSTGRES_DB=postgres
+    volumes:
+      - user-service_data:/var/lib/postgresql/data
+  plan-service-db:
+    image: postgres
+    container_name: "plan-service-db"
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=test
+      - POSTGRES_DB=postgres
+    volumes:
+      - plan-service_data:/var/lib/postgresql/data
+  payment-service-db:
+    image: postgres
+    container_name: "payment-service-db"
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=test
+      - POSTGRES_DB=postgres
+    volumes:
+      - payment-service_data:/var/lib/postgresql/data
+  customer-support-service-db:
+    image: postgres
+    container_name: "customer-support-service-db"
+    ports:
+      - "5435:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=test
+      - POSTGRES_DB=postgres
+    volumes:
+      - customer-support-service_data:/var/lib/postgresql/data
+  contract-service-db:
+    image: postgres
+    container_name: "contract-service-db"
+    ports:
+      - "5436:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=test
+      - POSTGRES_DB=postgres
+    volumes:
+      - contract-service_data:/var/lib/postgresql/data
+  kafka:
+    image: bitnami/kafka
+    container_name: "kafka-1"
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-1:9092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_HOST://0.0.0.0:29092
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+      KAFKA_CREATE_TOPICS: "notification-topic:1:1,password-reset-events:1:1"
+    depends_on:
+      - zookeeper
+  zookeeper:
+    image: wurstmeister/zookeeper
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+  papercut-smtp:
+    image: jijiechen/papercut
+    container_name: papercut-smtp
+    ports:
+      - "25:25"      # SMTP portu
+      - "37408:37408" # Web arayüzü portu
+    restart: always
+  user-service:
+    image: user-service
+    build: ./user-service
+    container_name: "user-service"
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+    ports:
+      - "9010:9010"
+    environment:
+      SPRING_CLOUD_CONFIG_PROFILE: "dev"
+      CONFIGURL: "http://config-server:8090"
+  plan-service:
+    image: plan-service
+    build: ./plan-service
+    container_name: "plan-service"
+    ports:
+      - "9040:9040"
+    environment:
+      SPRING_CLOUD_CONFIG_PROFILE: "dev"
+      CONFIGURL: "http://config-server:8090"
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+  payment-service:
+    build: ./payment-service
+    container_name: payment-service
+    ports:
+      - "9050:9050"
+    environment:
+      SPRING_CLOUD_CONFIG_PROFILE: "dev"
+      CONFIGURL: "http://config-server:8090"
+    depends_on:
+      discovery-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+  notification-service:
+    image: notification-service
+    build: ./notification-service
+    container_name: notification-service
+    ports:
+      - "9080:9080"
+    environment:
+      SPRING_CLOUD_CONFIG_PROFILE: "dev"
+      CONFIGURL: "http://config-server:8090"
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+  gateway-server:
+    image: gateway-server
+    build: ./gateway-server
+    container_name: "gateway-server"
+    restart: always
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_CLOUD_CONFIG_PROFILE: "dev"
+      CONFIGURL: "http://config-server:8090"
+  discovery-server:
+    image: discovery-server
+    build: ./discovery-server
+    container_name: "discovery-server"
+    restart: always
+    depends_on:
+      config-server:
+        condition: service_healthy
+    ports:
+      - "8888:8888"
+    environment:
+      SPRING_CLOUD_CONFIG_PROFILE: "dev"
+      CONFIGURL: "http://config-server:8090"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8888/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  customer-support-service:
+    image: customer-support-service
+    build: ./customer-support-service
+    container_name: "customer-support-service"
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+    ports:
+      - "9060:9060"
+    environment:
+      SPRING_CLOUD_CONFIG_PROFILE: "dev"
+      CONFIGURL: "http://config-server:8090"
+  customer-service:
+    image: customer-service
+    build: ./customer-service
+    container_name: "customer-service"
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+    ports:
+      - "9020:9020"
+    environment:
+      SPRING_CLOUD_CONFIG_PROFILE: "dev"
+      CONFIGURL: "http://config-server:8090"
+  contract-service:
+    image: contract-service
+    build: ./contract-service
+    container_name: "contract-service"
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+    ports:
+      - "9030:9030"
+    environment:
+      SPRING_CLOUD_CONFIG_PROFILE: "dev"
+      CONFIGURL: "http://config-server:8090"
+  config-server:
+    image: config-server
+    build: ./config-server
+    container_name: "config-server"
+    ports:
+      - "8090:8090"
+    environment:
+      SPRING_CLOUD_CONFIG_PROFILE: "dev"
+      CONFIGURL: "http://config-server:8090"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8090/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  analytics-service:
+    image: analytics-service
+    build: ./analytics-service
+    container_name: "analytics-service"
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+    ports:
+      - "9070:9070"
+    environment:
+      SPRING_CLOUD_CONFIG_PROFILE: "dev"
+      CONFIGURL: "http://config-server:8090"
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - 9090:9090
+    volumes:
+      - prometheus_data:/prometheus
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./alert.rules.yml:/etc/prometheus/alert.rules.yml
+  alertmanager:
+    image: prom/alertmanager
+    ports:
+      - 9093:9093
+    volumes:
+      - ./alertmanager.yml:/etc/alertmanager/alertmanager.yml
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - prometheus
+  zipkin:
+    image: openzipkin/zipkin
+    ports:
+      - 9411:9411
+volumes:
+    user-service_data:
+    plan-service_data:
+    payment-service_data:
+    customer-support-service_data:
+    contract-service_data:
+    prometheus_data:
+    grafana_data:

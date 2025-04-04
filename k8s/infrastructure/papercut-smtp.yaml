@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: papercut-smtp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: papercut-smtp
+  template:
+    metadata:
+      labels:
+        app: papercut-smtp
+    spec:
+      containers:
+      - name: papercut-smtp
+        image: jijiechen/papercut
+        ports:
+        - containerPort: 25
+          name: smtp
+        - containerPort: 37408
+          name: web
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: papercut-smtp
+spec:
+  selector:
+    app: papercut-smtp
+  ports:
+  - port: 25
+    targetPort: 25
+    name: smtp
+  - port: 37408
+    targetPort: 37408
+    name: web
+  type: ClusterIP

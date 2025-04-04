@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 @Component
-@Order(1) // Execute before validation
+@Order(2) // Execute before validation
 @RequiredArgsConstructor
 public class AuthorizationBehavior implements Command.Middleware {
 
@@ -56,25 +56,14 @@ public class AuthorizationBehavior implements Command.Middleware {
     }
 
     private boolean hasAnyPermission(Authentication authentication, String[] permissions) {
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        Collection<String> userPermissions = authorities.stream()
-                .map(GrantedAuthority::getAuthority)
-                .filter(authority -> !authority.startsWith("ROLE_"))
-                .collect(Collectors.toList());
-
-        return Arrays.stream(permissions)
-                .anyMatch(userPermissions::contains);
+        return authentication.getAuthorities().stream()
+                .anyMatch(authority -> Arrays.stream(permissions)
+                        .anyMatch(permission -> permission.equalsIgnoreCase(authority.getAuthority())));
     }
 
     private boolean hasAnyRole(Authentication authentication, String[] roles) {
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        Collection<String> userRoles = authorities.stream()
-                .map(GrantedAuthority::getAuthority)
-                .filter(authority -> authority.startsWith("ROLE_"))
-                .map(authority -> authority.substring(5)) // Remove "ROLE_" prefix
-                .collect(Collectors.toList());
-
-        return Arrays.stream(roles)
-                .anyMatch(userRoles::contains);
+        return authentication.getAuthorities().stream()
+                .anyMatch(authority -> Arrays.stream(roles)
+                        .anyMatch(role -> role.equalsIgnoreCase(authority.getAuthority())));
     }
 }

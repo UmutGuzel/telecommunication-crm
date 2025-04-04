@@ -3,9 +3,11 @@ package com.gygy.notificationservice.application.notification;
 import com.gygy.notificationservice.entity.Notification;
 import com.gygy.notificationservice.persistence.NotificationRepository;
 import com.gygy.notificationservice.core.kafka.KafkaProducer;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import java.util.List;
+
 /**
  * Notification servisi, iş mantığını içerir.
  * - Yeni bildirim oluşturur ve Kafka'ya gönderir.
@@ -13,11 +15,11 @@ import java.util.List;
  * - Bildirimleri okundu olarak işaretler.
  */
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class NotificationService {
-    @Autowired
-    private NotificationRepository notificationRepository;
-    @Autowired
-    private KafkaProducer kafkaProducer;
+    private final NotificationRepository notificationRepository;
+    private final KafkaProducer kafkaProducer;
 
     public Notification createNotification(String userId, String message) {
         Notification notification = new Notification(userId, message);

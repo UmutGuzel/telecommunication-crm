@@ -1,5 +1,8 @@
 package com.gygy.contractservice.dto.discount;
 
+import com.gygy.contractservice.model.enums.BillingCycleType;
+import com.gygy.contractservice.model.enums.DiscountType;
+import com.gygy.contractservice.model.enums.Status;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -7,6 +10,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -17,10 +21,16 @@ public class UpdateDiscountDto {
     @NotNull(message = "Contract detail ID is required")
     private UUID contractDetailId;
     @NotNull(message = "Billing Plan  ID is required")
-    private UUID billingPlanId;
+    private List<UUID> billingPlanId;
+    private UUID customerId;
+    private BillingCycleType billingCycleType;
+
+
 
     @NotBlank(message = "Discount type is required")
-    private String discountType;
+    private DiscountType discountType;
+    private Status status;
+
 
     @Min(value = 0, message = "Amount must be greater than or equal to 0")
     private double amount;

@@ -1,17 +1,12 @@
 package com.gygy.contractservice.dto.commitment;
 
-import com.gygy.contractservice.entity.ContractDetail;
-import jakarta.persistence.Column;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.validation.constraints.DecimalMin;
+import com.gygy.contractservice.model.enums.BillingCycleType;
+import com.gygy.contractservice.model.enums.Status;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
@@ -19,16 +14,19 @@ import java.util.UUID;
 public class CreateCommitmentDto {
 
 
+    private String name;
     private Integer durationMonths;
     @NotNull(message = "Start date is required")
     private LocalDate startDate;
     @NotNull(message = "End date is required")
     private LocalDate endDate;
-    @NotNull(message = "Early termination fee is required")
-    @DecimalMin(value = "0.0", inclusive = true, message = "Early termination fee must be at least 0")
-    private BigDecimal earlyTerminationFee;
+    private BillingCycleType cycleType;
+
+    private Integer billingDay;
+
+    private Double earlyTerminationFee;
     @NotNull(message = "Status is required")
-    private String status;
+    private Status status;
     @NotNull(message = "Contract detail ID is required")
     private UUID contractDetailId;
 

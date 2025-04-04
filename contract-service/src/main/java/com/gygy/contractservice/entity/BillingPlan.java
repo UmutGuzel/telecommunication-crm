@@ -2,14 +2,13 @@ package com.gygy.contractservice.entity;
 
 import com.gygy.contractservice.model.enums.BillingCycleType;
 import com.gygy.contractservice.model.enums.PaymentMethod;
-import com.gygy.contractservice.model.enums.ServiceType;
+import com.gygy.contractservice.model.enums.Status;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UuidGenerator;
-
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -19,6 +18,7 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class BillingPlan {
     @Id
     @UuidGenerator
@@ -35,9 +35,9 @@ public class BillingPlan {
     @Column(name = "payment_due_days", nullable = false)
     private Integer paymentDueDays;
     @Column(name = "base_amount", nullable = false)
-    private BigDecimal baseAmount;
+    private Integer baseAmount;
     @Column(name = "tax_rate", nullable = false)
-    private BigDecimal taxRate;
+    private Double taxRate;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_method", nullable = false)
@@ -45,7 +45,7 @@ public class BillingPlan {
 
 
     @Column(name = "status", nullable = false)
-    private String status;
+    private Status status;
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
     @Column(name = "updated_at")
@@ -60,17 +60,6 @@ public class BillingPlan {
             joinColumns = @JoinColumn(name = "billing_plan_id"),
             inverseJoinColumns = @JoinColumn(name = "discount_id"))
     private List<Discount> discounts;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
 
 
 }

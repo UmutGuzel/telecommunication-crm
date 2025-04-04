@@ -1,8 +1,12 @@
 package com.gygy.contractservice.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.gygy.contractservice.model.enums.BillingCycleType;
+import com.gygy.contractservice.model.enums.DiscountType;
+import com.gygy.contractservice.model.enums.Status;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UuidGenerator;
@@ -15,15 +19,32 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Discount {
     @Id
     @UuidGenerator
     private UUID id;
+    private String name;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name="billing_cycle_type")
+    private BillingCycleType billingCycleType;
+
+
+    @Enumerated(EnumType.STRING)
     @Column(name="discount_type")
-    private String discountType;
+    private DiscountType discountType;
+
     private double amount;
     private double percentage;
+
+    @Column(nullable = false, columnDefinition = "varchar(255) default 'ACTIVE'")
+    @Enumerated(EnumType.STRING)
+    private Status status;
+
+    private UUID customerId;
+    private String description;
+
 
     @Column(name="start_date")
     private LocalDate startDate;
