@@ -12,14 +12,20 @@ import com.gygy.userservice.persistance.UserRepository;
 import com.gygy.userservice.application.role.service.RoleService;
 import com.gygy.userservice.entity.User;
 import com.gygy.userservice.application.user.rule.UserRule;
+import com.gygy.userservice.core.pipelines.authorization.RequiresAuthorization;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UpdateUserRoleCommand implements Command<UpdateUserRoleResponse> {
+public class UpdateUserRoleCommand implements Command<UpdateUserRoleResponse>, RequiresAuthorization {
     private String email;
     private List<String> roleIds;
+
+    @Override
+    public List<String> getRequiredAuthorizations() {
+        return List.of("UPDATE_USER_ROLE", "ADMIN");
+    }
 
     @Component
     @RequiredArgsConstructor

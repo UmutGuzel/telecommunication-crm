@@ -1,4 +1,4 @@
-package com.gygy.contractservice.kafka.event;
+package com.gygy.common.events.contractservice;
 
 import lombok.*;
 
@@ -16,5 +16,6 @@ public class ContractDetailEvent {
     private String customerName;
     private String email;
     private LocalDateTime signatureDate;
+
 
 }

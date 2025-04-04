@@ -31,8 +31,13 @@ public class ContractDetail {
     @Column(name="customer_name")
     private String customerName;
 
+    @Column(name = "signature_date")
+    private LocalDateTime signatureDate;
+
+    @Column(name="cusmomer_id")
     private UUID customerId;
 
+    @Column(name="phone_number")
     private String phoneNumber;
 
 
@@ -58,7 +63,6 @@ public class ContractDetail {
     private LocalDateTime createdAt;
 
     @Email(message = "Email is not in proper format", regexp = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")
-    @NotBlank(message = "Email field cannot be left blank.")
     private String email;
 
 
