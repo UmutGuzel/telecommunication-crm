@@ -7,3 +7,8 @@ spring:
       profile: local
   config:
     import: configserver:${configurl}
+  kafka:
+    bootstrap-servers: localhost:9092
+
+server:
+  port: 9060

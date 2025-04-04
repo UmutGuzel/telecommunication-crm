@@ -10,7 +10,7 @@
     </parent>
     <groupId>io.github.umutguzel</groupId>
     <artifactId>common</artifactId>
-    <version>1.0.6</version>
+    <version>1.0.7</version>
     <packaging>jar</packaging>
     <url>https://maven.apache.org</url>
     <description>GYGY 4.0 microservice project, common</description>
@@ -46,10 +46,6 @@
         <developer>
             <id>gulcan</id>
             <name>Gülcan</name>
-        </developer>
-        <developer>
-            <id>buket</id>
-            <name>Buket</name>
         </developer>
     </developers>
 

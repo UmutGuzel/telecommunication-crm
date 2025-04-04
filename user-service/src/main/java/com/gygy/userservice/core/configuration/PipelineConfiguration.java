@@ -12,9 +12,11 @@ import org.springframework.context.annotation.Bean;
 public class PipelineConfiguration {
     @Bean
     public Pipeline pipeline(ObjectProvider<Command.Handler> commandHandlers,
+            ObjectProvider<Notification.Handler> notificationHandlers,
             ObjectProvider<Command.Middleware> middlewares) {
         return new Pipelinr()
                 .with(() -> commandHandlers.stream())
+                .with(() -> notificationHandlers.stream())
                 .with(() -> middlewares.orderedStream());
     }
 }

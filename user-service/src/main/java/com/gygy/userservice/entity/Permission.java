@@ -9,14 +9,20 @@ import java.util.List;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Entity;
 import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 import jakarta.persistence.Column;
+import org.hibernate.annotations.UuidGenerator;
 
 @Entity
 @Table(name = "permissions")
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Permission {
     @Id
+    @UuidGenerator
     private UUID id;
     private String name;
     private String description;
