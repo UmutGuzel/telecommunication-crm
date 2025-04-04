@@ -18,7 +18,6 @@ public class ContractMapper {
             .createdAt(LocalDateTime.now())
             .updatedAt(LocalDateTime.now())
             .documentType(createContractDto.getDocumentType())
-            .signatureDate(createContractDto.getSignatureDate())
             .uploadDate(createContractDto.getUploadDate())
             .documentUrl(createContractDto.getDocumentUrl())
             .status(createContractDto.getStatus())
@@ -29,7 +28,6 @@ public class ContractMapper {
         .contractNumber(updateContractDto.getContractNumber())
         .status(updateContractDto.getStatus())
         .documentUrl(updateContractDto.getDocumentUrl())
-        .signatureDate(updateContractDto.getSignatureDate())
         .uploadDate(updateContractDto.getUploadDate())
         .documentType(updateContractDto.getDocumentType())
                 .id(updateContractDto.getId())
@@ -40,8 +38,7 @@ public class ContractMapper {
             contract.getContractNumber(),
             contract.getStatus(),
             contract.getDocumentType(),
-            contract.getDocumentUrl(),
-            contract.getSignatureDate()
+            contract.getDocumentUrl()
                 );
     }
     

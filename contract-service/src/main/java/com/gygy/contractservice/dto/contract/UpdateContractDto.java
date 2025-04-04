@@ -15,6 +15,5 @@ public class UpdateContractDto {
     private String documentType;
     private String documentUrl;
     private LocalDateTime uploadDate;
-    private LocalDateTime signatureDate;
     private Status status;
 }

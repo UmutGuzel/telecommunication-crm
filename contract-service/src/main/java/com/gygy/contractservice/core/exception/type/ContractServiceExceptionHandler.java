@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
-public class GlobalExceptionHandler {
+public class ContractServiceExceptionHandler {
     @ExceptionHandler({Exception.class})
     @ResponseStatus(code= HttpStatus.INTERNAL_SERVER_ERROR)
     public ExceptionResult handleException(Exception e) {return new ExceptionResult("Internal Server Error");}
