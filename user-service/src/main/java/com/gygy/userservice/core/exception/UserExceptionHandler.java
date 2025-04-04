@@ -48,5 +48,4 @@ public class UserExceptionHandler extends com.gygy.common.exception.GlobalExcept
 
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
 }

@@ -12,14 +12,20 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.JoinColumn;
 import lombok.Data;
 import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 import jakarta.persistence.Column;
+import org.hibernate.annotations.UuidGenerator;
 
 @Entity
 @Table(name = "roles")
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Role {
     @Id
+    @UuidGenerator
     private UUID id;
     private String name;
     private String description;
