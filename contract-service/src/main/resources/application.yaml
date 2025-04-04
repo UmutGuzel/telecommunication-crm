@@ -21,19 +21,14 @@ spring:
       function:
         definition: processPlanEvent
       bindings:
-        processPlanEvent-in-0:
-          destination: plan-requests
-          group: contract-group
+        contract-detail-created-topic:
+          destination: ContractDetailEvent
           binder: kafka
-        discount-events-out-0:
-          destination: discount-events
-          binder: kafka
-        notification-events-out-0:
-          destination: notification-events
-          binder: kafka
+
       kafka:
         binder:
           brokers: localhost:9092
+          zkNodes: localhost:2181
           auto-create-topics: true
           autoStartup: false
           required: false
@@ -52,5 +47,16 @@ spring:
       profile: local
   config:
     import: configserver:${configurl}
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: contract-service-group
+      auto-offset-reset: earliest
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+
+
 server:
   port: 9030
