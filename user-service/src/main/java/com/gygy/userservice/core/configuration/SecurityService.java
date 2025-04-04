@@ -7,6 +7,19 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gygy.common.exception.ErrorResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
 @EnableWebSecurity
@@ -22,14 +35,13 @@ public class SecurityService {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // Configure with base security service first
         HttpSecurity securityConfig = baseSecurityService.configureCoreSecurity(http);
 
-        // Add user-service specific configuration
         securityConfig.authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(USER_SERVICE_WHITELIST).permitAll()
-                .anyRequest().authenticated());
+                .anyRequest().permitAll());
 
         return securityConfig.build();
     }
+
 }

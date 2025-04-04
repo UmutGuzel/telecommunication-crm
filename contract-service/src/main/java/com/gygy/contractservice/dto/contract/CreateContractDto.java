@@ -23,8 +23,6 @@ public class CreateContractDto {
 
     private LocalDateTime uploadDate;
 
-    private LocalDateTime signatureDate;
-
     @NotNull(message = "Status is required")
     private Status status;
 }

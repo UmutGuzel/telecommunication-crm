@@ -1,6 +1,6 @@
 package com.gygy.contractservice.kafka.producer;
 
-import com.gygy.contractservice.kafka.event.ContractDetailEvent;
+import com.gygy.common.events.contractservice.ContractDetailEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -20,8 +20,10 @@ public class KafkaProducerService {
         log.info("Sending contract detail  event: {}", contractDetailEvent);
         Message<ContractDetailEvent> message = MessageBuilder
                 .withPayload(contractDetailEvent)
-                .setHeader(KafkaHeaders.TOPIC, " contract-detail-created-topic")
+                .setHeader(KafkaHeaders.TOPIC, "contract_detail_created_topic")
                 .build();
         kafkaTemplate.send(message);
     }
+
+
 }
