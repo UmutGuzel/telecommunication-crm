@@ -10,7 +10,7 @@ public class KafkaContractDetailTopicConfig {
     @Bean
     public NewTopic contractdetailTopic(){
         return TopicBuilder
-                .name("contract-detail-created-topic")
+                .name("contract_detail_created_topic")
                 .build();
     }
 }

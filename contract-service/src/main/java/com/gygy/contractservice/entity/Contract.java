@@ -36,9 +36,6 @@ public class Contract {
     @Column(name = "upload_date")
     private LocalDateTime uploadDate;
 
-    @Column(name = "signature_date")
-    private LocalDateTime signatureDate;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private Status status;

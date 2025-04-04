@@ -1,6 +1,6 @@
 package com.gygy.contractservice.service.impl;
 
-import com.gygy.contractservice.client.CustomerClient;
+import com.gygy.common.events.contractservice.ContractDetailEvent;
 import com.gygy.contractservice.core.exception.type.BusinessException;
 import com.gygy.contractservice.dto.contractDetail.ContractDetailListiningDto;
 import com.gygy.contractservice.dto.contractDetail.CreateContractDetailDto;
@@ -8,7 +8,6 @@ import com.gygy.contractservice.dto.contractDetail.DeleteContractDetailDto;
 import com.gygy.contractservice.dto.contractDetail.UpdateContractDetailDto;
 import com.gygy.contractservice.entity.Contract;
 import com.gygy.contractservice.entity.ContractDetail;
-import com.gygy.contractservice.kafka.event.ContractDetailEvent;
 import com.gygy.contractservice.kafka.producer.KafkaProducerService;
 import com.gygy.contractservice.mapper.ContractDetailMapper;
 import com.gygy.contractservice.repository.ContractDetailRepository;
@@ -33,14 +32,14 @@ public class ContractDetailServiceImpl implements ContractDetailService {
     private final ContractDetailMapper contractDetailMapper;
     private static final Logger logger = LoggerFactory.getLogger(ContractDetail.class);
     private final KafkaProducerService kafkaProducerService;
-    private final CustomerClient customerClient;
+    //private final CustomerClient customerClient;
 
-    public ContractDetailServiceImpl(ContractDetailRepository contractDetailRepository, ContractService contractService , ContractDetailMapper contractDetailMapper, KafkaProducerService kafkaProducerService, CustomerClient customerClient) {
+    public ContractDetailServiceImpl(ContractDetailRepository contractDetailRepository, ContractService contractService , ContractDetailMapper contractDetailMapper, KafkaProducerService kafkaProducerService) {
         this.contractDetailRepository = contractDetailRepository;
         this.contractService = contractService;
         this.contractDetailMapper = contractDetailMapper;
         this.kafkaProducerService = kafkaProducerService;
-        this.customerClient = customerClient;
+        //this.customerClient = customerClient;
     }
 
     @Override
@@ -62,10 +61,10 @@ public class ContractDetailServiceImpl implements ContractDetailService {
         try {
             ContractDetail contractDetail=contractDetailMapper.createContractDetailFromCreateContractDetailDto(createContractDetailDto);
             contractDetail.setContract(contract);
-            List<GetListCustomerItemDto> response= customerClient.getAllCustomers();
-            contractDetail.setCustomerId(response.get(0).getId());
-            contractDetail.setEmail(response.get(0).getEmail());
-            contractDetail.setPhoneNumber(response.get(0).getPhoneNumber());
+           // List<GetListCustomerItemDto> response= customerClient.getAllCustomers();
+            //contractDetail.setCustomerId(response.get(0).getId());
+            //contractDetail.setEmail(response.get(0).getEmail());
+            //contractDetail.setPhoneNumber(response.get(0).getPhoneNumber());
 
             contractDetailRepository.save(contractDetail);
             logger.info("Contract detail created successfully");
@@ -75,8 +74,6 @@ public class ContractDetailServiceImpl implements ContractDetailService {
                                     .builder()
                                     .discountId(contractDetail.getCustomerId())
                                     .contractName(contractDetail.getName())
-                                    .signatureDate(contract.getSignatureDate())
-                                    .email(contractDetail.getEmail())
                                     .customerName(contractDetail.getCustomerName())
                                     .build());
         } catch (Exception e) {
@@ -148,7 +145,8 @@ public class ContractDetailServiceImpl implements ContractDetailService {
                         ,contractDetail.getEndDate()
                         ,contractDetail.getStartDate()
                         ,contractDetail.getCustomerId()
-                        ,contractDetail.getServiceType())).toList();
+                        ,contractDetail.getServiceType()
+                        ,contractDetail.getSignatureDate())).toList();
     }
 
     @Override
@@ -164,7 +162,8 @@ public class ContractDetailServiceImpl implements ContractDetailService {
                         ,contractDetail.getEndDate()
                         ,contractDetail.getStartDate()
                         ,contractDetail.getCustomerId()
-                        ,contractDetail.getServiceType())).toList();
+                        ,contractDetail.getServiceType()
+                        ,contractDetail.getSignatureDate())).toList();
     }
 
     @Override
@@ -178,7 +177,8 @@ public class ContractDetailServiceImpl implements ContractDetailService {
                         ,contractDetail.getEndDate()
                         ,contractDetail.getStartDate()
                         ,contractDetail.getCustomerId()
-                        ,contractDetail.getServiceType())).toList();
+                        ,contractDetail.getServiceType()
+                ,contractDetail.getSignatureDate())).toList();
     }
 
     @Override
@@ -191,7 +191,8 @@ public class ContractDetailServiceImpl implements ContractDetailService {
                         ,contractDetail.getEndDate()
                         ,contractDetail.getStartDate()
                         ,contractDetail.getCustomerId()
-                        ,contractDetail.getServiceType())).toList();
+                        ,contractDetail.getServiceType()
+                ,contractDetail.getSignatureDate())).toList();
     }
     @Override
     public List<ContractDetailListiningDto> getExpiredContractsByCustomerId(UUID customerId) {
@@ -203,7 +204,8 @@ public class ContractDetailServiceImpl implements ContractDetailService {
                         ,contractDetail.getEndDate()
                         ,contractDetail.getStartDate()
                         ,contractDetail.getCustomerId()
-                        ,contractDetail.getServiceType())).toList();
+                        ,contractDetail.getServiceType()
+                ,contractDetail.getSignatureDate())).toList();
 }
 
     @Override
@@ -216,7 +218,8 @@ public class ContractDetailServiceImpl implements ContractDetailService {
                         ,contractDetail.getEndDate()
                         ,contractDetail.getStartDate()
                         ,contractDetail.getCustomerId()
-                        ,contractDetail.getServiceType()))
+                        ,contractDetail.getServiceType()
+                ,contractDetail.getSignatureDate()))
                 .toList();
     }
 
