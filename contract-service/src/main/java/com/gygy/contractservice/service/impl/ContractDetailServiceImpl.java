@@ -8,12 +8,15 @@ import com.gygy.contractservice.dto.contractDetail.DeleteContractDetailDto;
 import com.gygy.contractservice.dto.contractDetail.UpdateContractDetailDto;
 import com.gygy.contractservice.entity.Contract;
 import com.gygy.contractservice.entity.ContractDetail;
+import com.gygy.contractservice.entity.Discount;
 import com.gygy.contractservice.kafka.producer.KafkaProducerService;
 import com.gygy.contractservice.mapper.ContractDetailMapper;
 import com.gygy.contractservice.repository.ContractDetailRepository;
 import com.gygy.contractservice.service.ContractDetailService;
 import com.gygy.contractservice.service.ContractService;
+import com.gygy.contractservice.service.DiscountService;
 import com.gygy.customerservice.application.customer.query.GetListCustomerItemDto;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
@@ -32,14 +35,16 @@ public class ContractDetailServiceImpl implements ContractDetailService {
     private final ContractDetailMapper contractDetailMapper;
     private static final Logger logger = LoggerFactory.getLogger(ContractDetail.class);
     private final KafkaProducerService kafkaProducerService;
+    private final DiscountService discountService;
     //private final CustomerClient customerClient;
 
-    public ContractDetailServiceImpl(ContractDetailRepository contractDetailRepository, ContractService contractService , ContractDetailMapper contractDetailMapper, KafkaProducerService kafkaProducerService) {
+    public ContractDetailServiceImpl(ContractDetailRepository contractDetailRepository, ContractService contractService , ContractDetailMapper contractDetailMapper, KafkaProducerService kafkaProducerService,@Lazy DiscountService discountService) {
         this.contractDetailRepository = contractDetailRepository;
         this.contractService = contractService;
         this.contractDetailMapper = contractDetailMapper;
         this.kafkaProducerService = kafkaProducerService;
         //this.customerClient = customerClient;
+        this.discountService = discountService;
     }
 
     @Override
@@ -57,6 +62,7 @@ public class ContractDetailServiceImpl implements ContractDetailService {
     @Override
     public void add(CreateContractDetailDto createContractDetailDto) {
        Contract contract=contractService.findById(createContractDetailDto.getContractId()).orElseThrow(()-> new RuntimeException("Contract not found"));
+        Discount discount=discountService.findById(createContractDetailDto.getDiscountId());
         logger.debug("Creating contract detail for contract: {}", contract.getId());
         try {
             ContractDetail contractDetail=contractDetailMapper.createContractDetailFromCreateContractDetailDto(createContractDetailDto);
@@ -72,8 +78,10 @@ public class ContractDetailServiceImpl implements ContractDetailService {
                     .sendCreatedContractDetailEvent(
                             ContractDetailEvent
                                     .builder()
-                                    .discountId(contractDetail.getCustomerId())
+                                    .discountId(discount.getId())
                                     .contractName(contractDetail.getName())
+                                    .discountName(discount.getName())
+                                    .discountDescription(discount.getDescription())
                                     .customerName(contractDetail.getCustomerName())
                                     .build());
         } catch (Exception e) {

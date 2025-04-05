@@ -16,6 +16,7 @@ public class CreateContractDetailDto {
     @NotNull(message = "Contract ID is required")
     private UUID contractId;
     private UUID customerId;
+    private UUID discountId;
     private String name;
     private String customerName;
     private String phoneNumber;
