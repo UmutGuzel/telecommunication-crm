@@ -12,6 +12,8 @@ import java.util.UUID;
 @Builder
 public class ContractDetailEvent {
     private UUID discountId;
+    private String discountName;
+    private String discountDescription;
     private String contractName;
     private String customerName;
     private String email;
