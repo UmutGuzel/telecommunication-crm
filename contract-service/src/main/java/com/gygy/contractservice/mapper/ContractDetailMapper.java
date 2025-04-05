@@ -24,6 +24,7 @@ public class ContractDetailMapper {
         .endDate(createContractDetailDto.getEndDate())
                 .name(createContractDetailDto.getName())
                 .signatureDate(createContractDetailDto.getSignatureDate())
+                .customerName(createContractDetailDto.getCustomerName())
                 .build();
     }
     public ContractDetail updateContractDetailFromUpdateContractDetailDto(UpdateContractDetailDto updateContractDetailDto){

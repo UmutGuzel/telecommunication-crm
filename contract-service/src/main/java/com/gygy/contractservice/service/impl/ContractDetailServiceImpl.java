@@ -83,6 +83,8 @@ public class ContractDetailServiceImpl implements ContractDetailService {
                                     .discountName(discount.getName())
                                     .discountDescription(discount.getDescription())
                                     .customerName(contractDetail.getCustomerName())
+                                    .email(contractDetail.getEmail())
+                                    .signatureDate(contractDetail.getSignatureDate())
                                     .build());
         } catch (Exception e) {
             logger.error("Error creating contract detail: {}", e.getMessage(), e);
