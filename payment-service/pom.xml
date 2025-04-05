@@ -23,7 +23,7 @@
         <dependency>
             <groupId>io.github.umutguzel</groupId>
             <artifactId>common</artifactId>
-            <version>1.0.4</version>
+            <version>1.0.7</version>
         </dependency>
 
         <dependency>

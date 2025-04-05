@@ -1,7 +1,6 @@
 package com.gygy.common.events.paymentservice.payment;
 
 import com.gygy.common.events.base.BaseEvent;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,14 +9,33 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 
-@Getter
-@Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class PaymentSuccessEvent extends BaseEvent {
-
     private UUID billId;
-    private UUID customerId;
+    private UUID paymentId;
     private BigDecimal paidAmount;
-    private String paymentMethod;
+
+    public void setBillId(UUID billId) {
+        this.billId = billId;
+    }
+
+    public void setPaymentId(UUID paymentId) {
+        this.paymentId = paymentId;
+    }
+
+    public void setPaidAmount(BigDecimal paidAmount) {
+        this.paidAmount = paidAmount;
+    }
+
+    public UUID getBillId() {
+        return billId;
+    }
+
+    public UUID getPaymentId() {
+        return paymentId;
+    }
+
+    public BigDecimal getPaidAmount() {
+        return paidAmount;
+    }
 }

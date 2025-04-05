@@ -1,6 +1,9 @@
 package com.gygy.paymentservice.application.bill.command.create;
 
 import an.awesome.pipelinr.Command;
+import com.gygy.common.constants.KafkaTopics;
+import com.gygy.common.events.paymentservice.bill.BillCreatedEvent;
+import com.gygy.common.kafka.producer.EventProducer;
 import com.gygy.paymentservice.application.bill.command.create.dto.CreatedBillResponse;
 import com.gygy.paymentservice.application.bill.service.BillService;
 import com.gygy.paymentservice.domain.entity.bill.Bill;
@@ -10,6 +13,7 @@ import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,11 +39,14 @@ public class CreateBillCommand implements Command<CreatedBillResponse> {
     @NotNull(message = "Due date is required")
     @Future(message = "Due date must be in the future")
     private LocalDate dueDate;
+    //TODO: otomatize et
 
+    @Slf4j
     @Component
     @RequiredArgsConstructor
     public static class CreateBillCommandHandler implements Command.Handler<CreateBillCommand, CreatedBillResponse> {
         private final BillService billService;
+        private final EventProducer eventProducer;
 
         @Override
         @Transactional
@@ -54,6 +61,23 @@ public class CreateBillCommand implements Command<CreatedBillResponse> {
             bill.setUpdatedAt(LocalDateTime.now());
 
             billService.save(bill);
+
+            // Fatura oluşturuldu eventi
+            BillCreatedEvent event = new BillCreatedEvent();
+            event.setBillId(bill.getBillId());
+            event.setCustomerId(bill.getCustomerId());
+            event.setTotalAmount(bill.getTotalAmount());
+            event.setDueDate(bill.getDueDate());
+            event.setServiceName("payment-service");
+
+            log.info("Event gönderiliyor: {}", event);
+            try {
+                eventProducer.sendEvent(KafkaTopics.BILL_CREATED, event);
+                log.info("Event başarıyla gönderildi");
+            } catch (Exception e) {
+                log.error("Event gönderilirken hata oluştu: {}", e.getMessage(), e);
+                throw e;
+            }
 
             return new CreatedBillResponse(
                     bill.getBillId(),

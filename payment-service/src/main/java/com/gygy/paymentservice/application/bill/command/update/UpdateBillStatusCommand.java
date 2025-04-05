@@ -1,6 +1,8 @@
 package com.gygy.paymentservice.application.bill.command.update;
 
 import an.awesome.pipelinr.Command;
+import com.gygy.common.constants.KafkaTopics;
+import com.gygy.common.kafka.producer.EventProducer;
 import com.gygy.paymentservice.application.bill.command.update.dto.UpdatedBillStatusResponse;
 import com.gygy.paymentservice.application.bill.service.BillService;
 import com.gygy.paymentservice.domain.entity.bill.Bill;
@@ -26,6 +28,7 @@ public class UpdateBillStatusCommand implements Command<UpdatedBillStatusRespons
             implements Command.Handler<UpdateBillStatusCommand, UpdatedBillStatusResponse> {
 
         private final BillService billService;
+        private final EventProducer eventProducer;
 
         @Override
         @Transactional
