@@ -13,10 +13,81 @@ alerting:
 
 scrape_configs:
   - job_name: "config-server-app"
-    scrape_interval: 30s
+    scrape_interval: 2s
     metrics_path: "/actuator/prometheus"
     static_configs:
       - targets: ["config-server:8090"]
+
+  - job_name: "discovery-server-app"
+    scrape_interval: 2s
+    metrics_path: "/actuator/prometheus"
+    static_configs:
+      - targets: ["discovery-server:8888"]
+
+  - job_name: "gateway-server-app"
+    scrape_interval: 2s
+    metrics_path: "/actuator/prometheus"
+    static_configs:
+      - targets: ["gateway-server:8080"]
+
+  - job_name: "user-service-app"
+    scrape_interval: 2s
+    metrics_path: "/actuator/prometheus"
+    static_configs:
+      - targets: ["user-service:9010"]
+
+  - job_name: "customer-service-app"
+    scrape_interval: 2s
+    metrics_path: "/actuator/prometheus"
+    static_configs:
+      - targets: ["customer-service:9020"]
+
+  - job_name: "contract-service-app"
+    scrape_interval: 2s
+    metrics_path: "/actuator/prometheus"
+    static_configs:
+      - targets: ["contract-service:9030"]
+
+  - job_name: "plan-service-app"
+    scrape_interval: 2s
+    metrics_path: "/actuator/prometheus"
+    static_configs:
+      - targets: ["plan-service:9040"]
+
+  - job_name: "payment-service-app"
+    scrape_interval: 2s
+    metrics_path: "/actuator/prometheus"
+    static_configs:
+      - targets: ["payment-service:9050"]
+
+  - job_name: "customer-support-service-app"
+    scrape_interval: 2s
+    metrics_path: "/actuator/prometheus"
+    static_configs:
+      - targets: ["customer-support-service:9060"]
+
+  - job_name: "analytics-service-app"
+    scrape_interval: 2s
+    metrics_path: "/actuator/prometheus"
+    static_configs:
+      - targets: ["analytics-service:9070"]
+
+  - job_name: "notification-service-app"
+    scrape_interval: 2s
+    metrics_path: "/actuator/prometheus"
+    static_configs:
+      - targets: ["notification-service:9080"]
+
+  - job_name: "prometheus"
+    scrape_interval: 5s
+    static_configs:
+      - targets: ["prometheus:9090"]
+
+  - job_name: "zipkin"
+    scrape_interval: 5s
+    metrics_path: "/prometheus"
+    static_configs:
+      - targets: ["zipkin:9411"]
 
 #  - job_name: "self"
 #    scrape_interval: 30s
