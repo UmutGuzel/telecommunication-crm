@@ -9,4 +9,5 @@ import com.gygy.customerservice.domain.entity.Customer;
 
 public interface CustomerRepository extends JpaRepository<Customer, UUID> {
     Optional<Customer> findByEmail(String email);
+    Optional<Customer> findByPhoneNumber(String phoneNumber);
 } 
