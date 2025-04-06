@@ -1,6 +1,5 @@
 package com.gygy.common.events.base;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,11 +10,9 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class BaseEvent {
-    private UUID eventId;
-    private LocalDateTime eventTime;
+    private UUID eventId = UUID.randomUUID();
+    private LocalDateTime eventTime = LocalDateTime.now();
     private String serviceName;
     private UUID customerId;
-    //private String correlationId;  işlemleri takip etmek için kullanılabiir, hata tespiti kolaylığı
 }
