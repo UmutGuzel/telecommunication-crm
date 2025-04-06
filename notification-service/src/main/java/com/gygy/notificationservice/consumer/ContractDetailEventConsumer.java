@@ -2,7 +2,7 @@ package com.gygy.notificationservice.consumer;
 
 import com.gygy.notificationservice.application.notification.EmailService;
 import com.gygy.notificationservice.core.configuration.KafkaTopicConfig;
-import com.gygy.common.events.ContractDetailEvent;
+import com.gygy.common.events.contractservice.ContractDetailEvent;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

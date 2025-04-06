@@ -23,6 +23,7 @@ kafka:
   topics:
     passwordResetEventsTopic: password-reset-events
     userActivationEventsTopic: user-activation-events
+    contractDetailCreatedTopic: contract_detail_created_topic
 
 server:
   port: 9080
