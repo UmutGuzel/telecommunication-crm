@@ -1,7 +1,9 @@
 package com.gygy.notificationservice.consumer;
 
-import com.gygy.common.events.paymentservice.bill.BillCreatedEvent;
 import com.gygy.notificationservice.application.notification.EmailService;
+import com.gygy.notificationservice.core.configuration.KafkaTopicConfig;
+import com.gygy.notificationservice.tempdto.BillCreatedEvent;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -13,34 +15,35 @@ import org.springframework.stereotype.Component;
 public class BillCreatedEventConsumer {
 
     private final EmailService emailService;
+    private final KafkaTopicConfig kafkaTopicConfig;
 
     @KafkaListener(
             topics = "${kafka.topics.billCreatedEventsTopic}",
             groupId = "${spring.kafka.consumer.group-id}",
-            containerFactory = "kafkaListenerContainerFactory"
+            containerFactory = "billCreatedKafkaListenerContainerFactory"
     )
     public void consume(BillCreatedEvent event) {
         if (event == null) {
-            log.error("Received null BillCreatedEvent");
+            log.error("Received null bill created event");
             return;
         }
 
-        log.info("Received BillCreatedEvent for customerId: {}", event.getCustomerId());
+        log.info("Received bill created event for email: {}", event.getEmail());
 
         try {
-            String subject = "Yeni Faturanız Oluşturuldu";
-            String message = String.format(
-                    "Merhaba,\n\n%.2f TL tutarındaki yeni faturanız oluşturulmuştur.\nSon ödeme tarihi: %s.\n\nSaygılarımızla.",
-                    event.getTotalAmount(),
-                    event.getDueDate()
+            emailService.sendGenericEmail(
+                    event.getEmail(),
+                    "Yeni Faturanız Oluşturuldu",
+                    String.format("Merhaba,\n\n%.2f TL tutarındaki yeni faturanız oluşturulmuştur.\nSon ödeme tarihi: %s.\n\nSaygılarımızla.",
+                            event.getTotalAmount(),
+                            event.getDueDate()
+                    )
             );
 
-            // customerId yerine gerçek e-posta kullanılacaksa event’e 'email' alanı eklenmeli
-            emailService.sendGenericEmail(event.getCustomerId().toString(), subject, message);
-
-            log.info("Bill created email sent to customerId: {}", event.getCustomerId());
+            log.info("Bill created email processing completed for email: {}", event.getEmail());
         } catch (Exception e) {
-            log.error("Error while processing BillCreatedEvent", e);
+            log.error("Error processing bill created event for email: {}",
+                    event.getEmail() != null ? event.getEmail() : "unknown", e);
         }
     }
 }

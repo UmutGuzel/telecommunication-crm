@@ -1,8 +1,8 @@
 package com.gygy.notificationservice.consumer;
 
 import com.gygy.notificationservice.application.notification.EmailService;
+import com.gygy.notificationservice.tempdto.ContractDetailEvent; // ✅ doğru
 import com.gygy.notificationservice.core.configuration.KafkaTopicConfig;
-import com.gygy.common.events.contractservice.ContractDetailEvent;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +17,11 @@ public class ContractDetailEventConsumer {
     private final EmailService emailService;
     private final KafkaTopicConfig kafkaTopicConfig;
 
-    @KafkaListener(topics = "${kafka.topics.contractDetailCreatedTopic}", groupId = "${spring.kafka.consumer.group-id}", containerFactory = "contractDetailKafkaListenerContainerFactory")
+    @KafkaListener(
+            topics = "${kafka.topics.contractDetailCreatedTopic}",
+            groupId = "${spring.kafka.consumer.group-id}",
+            containerFactory = "contractDetailKafkaListenerContainerFactory"
+    )
     public void consume(ContractDetailEvent event) {
         if (event == null) {
             log.error("Received null contract detail event");
@@ -27,17 +31,23 @@ public class ContractDetailEventConsumer {
         log.info("Received contract detail event for customer: {}", event.getCustomerName());
 
         try {
-            String subject = "Sözleşme Detayları Oluşturuldu";
+            String subject = "Yeni Sözleşme Oluşturuldu";
             String message = String.format(
-                    "Sayın %s,\n\n'%s' adlı sözleşmenizin detayları %s tarihinde oluşturulmuştur.\nİndirim Oranı: %.2f%%.\n\nSaygılarımızla.",
+                    "Sayın %s,\n\nYeni sözleşmeniz oluşturulmuştur:\n\n" +
+                            "- Sözleşme Adı: %s\n" +
+                            "- İmza Tarihi: %s\n\n" +
+                            "- İndirim: %s (%s)\n\n" +
+                            "Sözleşmeniz hakkında daha fazla bilgi için bizimle iletişime geçebilirsiniz.\n\nSaygılarımızla.",
                     event.getCustomerName(),
                     event.getContractName(),
-                    event.getEventDate(),
-                    event.getDiscount()
+                    event.getSignatureDate(),
+                    event.getDiscountName(),
+                    event.getDiscountDescription()
             );
 
             emailService.sendGenericEmail(event.getEmail(), subject, message);
             log.info("Contract detail email sent to: {}", event.getEmail());
+
         } catch (Exception e) {
             log.error("Error sending contract detail email to: {}", event.getEmail(), e);
         }
