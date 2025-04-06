@@ -1,26 +1,27 @@
 package com.gygy.contractservice.service.impl;
 
+import com.gygy.common.events.contractservice.ContractDetailEvent;
 import com.gygy.contractservice.core.exception.type.BusinessException;
-import com.gygy.contractservice.dto.billingPlan.BillingPlanListiningDto;
 import com.gygy.contractservice.dto.contractDetail.ContractDetailListiningDto;
 import com.gygy.contractservice.dto.contractDetail.CreateContractDetailDto;
 import com.gygy.contractservice.dto.contractDetail.DeleteContractDetailDto;
 import com.gygy.contractservice.dto.contractDetail.UpdateContractDetailDto;
-import com.gygy.contractservice.entity.BillingPlan;
 import com.gygy.contractservice.entity.Contract;
 import com.gygy.contractservice.entity.ContractDetail;
-import com.gygy.contractservice.event.NotificationEvent;
+import com.gygy.contractservice.entity.Discount;
+import com.gygy.contractservice.kafka.producer.KafkaProducerService;
 import com.gygy.contractservice.mapper.ContractDetailMapper;
 import com.gygy.contractservice.repository.ContractDetailRepository;
 import com.gygy.contractservice.service.ContractDetailService;
 import com.gygy.contractservice.service.ContractService;
-import org.springframework.cloud.stream.function.StreamBridge;
+import com.gygy.contractservice.service.DiscountService;
+import com.gygy.customerservice.application.customer.query.GetListCustomerItemDto;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,15 +32,19 @@ public class ContractDetailServiceImpl implements ContractDetailService {
 
     private final ContractDetailRepository contractDetailRepository;
     private final ContractService contractService;
-    private final StreamBridge streamBridge;
     private final ContractDetailMapper contractDetailMapper;
-    private static final Logger logger = LoggerFactory.getLogger(CommitmentServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(ContractDetail.class);
+    private final KafkaProducerService kafkaProducerService;
+    private final DiscountService discountService;
+    //private final CustomerClient customerClient;
 
-    public ContractDetailServiceImpl(ContractDetailRepository contractDetailRepository, ContractService contractService, StreamBridge streamBridge, ContractDetailMapper contractDetailMapper) {
+    public ContractDetailServiceImpl(ContractDetailRepository contractDetailRepository, ContractService contractService , ContractDetailMapper contractDetailMapper, KafkaProducerService kafkaProducerService,@Lazy DiscountService discountService) {
         this.contractDetailRepository = contractDetailRepository;
         this.contractService = contractService;
-        this.streamBridge = streamBridge;
         this.contractDetailMapper = contractDetailMapper;
+        this.kafkaProducerService = kafkaProducerService;
+        //this.customerClient = customerClient;
+        this.discountService = discountService;
     }
 
     @Override
@@ -57,53 +62,41 @@ public class ContractDetailServiceImpl implements ContractDetailService {
     @Override
     public void add(CreateContractDetailDto createContractDetailDto) {
        Contract contract=contractService.findById(createContractDetailDto.getContractId()).orElseThrow(()-> new RuntimeException("Contract not found"));
+        Discount discount=discountService.findById(createContractDetailDto.getDiscountId());
         logger.debug("Creating contract detail for contract: {}", contract.getId());
         try {
             ContractDetail contractDetail=contractDetailMapper.createContractDetailFromCreateContractDetailDto(createContractDetailDto);
             contractDetail.setContract(contract);
+           // List<GetListCustomerItemDto> response= customerClient.getAllCustomers();
+            //contractDetail.setCustomerId(response.get(0).getId());
+            //contractDetail.setEmail(response.get(0).getEmail());
+            //contractDetail.setPhoneNumber(response.get(0).getPhoneNumber());
+
             contractDetailRepository.save(contractDetail);
             logger.info("Contract detail created successfully");
+            kafkaProducerService
+                    .sendCreatedContractDetailEvent(
+                            ContractDetailEvent
+                                    .builder()
+                                    .discountId(discount.getId())
+                                    .contractName(contractDetail.getName())
+                                    .discountName(discount.getName())
+                                    .discountDescription(discount.getDescription())
+                                    .customerName(contractDetail.getCustomerName())
+                                    .email(contractDetail.getEmail())
+                                    .signatureDate(contractDetail.getSignatureDate())
+                                    .build());
         } catch (Exception e) {
             logger.error("Error creating contract detail: {}", e.getMessage(), e);
             throw e;
         }
 
 
-
-        // Send notification event to Kafka
-        NotificationEvent notification = new NotificationEvent();
-        notification.setCustomerId(createContractDetailDto.getCustomerId());
-        notification.setTitle("Contract Detail Created");
-        notification.setMessage("A new contract detail has been created for your contract.");
-        notification.setType("CONTRACT_DETAIL");
-        notification.setStatus("SUCCESS");
-        notification.setEventType("NOTIFICATION");
-        notification.setEventDate(LocalDate.now().toString());
-
-        try {
-            streamBridge.send("notification-events-out-0", notification);
-        } catch (Exception e) {
-           // log.error("Failed to send notification event: {}", e.getMessage());
-            System.out.println("deneme");
-            // Continue execution even if Kafka is unavailable
-        }
-
     }
 
     @Override
     public List<ContractDetailListiningDto> getAll() {
-        /*
-        List<ContractDetailListiningDto> contractDetailListiningDtos=
-                contractDetailRepository
-                        .findAll()
-                        .stream()
-                        .map(contractDetail ->new ContractDetailListiningDto(
-                                contractDetail.getContractDetailType()
-                                ,contractDetail.getContract().getId(),contractDetail.getStatus(),contractDetail.getEndDate(),contractDetail.getStartDate())).toList();
 
-        return contractDetailListiningDtos;
-
-         */
         logger.debug(FETCHING_ALL_CONTRACT_DETAIL);
         List<ContractDetail>  contractDetails = contractDetailRepository.findAll();
         List<ContractDetailListiningDto> contractDetailListiningDtos1 = contractDetails.stream()
@@ -162,7 +155,8 @@ public class ContractDetailServiceImpl implements ContractDetailService {
                         ,contractDetail.getEndDate()
                         ,contractDetail.getStartDate()
                         ,contractDetail.getCustomerId()
-                        ,contractDetail.getServiceType())).toList();
+                        ,contractDetail.getServiceType()
+                        ,contractDetail.getSignatureDate())).toList();
     }
 
     @Override
@@ -178,7 +172,8 @@ public class ContractDetailServiceImpl implements ContractDetailService {
                         ,contractDetail.getEndDate()
                         ,contractDetail.getStartDate()
                         ,contractDetail.getCustomerId()
-                        ,contractDetail.getServiceType())).toList();
+                        ,contractDetail.getServiceType()
+                        ,contractDetail.getSignatureDate())).toList();
     }
 
     @Override
@@ -192,7 +187,8 @@ public class ContractDetailServiceImpl implements ContractDetailService {
                         ,contractDetail.getEndDate()
                         ,contractDetail.getStartDate()
                         ,contractDetail.getCustomerId()
-                        ,contractDetail.getServiceType())).toList();
+                        ,contractDetail.getServiceType()
+                ,contractDetail.getSignatureDate())).toList();
     }
 
     @Override
@@ -205,7 +201,8 @@ public class ContractDetailServiceImpl implements ContractDetailService {
                         ,contractDetail.getEndDate()
                         ,contractDetail.getStartDate()
                         ,contractDetail.getCustomerId()
-                        ,contractDetail.getServiceType())).toList();
+                        ,contractDetail.getServiceType()
+                ,contractDetail.getSignatureDate())).toList();
     }
     @Override
     public List<ContractDetailListiningDto> getExpiredContractsByCustomerId(UUID customerId) {
@@ -217,7 +214,8 @@ public class ContractDetailServiceImpl implements ContractDetailService {
                         ,contractDetail.getEndDate()
                         ,contractDetail.getStartDate()
                         ,contractDetail.getCustomerId()
-                        ,contractDetail.getServiceType())).toList();
+                        ,contractDetail.getServiceType()
+                ,contractDetail.getSignatureDate())).toList();
 }
 
     @Override
@@ -230,7 +228,8 @@ public class ContractDetailServiceImpl implements ContractDetailService {
                         ,contractDetail.getEndDate()
                         ,contractDetail.getStartDate()
                         ,contractDetail.getCustomerId()
-                        ,contractDetail.getServiceType()))
+                        ,contractDetail.getServiceType()
+                ,contractDetail.getSignatureDate()))
                 .toList();
     }
 

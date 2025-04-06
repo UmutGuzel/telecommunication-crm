@@ -39,7 +39,7 @@ import java.util.Optional;
 import com.gygy.userservice.core.configuration.ApplicationConfig;
 
 @RestController
-@RequestMapping("api/auth")
+@RequestMapping("api/v1/auth")
 @Data
 public class UserController {
     private final Pipeline pipeline;

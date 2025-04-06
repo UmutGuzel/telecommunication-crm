@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
@@ -15,6 +16,13 @@ public class CreateContractDetailDto {
     @NotNull(message = "Contract ID is required")
     private UUID contractId;
     private UUID customerId;
+    private UUID discountId;
+    private String name;
+    private String customerName;
+    private String phoneNumber;
+    private String email;
+
+
 
     @NotNull(message = "Start date is required")
     private LocalDate startDate;
@@ -23,6 +31,9 @@ public class CreateContractDetailDto {
 
     @NotNull(message = "Status is required")
     private Status status;
+
+    private LocalDateTime signatureDate;
+
 
     @NotNull(message = "Contract detail type is required")
     private ContractDetailType contractDetailType;

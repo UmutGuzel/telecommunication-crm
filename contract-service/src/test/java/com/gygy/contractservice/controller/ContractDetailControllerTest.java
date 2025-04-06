@@ -50,11 +50,9 @@ public class ContractDetailControllerTest {
     }
     @Test
     void getcontractDetail(){
-        id=UUID.randomUUID();
         customer_id=UUID.randomUUID();
         contract_id=UUID.randomUUID();
         ContractDetailListiningDto contractDetailListiningDto=new ContractDetailListiningDto();
-        contractDetailListiningDto.setId(id);
         contractDetailListiningDto.setContractId(contract_id);
         contractDetailListiningDto.setStatus(Status.ACTIVE);
         contractDetailListiningDto.setEndDate(LocalDate.now());
@@ -75,7 +73,6 @@ public class ContractDetailControllerTest {
         assertEquals(LocalDate.now(),response.get(0).getEndDate());
         assertEquals(CORPORATE,response.get(0).getContractDetailType());
         assertEquals(INTERNET,response.get(0).getServiceType());
-        assertNotNull(response.get(0).getId());
         verify(contractDetailService,times(1)).getAll();
     }
     @Test

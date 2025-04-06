@@ -3,7 +3,7 @@ services:
     image: postgres
     container_name: "user-service-db"
     ports:
-      - "5432:5432"
+      - "5434:5432"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=test
@@ -25,7 +25,7 @@ services:
     image: postgres
     container_name: "payment-service-db"
     ports:
-      - "5434:5432"
+      - "5432:5432"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=test
@@ -84,10 +84,11 @@ services:
   user-service:
     image: user-service
     build: ./user-service
-    container_name: user-service-app
-    restart: always
+    container_name: "user-service"
     depends_on:
       config-server:
+        condition: service_healthy
+      discovery-server:
         condition: service_healthy
     ports:
       - "9010:9010"
@@ -97,80 +98,68 @@ services:
   plan-service:
     image: plan-service
     build: ./plan-service
-    container_name: plan-service-app
-    restart: always
-    depends_on:
-      config-server:
-        condition: service_healthy
+    container_name: "plan-service"
     ports:
       - "9040:9040"
     environment:
       SPRING_CLOUD_CONFIG_PROFILE: "dev"
       CONFIGURL: "http://config-server:8090"
-<<<<<<< HEAD
-=======
-  payment-service:
-    image: payment-service
-    build: ./payment-service
-    container_name: payment-service-app
-    restart: always
->>>>>>> 0358754d01834d391f8916918fe034a5eb739bc6
     depends_on:
       config-server:
         condition: service_healthy
-<<<<<<< HEAD
+      discovery-server:
+        condition: service_healthy
   payment-service:
+    image: payment-service
     build: ./payment-service
     container_name: payment-service
-=======
->>>>>>> 0358754d01834d391f8916918fe034a5eb739bc6
     ports:
       - "9050:9050"
     environment:
       SPRING_CLOUD_CONFIG_PROFILE: "dev"
       CONFIGURL: "http://config-server:8090"
-<<<<<<< HEAD
     depends_on:
       discovery-server:
         condition: service_healthy
       config-server:
         condition: service_healthy
+      kafka:
+        condition: service_started
+      zookeeper:
+        condition: service_started
   notification-service:
     image: notification-service
     build: ./notification-service
     container_name: notification-service
-=======
-  notification-service:
-    image: notification-service
-    build: ./notification-service
-    container_name: notification-service-app
-    restart: always
-    depends_on:
-      config-server:
-        condition: service_healthy
->>>>>>> 0358754d01834d391f8916918fe034a5eb739bc6
     ports:
       - "9080:9080"
     environment:
       SPRING_CLOUD_CONFIG_PROFILE: "dev"
       CONFIGURL: "http://config-server:8090"
-  gateway-service:
-    image: gateway-service
-    build: ./gateway-service
-    container_name: gateway-service-app
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+  gateway-server:
+    image: gateway-server
+    build: ./gateway-server
+    container_name: "gateway-server"
     restart: always
     depends_on:
       config-server:
+        condition: service_healthy
+      discovery-server:
         condition: service_healthy
     ports:
       - "8080:8080"
     environment:
       SPRING_CLOUD_CONFIG_PROFILE: "dev"
       CONFIGURL: "http://config-server:8090"
-  discovery-service:
-    image: discovery-service
-    build: ./discovery-service
-    container_name: discovery-service-app
+  discovery-server:
+    image: discovery-server
+    build: ./discovery-server
+    container_name: "discovery-server"
     restart: always
     depends_on:
       config-server:
@@ -180,13 +169,19 @@ services:
     environment:
       SPRING_CLOUD_CONFIG_PROFILE: "dev"
       CONFIGURL: "http://config-server:8090"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8888/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   customer-support-service:
     image: customer-support-service
     build: ./customer-support-service
-    container_name: customer-support-service-app
-    restart: always
+    container_name: "customer-support-service"
     depends_on:
       config-server:
+        condition: service_healthy
+      discovery-server:
         condition: service_healthy
     ports:
       - "9060:9060"
@@ -196,10 +191,11 @@ services:
   customer-service:
     image: customer-service
     build: ./customer-service
-    container_name: customer-service-app
-    restart: always
+    container_name: "customer-service"
     depends_on:
       config-server:
+        condition: service_healthy
+      discovery-server:
         condition: service_healthy
     ports:
       - "9020:9020"
@@ -209,10 +205,11 @@ services:
   contract-service:
     image: contract-service
     build: ./contract-service
-    container_name: contract-service-app
-    restart: always
+    container_name: "contract-service"
     depends_on:
       config-server:
+        condition: service_healthy
+      discovery-server:
         condition: service_healthy
     ports:
       - "9030:9030"
@@ -222,7 +219,7 @@ services:
   config-server:
     image: config-server
     build: ./config-server
-    container_name: config-server-app
+    container_name: "config-server"
     restart: always
     ports:
       - "8090:8090"
@@ -236,11 +233,12 @@ services:
       retries: 5
   analytics-service:
     image: analytics-service
-    build: .analytics-service/
-    container_name: analytics-service-app
-    restart: always
+    build: ./analytics-service
+    container_name: "analytics-service"
     depends_on:
       config-server:
+        condition: service_healthy
+      discovery-server:
         condition: service_healthy
     ports:
       - "9070:9070"

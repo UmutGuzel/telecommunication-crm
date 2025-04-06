@@ -5,6 +5,7 @@ import com.gygy.contractservice.dto.billingPlan.CreateBillingPlanDto;
 import com.gygy.contractservice.dto.billingPlan.UpdateBillingPlanDto;
 import com.gygy.contractservice.entity.BillingPlan;
 import lombok.Data;
+import org.mapstruct.Mapper;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;

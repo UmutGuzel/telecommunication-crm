@@ -13,8 +13,8 @@ spring:
 
 app-config:
   gateway-url: ${GATEWAY_URL:http://localhost:8080}
-  reset-password-path: /api/auth/reset-password
-  activation-path: /api/users/activate
+  reset-password-path: /api/v1/auth/reset-password
+  activation-path: /api/v1/auth/activate
   activation-token-expiry-hours: 24
   kafka:
     topics:

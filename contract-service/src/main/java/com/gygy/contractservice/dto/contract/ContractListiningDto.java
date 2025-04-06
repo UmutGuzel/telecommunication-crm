@@ -13,17 +13,15 @@ public class ContractListiningDto {
     private String documentType;
     private String documentUrl;
     private LocalDateTime uploadDate;
-    private LocalDateTime signatureDate;
     private Status status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public ContractListiningDto(String contractNumber, Status status, String documentType, String documentUrl, LocalDateTime signatureDate) {
+    public ContractListiningDto(String contractNumber, Status status, String documentType, String documentUrl) {
         this.contractNumber = contractNumber;
         this.documentType = documentType;
         this.documentUrl = documentUrl;
         this.uploadDate = updatedAt;
-        this.signatureDate = signatureDate;
         this.status = status;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
@@ -32,6 +30,7 @@ public class ContractListiningDto {
     public ContractListiningDto() {
 
     }
+
 
 
 }

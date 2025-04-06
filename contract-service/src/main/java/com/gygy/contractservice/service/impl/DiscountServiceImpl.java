@@ -8,8 +8,6 @@ import com.gygy.contractservice.dto.discount.UpdateDiscountDto;
 import com.gygy.contractservice.entity.BillingPlan;
 import com.gygy.contractservice.entity.ContractDetail;
 import com.gygy.contractservice.entity.Discount;
-import com.gygy.contractservice.event.DiscountEvent;
-import com.gygy.contractservice.event.NotificationEvent;
 import com.gygy.contractservice.mapper.DiscountMapper;
 import com.gygy.contractservice.model.enums.DiscountType;
 import com.gygy.contractservice.model.enums.Status;
@@ -90,41 +88,7 @@ public class DiscountServiceImpl implements DiscountService {
             logger.error("Error creating discount: {}", e.getMessage(), e);
             throw e;
         }
-        /*
-        // Send discount event to Kafka
-        DiscountEvent event = new DiscountEvent();
-        event.setDiscountId(discount.getId());
-        event.setContractDetailId(createDiscountDto.getContractDetailId());
-        event.setCustomerId(createDiscountDto.getCustomerId());
-        //event.setEventType(DISCOUNT_CREATED);
-        event.setEventDate(LocalDate.now());
-        event.setDiscountData(discount);
 
-        try {
-            streamBridge.send("discount-events-out-0", event);
-        } catch (Exception e) {
-            logger.error("Failed to send discount event: {}", e.getMessage());
-            // Continue execution even if Kafka is unavailable
-        }
-
-         */
-
-        // Send notification event to Kafka
-        NotificationEvent notification = new NotificationEvent();
-        notification.setCustomerId(createDiscountDto.getCustomerId());
-        notification.setTitle("Discount Created");
-        notification.setMessage("A new discount has been created for your contract.");
-        notification.setType("DISCOUNT");
-        notification.setStatus("SUCCESS");
-        notification.setEventType("NOTIFICATION");
-        notification.setEventDate(LocalDate.now().toString());
-
-        try {
-            streamBridge.send("notification-events-out-0", notification);
-        } catch (Exception e) {
-            logger.error("Failed to send notification event: {}", e.getMessage());
-            // Continue execution even if Kafka is unavailable
-        }
     }
 
     @Override
@@ -207,18 +171,6 @@ public class DiscountServiceImpl implements DiscountService {
                 .collect(Collectors.toList());
         logger.info("Found {} active contracts", discounts.size());
         return discountListiningDtos;
-        /*
-             return discountRepository.findAll().stream()
-                .filter(discount -> "ACTIVE".equals(discount.getStatus().toString())
-                        && discount.getCustomerId().equals(customerId))
-                .map(discount -> new DiscountListiningDto(discount.getDiscountType(), discount.getAmount(),
-                        discount.getPercentage(), discount.getContractDetail(), discount.getEndDate(),
-                        discount.getStartDate(), discount.getBillingPlans(), discount.getCreatedAt(),
-                        discount.getUpdatedAt()))
-                .toList();
-         */
-
-
     }
 
     @Override
@@ -231,17 +183,6 @@ public class DiscountServiceImpl implements DiscountService {
                 .collect(Collectors.toList());
         logger.info("Found {} active contracts", discounts.size());
         return discountListiningDtos;
-
-        /*
-         return discountRepository.findAll().stream()
-                .filter(discount -> discount.getContractDetail().getId().equals(contractId))
-                .map(discount -> new DiscountListiningDto(discount.getDiscountType(), discount.getAmount(),
-                        discount.getPercentage(), discount.getContractDetail(), discount.getEndDate(),
-                        discount.getStartDate(), discount.getBillingPlans(), discount.getCreatedAt(),
-                        discount.getUpdatedAt()))
-                .toList();
-         */
-
     }
 
     @Override
@@ -260,38 +201,6 @@ public class DiscountServiceImpl implements DiscountService {
             discount.setAmount(0.1); // Geçici bir değer veya hesaplanmış değer atan
 
             Discount savedDiscount = discountRepository.save(discount);
-
-            DiscountEvent event = new DiscountEvent();
-            event.setDiscountId(savedDiscount.getId());
-            event.setContractDetailId(createDiscountDto.getContractDetailId());
-            event.setCustomerId(createDiscountDto.getCustomerId());
-            event.setEventType(DISCOUNT_APPLIED); //STRİNG DEĞİL ENUM OLARAK VERİLİCEK
-            event.setEventDate(LocalDate.now());
-            event.setDiscountData(savedDiscount);
-
-
-            try {
-                streamBridge.send("discount-events-out-0", event);
-            } catch (Exception e) {
-                logger.error(SEND_DISCOUNT_ERROR, e.getMessage()); //ENUM VERİLSİN FAİL MESSAGE OLABİLİR
-                // Continue execution even if Kafka is unavailable
-            }
-
-            NotificationEvent notification = new NotificationEvent();
-            notification.setCustomerId(createDiscountDto.getCustomerId());
-            notification.setTitle("Discount Applied");
-            notification.setMessage("A 5% discount has been applied to your annual subscription.");
-            notification.setType("DISCOUNT");
-            notification.setStatus("SUCCESS");
-            notification.setEventType("NOTIFICATION");
-            notification.setEventDate(LocalDate.now().toString());
-
-            try {
-                streamBridge.send("notification-events-out-0", notification);
-            } catch (Exception e) {
-                logger.error("Failed to send notification event: {}", e.getMessage());
-                // Continue execution even if Kafka is unavailable
-            }
 
             return savedDiscount;
         }

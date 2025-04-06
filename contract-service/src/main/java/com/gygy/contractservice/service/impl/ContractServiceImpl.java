@@ -48,6 +48,8 @@ public class ContractServiceImpl implements ContractService {
             Contract contract = contractMapper.createContractFromCreateContractDto(createContractDto);
             contractRepository.save(contract);
             logger.info("Successfully created contract with ID: {}", contract.getId());
+
+
         } catch (Exception e) {
             logger.error("Error creating contract: {}", e.getMessage(), e);
             throw e;

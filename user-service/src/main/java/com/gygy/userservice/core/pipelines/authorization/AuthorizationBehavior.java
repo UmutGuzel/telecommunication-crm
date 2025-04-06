@@ -1,17 +1,15 @@
 package com.gygy.userservice.core.pipelines.authorization;
 
 import an.awesome.pipelinr.Command;
+import com.gygy.common.exception.UnauthorizedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.stream.Collectors;
+import java.util.List;
 
 @Component
 @Order(2) // Execute before validation
@@ -23,47 +21,31 @@ public class AuthorizationBehavior implements Command.Middleware {
         Authentication authentication = null;
 
         // Check if command requires authorization
-        if (command instanceof RequiresPermission || command instanceof RequiresRole) {
+        if (command instanceof RequiresAuthorization || command instanceof RequiresAuthentication) {
             authentication = SecurityContextHolder.getContext().getAuthentication();
 
             // Throw exception if not authenticated
             if (authentication == null || !authentication.isAuthenticated()) {
-                throw new AccessDeniedException("Authentication required");
+                throw new UnauthorizedException("Authentication required");
             }
-        }
 
-        // Check permission requirements
-        if (command instanceof RequiresPermission) {
-            String[] requiredPermissions = ((RequiresPermission) command).getRequiredPermissions();
-            boolean hasPermission = hasAnyPermission(authentication, requiredPermissions);
-            if (!hasPermission) {
-                throw new AccessDeniedException("Required permission not found: " +
-                        Arrays.toString(requiredPermissions));
-            }
-        }
-
-        // Check role requirements
-        if (command instanceof RequiresRole) {
-            String[] requiredRoles = ((RequiresRole) command).getRequiredRoles();
-            boolean hasRole = hasAnyRole(authentication, requiredRoles);
-            if (!hasRole) {
-                throw new AccessDeniedException("Required role not found: " +
-                        Arrays.toString(requiredRoles));
+            // Check permission requirements
+            if (command instanceof RequiresAuthorization) {
+                List<String> requiredAuthorizations = ((RequiresAuthorization) command).getRequiredAuthorizations();
+                boolean hasAuthorization = hasAnyAuthorization(authentication, requiredAuthorizations);
+                if (!hasAuthorization) {
+                    throw new UnauthorizedException("Required authorization not found: " +
+                            requiredAuthorizations.toString());
+                }
             }
         }
 
         return next.invoke();
     }
 
-    private boolean hasAnyPermission(Authentication authentication, String[] permissions) {
+    private boolean hasAnyAuthorization(Authentication authentication, List<String> authorizations) {
         return authentication.getAuthorities().stream()
-                .anyMatch(authority -> Arrays.stream(permissions)
-                        .anyMatch(permission -> permission.equalsIgnoreCase(authority.getAuthority())));
-    }
-
-    private boolean hasAnyRole(Authentication authentication, String[] roles) {
-        return authentication.getAuthorities().stream()
-                .anyMatch(authority -> Arrays.stream(roles)
-                        .anyMatch(role -> role.equalsIgnoreCase(authority.getAuthority())));
+                .anyMatch(authority -> authorizations.stream()
+                        .anyMatch(authorization -> authorization.equalsIgnoreCase(authority.getAuthority())));
     }
 }

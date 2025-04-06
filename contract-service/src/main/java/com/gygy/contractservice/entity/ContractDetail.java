@@ -3,6 +3,8 @@ import com.gygy.contractservice.model.enums.ContractDetailType;
 import com.gygy.contractservice.model.enums.Status;
 import com.gygy.contractservice.model.enums.ServiceType;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,7 +27,19 @@ public class ContractDetail {
     @UuidGenerator
     private UUID id;
 
+    private String name;
+    @Column(name="customer_name")
+    private String customerName;
+
+    @Column(name = "signature_date")
+    private LocalDateTime signatureDate;
+
+    @Column(name="cusmomer_id")
     private UUID customerId;
+
+    @Column(name="phone_number")
+    private String phoneNumber;
+
 
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
@@ -48,6 +62,10 @@ public class ContractDetail {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @Email(message = "Email is not in proper format", regexp = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")
+    private String email;
+
+
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
@@ -67,15 +85,5 @@ public class ContractDetail {
 
     }
 
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
 
 }

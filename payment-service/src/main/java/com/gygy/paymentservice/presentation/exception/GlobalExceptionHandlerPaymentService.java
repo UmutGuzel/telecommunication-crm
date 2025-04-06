@@ -1,5 +1,6 @@
 package com.gygy.paymentservice.presentation.exception;
 
+import com.gygy.common.exception.GlobalExceptionHandler;
 import com.gygy.paymentservice.domain.exception.bill.BillValidationException;
 import com.gygy.paymentservice.presentation.dto.ErrorResponse;
 import com.gygy.paymentservice.domain.exception.bill.BillAmountException;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.time.LocalDateTime;
 
 @RestControllerAdvice
-public class GlobalExceptionHandler {
+public class GlobalExceptionHandlerPaymentService extends GlobalExceptionHandler {
 
     @ExceptionHandler(BillNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleBillNotFound(BillNotFoundException ex) {

@@ -19,8 +19,12 @@ public class ContractDetailMapper {
         .serviceType(createContractDetailDto.getServiceType())
         .createdAt(LocalDateTime.now())
         .status(createContractDetailDto.getStatus())
+                .email(createContractDetailDto.getEmail())
         .startDate(createContractDetailDto.getStartDate())
         .endDate(createContractDetailDto.getEndDate())
+                .name(createContractDetailDto.getName())
+                .signatureDate(createContractDetailDto.getSignatureDate())
+                .customerName(createContractDetailDto.getCustomerName())
                 .build();
     }
     public ContractDetail updateContractDetailFromUpdateContractDetailDto(UpdateContractDetailDto updateContractDetailDto){
@@ -34,6 +38,7 @@ public class ContractDetailMapper {
                 .id(updateContractDetailDto.getId())
                 .serviceType(updateContractDetailDto.getServiceType())
                 .customerId(updateContractDetailDto.getCustomerId())
+                .signatureDate(updateContractDetailDto.getSignatureDate())
                 .build();
     }
     public ContractDetailListiningDto toContractDetailListiningDto(ContractDetail contractDetail){
@@ -45,6 +50,7 @@ public class ContractDetailMapper {
                 ,contractDetail.getStartDate()
                 ,contractDetail.getCustomerId()
                 ,contractDetail.getServiceType()
+                ,contractDetail.getSignatureDate()
         );
     }
 
