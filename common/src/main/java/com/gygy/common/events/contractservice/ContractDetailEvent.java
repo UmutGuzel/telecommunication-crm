@@ -19,5 +19,4 @@ public class ContractDetailEvent {
     private String email;
     private LocalDateTime signatureDate;
 
-
 }

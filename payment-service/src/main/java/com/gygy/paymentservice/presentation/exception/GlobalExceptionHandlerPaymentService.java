@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.time.LocalDateTime;
 
@@ -23,8 +24,7 @@ public class GlobalExceptionHandlerPaymentService extends GlobalExceptionHandler
         ErrorResponse error = new ErrorResponse(
                 ex.getMessage(),
                 LocalDateTime.now(),
-                "BILL_NOT_FOUND"
-        );
+                "BILL_NOT_FOUND");
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
@@ -33,8 +33,7 @@ public class GlobalExceptionHandlerPaymentService extends GlobalExceptionHandler
         ErrorResponse error = new ErrorResponse(
                 ex.getMessage(),
                 LocalDateTime.now(),
-                "INVALID_BILL_AMOUNT"
-        );
+                "INVALID_BILL_AMOUNT");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
@@ -43,8 +42,7 @@ public class GlobalExceptionHandlerPaymentService extends GlobalExceptionHandler
         ErrorResponse error = new ErrorResponse(
                 ex.getMessage(),
                 LocalDateTime.now(),
-                "BILL_STATUS_ERROR"
-        );
+                "BILL_STATUS_ERROR");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
@@ -53,8 +51,7 @@ public class GlobalExceptionHandlerPaymentService extends GlobalExceptionHandler
         ErrorResponse error = new ErrorResponse(
                 ex.getMessage(),
                 LocalDateTime.now(),
-                "PAYMENT_NOT_FOUND"
-        );
+                "PAYMENT_NOT_FOUND");
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
@@ -63,8 +60,7 @@ public class GlobalExceptionHandlerPaymentService extends GlobalExceptionHandler
         ErrorResponse error = new ErrorResponse(
                 ex.getMessage(),
                 LocalDateTime.now(),
-                "INVALID_PAYMENT_AMOUNT"
-        );
+                "INVALID_PAYMENT_AMOUNT");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
@@ -73,19 +69,17 @@ public class GlobalExceptionHandlerPaymentService extends GlobalExceptionHandler
         ErrorResponse error = new ErrorResponse(
                 ex.getMessage(),
                 LocalDateTime.now(),
-                "PAYMENT_VALIDATION_ERROR"
-        );
+                "PAYMENT_VALIDATION_ERROR");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleGeneral(Exception ex) {
-        ErrorResponse error = new ErrorResponse(
-                "An unexpected error occurred. Please try again later.",
-                LocalDateTime.now(),
-                "INTERNAL_SERVER_ERROR"
-        );
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
-    }
+    // @ExceptionHandler(Exception.class)
+    // public ResponseEntity<ErrorResponse> handleGenericException(Exception ex,
+    // HttpServletRequest request) {
+    // ErrorResponse error = new ErrorResponse(
+    // "An unexpected error occurred. Please try again later.",
+    // LocalDateTime.now(),
+    // "INTERNAL_SERVER_ERROR");
+    // return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+    // }
 }
-
