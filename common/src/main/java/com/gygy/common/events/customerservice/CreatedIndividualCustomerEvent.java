@@ -1,6 +1,6 @@
-package com.gygy.customerservice.infrastructure.messaging.event;
+package com.gygy.common.events.customerservice;
 
-import com.gygy.customerservice.domain.enums.CustomerType;
+import com.gygy.common.events.enums.CustomerType;
 import lombok.*;
 
 import java.util.UUID;
