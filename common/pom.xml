@@ -132,7 +132,8 @@
                 <extensions>true</extensions>
                 <configuration>
                     <publishingServerId>central</publishingServerId>
-                    <!-- <tokenAuth>true</tokenAuth> -->
+                    <autoPublish>true</autoPublish>
+                    <tokenAuth>true</tokenAuth>
                 </configuration>
             </plugin>
 
@@ -143,7 +144,7 @@
                 <executions>
                     <execution>
                         <id>sign-artifacts</id>
-                        <phase>verify</phase>
+                        <!-- <phase>verify</phase> -->
                         <goals>
                             <goal>sign</goal>
                         </goals>

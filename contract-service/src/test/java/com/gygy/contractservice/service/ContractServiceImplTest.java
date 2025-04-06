@@ -34,11 +34,11 @@ class ContractServiceImplTest {
     private CreateContractDto createContractDto;
 
     @BeforeEach
-    void setup(){
-        id=UUID.randomUUID();
-        contract=new Contract();
+    void setup() {
+        id = UUID.randomUUID();
+        contract = new Contract();
         contract.setId(id);
-        contract.setSignatureDate(LocalDateTime.now());
+        // contract.setSignatureDate(LocalDateTime.now());
         contract.setContractNumber("1212");
         contract.setDocumentUrl("Test URL");
         contract.setStatus(ACTIVE);
@@ -46,26 +46,27 @@ class ContractServiceImplTest {
         contract.setUploadDate(LocalDateTime.now());
         contract.setDocumentType("Test Type");
 
-        createContractDto=new CreateContractDto();
+        createContractDto = new CreateContractDto();
         createContractDto.setStatus(ACTIVE);
         createContractDto.setDocumentType("Test URL");
         createContractDto.setUploadDate(LocalDateTime.now());
         createContractDto.setDocumentType("Test Type");
-        createContractDto.setSignatureDate(LocalDateTime.now());
+        // createContractDto.setSignatureDate(LocalDateTime.now());
         createContractDto.setContractNumber("1212");
         createContractDto.setCreateDate(LocalDateTime.now());
     }
+
     @Test
-    void whenAddCalledWithValidRequest_itShouldSaveContractToRepository(){
-        //Arrange
+    void whenAddCalledWithValidRequest_itShouldSaveContractToRepository() {
+        // Arrange
         when(contractMapper.createContractFromCreateContractDto(createContractDto)).thenReturn(contract);
         when(contractRepository.save(any(Contract.class))).thenReturn(contract);
 
-        //Act
+        // Act
         contractService.add(createContractDto);
 
         // Assert - Beklenen sonuçları doğruluyoruz
-        verify(contractMapper,times(1)).createContractFromCreateContractDto(createContractDto);
+        verify(contractMapper, times(1)).createContractFromCreateContractDto(createContractDto);
         verify(contractRepository, times(1)).save(any(Contract.class));
     }
 
@@ -82,8 +83,5 @@ class ContractServiceImplTest {
         assertEquals(contract, result.get());
         verify(contractRepository, times(1)).findById(id);
     }
-
-
-
 
 }
