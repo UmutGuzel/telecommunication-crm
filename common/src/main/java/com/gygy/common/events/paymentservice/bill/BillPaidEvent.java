@@ -17,7 +17,6 @@ import java.util.UUID;
 @AllArgsConstructor
 public class BillPaidEvent extends BaseEvent {
     private UUID billId;
-    private UUID customerId;
     private BigDecimal totalAmount;
     private String paymentMethod;
     private LocalDateTime paymentDate;

@@ -135,6 +135,7 @@ services:
       discovery-server:
         condition: service_healthy
   payment-service:
+    image: payment-service
     build: ./payment-service
     container_name: payment-service
     ports:
@@ -147,6 +148,10 @@ services:
         condition: service_healthy
       config-server:
         condition: service_healthy
+      kafka:
+        condition: service_started
+      zookeeper:
+        condition: service_started
   notification-service:
     image: notification-service
     build: ./notification-service
@@ -240,6 +245,7 @@ services:
     image: config-server
     build: ./config-server
     container_name: "config-server"
+    restart: always
     ports:
       - "8090:8090"
     environment:
