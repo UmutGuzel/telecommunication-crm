@@ -80,6 +80,11 @@ public class CreateCorporateCustomerCommand implements Command<CreatedCorporateC
                     .companyName(newCorporateCustomer.getCompanyName())
                     .contactPersonName(newCorporateCustomer.getContactPersonName())
                     .contactPersonSurname(newCorporateCustomer.getContactPersonSurname())
+                    .customerType(newCorporateCustomer.getType())
+                    .allowEmailMessages(newCorporateCustomer.isAllowEmailMessages())
+                    .allowSmsMessages(newCorporateCustomer.isAllowSmsMessages())
+                    .allowPromotionalEmails(newCorporateCustomer.isAllowPromotionalEmails())
+                    .allowPromotionalSms(newCorporateCustomer.isAllowPromotionalSms())
                     .build());
 
             return corporateCustomerMapper.convertCorporateCustomerToResponse(newCorporateCustomer);

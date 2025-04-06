@@ -7,13 +7,14 @@ import lombok.Setter;
 
 import java.util.UUID;
 
-
-@Setter
-@Getter
 @NoArgsConstructor
+@Getter
+@Setter
 public class PaymentFailedEvent extends BaseEvent {
     // Manuel setter metodları
 
     private UUID billId;
+    private UUID paymentId;
+    private String errorMessage;
 
 }

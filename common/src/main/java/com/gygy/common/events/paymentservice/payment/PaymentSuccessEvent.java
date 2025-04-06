@@ -8,12 +8,12 @@ import lombok.Setter;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-
-@Setter
-@Getter
 @NoArgsConstructor
+@Getter
+@Setter
 public class PaymentSuccessEvent extends BaseEvent {
     private UUID billId;
+    private UUID paymentId;
     private BigDecimal paidAmount;
 
 }

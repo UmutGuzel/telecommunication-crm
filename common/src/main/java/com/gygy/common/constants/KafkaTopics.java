@@ -30,4 +30,9 @@ public final class KafkaTopics {
     public static final String BILL_STATUS_UPDATED = "bill-status-updated-topic";
     public static final String BILL_AMOUNT_UPDATED = "bill-amount-updated-topic";
 
+    // Customer Events
+    public static final String INDIVIDUAL_CUSTOMER_CREATED = "individual-customer-created-topic";
+    public static final String CORPORATE_CUSTOMER_CREATED = "corporate-customer-created-topic";
+    public static final String INDIVIDUAL_CUSTOMER_UPDATED = "individual-customer-updated-topic";
+    public static final String CORPORATE_CUSTOMER_UPDATED = "corporate-customer-updated-topic";
 }
