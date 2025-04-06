@@ -1,7 +1,7 @@
 package com.gygy.paymentservice.core.configuration;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cglib.core.internal.Function;
+import java.util.function.Function;
 import org.springframework.context.annotation.Bean;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
