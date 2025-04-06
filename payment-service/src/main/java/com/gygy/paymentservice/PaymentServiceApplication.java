@@ -9,15 +9,15 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
-//@ComponentScan(basePackages = {
-//        "com.gygy.paymentservice.presentation.controllers",
-//        "com.gygy.paymentservice.application",
-//        "com.gygy.paymentservice.persistence",
-//        "com.gygy.paymentservice.core.configuration",
-//        "com.gygy.common"
-//})
-//@EntityScan(basePackages = "com.gygy.paymentservice.domain.entity")
-//@EnableJpaRepositories(basePackages = "com.gygy.paymentservice.persistence")
+@ComponentScan(basePackages = {
+        "com.gygy.paymentservice.presentation.controllers",
+        "com.gygy.paymentservice.application",
+        "com.gygy.paymentservice.persistence",
+        "com.gygy.paymentservice.core.configuration",
+        "com.gygy.common"
+})
+@EntityScan(basePackages = "com.gygy.paymentservice.domain.entity")
+@EnableJpaRepositories(basePackages = "com.gygy.paymentservice.persistence")
 @EnableScheduling
 @EnableCommon
 public class PaymentServiceApplication {
