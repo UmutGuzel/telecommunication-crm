@@ -54,6 +54,17 @@ services:
       - POSTGRES_DB=postgres
     volumes:
       - contract-service_data:/var/lib/postgresql/data
+  customer-service-db:
+    image: postgres
+    container_name: "customer-service-db"
+    ports:
+      - "5437:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=test
+      - POSTGRES_DB=postgres
+    volumes:
+      - customer-service_data:/var/lib/postgresql/data
   kafka:
     image: bitnami/kafka
     container_name: "kafka-1"
@@ -66,7 +77,21 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
-      KAFKA_CREATE_TOPICS: "notification-topic:1:1,password-reset-events:1:1"
+      # KAFKA_CREATE_TOPICS: "notification-topic:1:1,password-reset-events:1:1"
+      # KAFKA_ENABLE_KRAFT: yes
+      # KAFKA_CFG_PROCESS_ROLES: broker,controller
+      # KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      # KAFKA_CFG_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094
+      # KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      # KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,EXTERNAL://localhost:9094
+      # KAFKA_BROKER_ID: 1
+      # KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 1@127.0.0.1:9093
+      # ALLOW_PLAINTEXT_LISTENER: yes
+      # KAFKA_CFG_NODE_ID: 1
+      # KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
+      # BITNAMI_DEBUG: yes
+      # KAFKA_CFG_NUM_PARTITIONS: 2
+
     depends_on:
       - zookeeper
   zookeeper:
@@ -256,7 +281,7 @@ services:
   alertmanager:
     image: prom/alertmanager
     ports:
-      - 9093:9093
+      - 9094:9093
     volumes:
       - ./alertmanager.yml:/etc/alertmanager/alertmanager.yml
   grafana:
@@ -281,5 +306,6 @@ volumes:
     payment-service_data:
     customer-support-service_data:
     contract-service_data:
+    customer-service_data:
     prometheus_data:
     grafana_data:

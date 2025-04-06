@@ -2,6 +2,8 @@ configurl: http://localhost:8090
 spring:
   application:
     name: contract-service
+  config:
+    import: configserver:${configurl}
   datasource:
     url: "jdbc:postgresql://localhost:5436/contract_service"
     username: postgres
@@ -14,6 +16,8 @@ spring:
     hibernate:
       ddlAuto: update
   cloud:
+    config:
+      profile: local
     function:
       enabled: false
     stream:
@@ -43,18 +47,15 @@ spring:
             reconnect.backoff.ms: 1000
             reconnect.backoff.max.ms: 5000
             request.timeout.ms: 5000
-    config:
-      profile: local
-  config:
-    import: configserver:${configurl}
-  kafka:
-    bootstrap-servers: localhost:9092
-    consumer:
-      group-id: contract-service-group
-      auto-offset-reset: earliest
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+  # kafka:
+  #   bootstrap-servers: localhost:9092
+  #   consumer:
+  #     group-id: contract-service-group
+  #     auto-offset-reset: earliest
+  #   producer:
+  #     key-serializer: org.apache.kafka.common.serialization.StringSerializer
+  #     value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
 
 

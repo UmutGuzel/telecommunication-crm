@@ -10,7 +10,7 @@
     </parent>
     <groupId>io.github.umutguzel</groupId>
     <artifactId>common</artifactId>
-    <version>1.0.8</version>
+    <version>1.0.9</version>
     <packaging>jar</packaging>
     <url>https://maven.apache.org</url>
     <description>GYGY 4.0 microservice project, common</description>
@@ -128,7 +128,8 @@
                 <extensions>true</extensions>
                 <configuration>
                     <publishingServerId>central</publishingServerId>
-                    <!-- <tokenAuth>true</tokenAuth> -->
+                    <autoPublish>true</autoPublish>
+                    <tokenAuth>true</tokenAuth>
                 </configuration>
             </plugin>
 
@@ -139,7 +140,7 @@
                 <executions>
                     <execution>
                         <id>sign-artifacts</id>
-                        <phase>verify</phase>
+                        <!-- <phase>verify</phase> -->
                         <goals>
                             <goal>sign</goal>
                         </goals>
