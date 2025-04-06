@@ -72,7 +72,6 @@ public class CreatePaymentCommand implements Command<CreatedPaymentResponse> {
 
                 // Başarılı ödeme event'i
                 PaymentSuccessEvent event = new PaymentSuccessEvent();
-                event.setPaymentId(payment.getPaymentId());
                 event.setBillId(bill.getBillId());
                 event.setPaidAmount(payment.getPaidAmount());
                 event.setCustomerId(payment.getCustomerId());
@@ -85,11 +84,10 @@ public class CreatePaymentCommand implements Command<CreatedPaymentResponse> {
                 paymentService.save(payment);
 
                 PaymentFailedEvent event = new PaymentFailedEvent();
-                event.setPaymentId(payment.getPaymentId());
+
                 event.setBillId(bill.getBillId());
                 event.setCustomerId(payment.getCustomerId());
                 event.setServiceName("payment-service");
-                event.setErrorMessage(e.getMessage());
 
                 eventProducer.sendEvent(KafkaTopics.PAYMENT_FAILED, event);
                 throw e;
