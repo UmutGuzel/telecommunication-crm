@@ -1,5 +1,9 @@
 package com.gygy.customerservice.application.corporateCustomer.mapper;
 
+import java.time.LocalDateTime;
+
+import org.springframework.stereotype.Component;
+
 import com.gygy.customerservice.application.corporateCustomer.command.create.CreateCorporateCustomerCommand;
 import com.gygy.customerservice.application.corporateCustomer.command.create.CreatedCorporateCustomerResponse;
 import com.gygy.customerservice.application.corporateCustomer.command.delete.DeletedCorporateCustomerResponse;
@@ -10,10 +14,10 @@ import com.gygy.customerservice.application.customer.dto.AddressResponse;
 import com.gygy.customerservice.application.customer.mapper.AddressMapper;
 import com.gygy.customerservice.domain.entity.Address;
 import com.gygy.customerservice.domain.entity.CorporateCustomer;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import com.gygy.customerservice.infrastructure.messaging.event.CreatedCorporateCustomerEvent;
+import com.gygy.customerservice.infrastructure.messaging.event.UpdatedCorporateCustomerEvent;
 
-import java.time.LocalDateTime;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Component
@@ -109,6 +113,34 @@ public class CorporateCustomerMapper {
                 .companyName(corporateCustomer.getCompanyName())
                 .contactPersonName(corporateCustomer.getContactPersonName())
                 .contactPersonSurname(corporateCustomer.getContactPersonSurname())
+                .build();
+    }
+
+    public CreatedCorporateCustomerEvent convertToCreatedCorporateCustomerEvent(CorporateCustomer customer) {
+        return CreatedCorporateCustomerEvent.builder()
+                .id(customer.getId())
+                .email(customer.getEmail())
+                .taxNumber(customer.getTaxNumber())
+                .companyName(customer.getCompanyName())
+                .contactPersonName(customer.getContactPersonName())
+                .contactPersonSurname(customer.getContactPersonSurname())
+                .customerType(customer.getType())
+                .allowEmailMessages(customer.isAllowEmailMessages())
+                .allowSmsMessages(customer.isAllowSmsMessages())
+                .allowPromotionalEmails(customer.isAllowPromotionalEmails())
+                .allowPromotionalSms(customer.isAllowPromotionalSms())
+                .build();
+    }
+
+    public UpdatedCorporateCustomerEvent convertToUpdatedCorporateCustomerEvent(CorporateCustomer customer) {
+        return UpdatedCorporateCustomerEvent.builder()
+                .id(customer.getId())
+                .email(customer.getEmail())
+                .phoneNumber(customer.getPhoneNumber())
+                .taxNumber(customer.getTaxNumber())
+                .companyName(customer.getCompanyName())
+                .contactPersonName(customer.getContactPersonName())
+                .contactPersonSurname(customer.getContactPersonSurname())
                 .build();
     }
 }

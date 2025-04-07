@@ -13,7 +13,6 @@ import com.gygy.customerservice.domain.entity.Address;
 import com.gygy.customerservice.domain.entity.Customer;
 import com.gygy.customerservice.domain.entity.IndividualCustomer;
 import com.gygy.customerservice.domain.enums.IndividualCustomerGender;
-import com.gygy.customerservice.infrastructure.messaging.event.CreatedIndividualCustomerEvent;
 import com.gygy.customerservice.infrastructure.messaging.service.KafkaProducerService;
 import com.gygy.customerservice.persistance.repository.AddressRepository;
 import com.gygy.customerservice.persistance.repository.CustomerRepository;
@@ -79,17 +78,9 @@ public class CreateIndividualCustomerCommand implements Command<CreatedIndividua
 
             individualCustomerRepository.save(newIndividualCustomer);
 
-            kafkaProducerService.sendCreatedIndividualCustomerEvent(CreatedIndividualCustomerEvent.builder()
-                    .id(newIndividualCustomer.getId())
-                    .email(newIndividualCustomer.getEmail())
-                    .name(newIndividualCustomer.getName())
-                    .surname(newIndividualCustomer.getSurname())
-                    .customerType(newIndividualCustomer.getType())
-                    .allowEmailMessages(newIndividualCustomer.isAllowEmailMessages())
-                    .allowSmsMessages(newIndividualCustomer.isAllowSmsMessages())
-                    .allowPromotionalEmails(newIndividualCustomer.isAllowPromotionalEmails())
-                    .allowPromotionalSms(newIndividualCustomer.isAllowPromotionalSms())
-                    .build());
+            kafkaProducerService.sendCreatedIndividualCustomerEvent(
+                individualCustomerMapper.convertToCreatedIndividualCustomerEvent(newIndividualCustomer)
+            );
 
             return individualCustomerMapper.convertIndividualCustomerToResponse(newIndividualCustomer);
         }

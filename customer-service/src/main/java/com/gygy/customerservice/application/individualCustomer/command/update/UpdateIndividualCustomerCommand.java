@@ -5,16 +5,13 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Component;
 
-import com.gygy.customerservice.application.corporateCustomer.mapper.CorporateCustomerMapper;
 import com.gygy.customerservice.application.customer.dto.UpdateAddressDto;
-import com.gygy.customerservice.application.customer.mapper.AddressMapper;
 import com.gygy.customerservice.application.customer.rule.CustomerRule;
 import com.gygy.customerservice.application.customer.validation.AddressValidation;
 import com.gygy.customerservice.application.customer.validation.CustomerValidation;
 import com.gygy.customerservice.application.individualCustomer.mapper.IndividualCustomerMapper;
 import com.gygy.customerservice.domain.entity.IndividualCustomer;
 import com.gygy.customerservice.domain.enums.IndividualCustomerGender;
-import com.gygy.customerservice.infrastructure.messaging.event.UpdatedIndividualCustomerEvent;
 import com.gygy.customerservice.infrastructure.messaging.service.KafkaProducerService;
 import com.gygy.customerservice.persistance.repository.IndividualCustomerRepository;
 
@@ -69,22 +66,13 @@ public class UpdateIndividualCustomerCommand implements Command<UpdatedIndividua
             customerRule.checkCustomerExists(individualCustomer);
 
             individualCustomerMapper.updateIndividualCustomer(individualCustomer, command);
-            IndividualCustomer updatedCustomer = individualCustomerRepository.save(individualCustomer);
+            individualCustomerRepository.save(individualCustomer);
 
-            kafkaProducerService.sendUpdatedIndividualCustomerEvent(UpdatedIndividualCustomerEvent.builder()
-                    .id(updatedCustomer.getId())
-                    .email(updatedCustomer.getEmail())
-                    .phoneNumber(updatedCustomer.getPhoneNumber())
-                    .identityNumber(updatedCustomer.getIdentityNumber())
-                    .name(updatedCustomer.getName())
-                    .surname(updatedCustomer.getSurname())
-                    .fatherName(updatedCustomer.getFatherName())
-                    .motherName(updatedCustomer.getMotherName())
-                    .gender(updatedCustomer.getGender())
-                    .birthDate(updatedCustomer.getBirthDate())
-                    .build());
+            kafkaProducerService.sendUpdatedIndividualCustomerEvent(
+                individualCustomerMapper.convertToUpdatedIndividualCustomerEvent(individualCustomer)
+            );
 
-            return individualCustomerMapper.convertIndividualCustomerToUpdatedIndividualCustomerResponse(updatedCustomer);
+            return individualCustomerMapper.convertIndividualCustomerToUpdatedIndividualCustomerResponse(individualCustomer);
         }
     }
 }

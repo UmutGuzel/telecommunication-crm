@@ -4,11 +4,15 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gygy.customerservice.application.customer.command.update.UpdateCustomerStatusCommand;
+import com.gygy.customerservice.application.customer.command.update.UpdatedCustomerStatusResponse;
 import com.gygy.customerservice.application.customer.query.GetCustomerByEmailQuery;
 import com.gygy.customerservice.application.customer.query.GetCustomerByEmailResponse;
 import com.gygy.customerservice.application.customer.query.GetCustomerByPhoneNumberQuery;
@@ -48,21 +52,28 @@ public class CustomerController extends BaseController {
         return query.execute(pipeline);
     }
 
-//    @PostMapping
-//    @ResponseStatus(HttpStatus.CREATED)
-//    public CreatedCustomerResponse createCustomer(@RequestBody CreateCustomerCommand command) {
-//        return command.execute(pipeline);
-//    }
-//
-//    @PutMapping
-//    @ResponseStatus(HttpStatus.OK)
-//    public UpdatedCustomerResponse updateCustomer(@RequestBody UpdateCustomerCommand command) {
-//        return command.execute(pipeline);
-//    }
-//
-//    @DeleteMapping
-//    @ResponseStatus(HttpStatus.NO_CONTENT)
-//    public DeletedCustomerResponse deleteCustomer(@RequestBody DeleteCustomerCommand command) {
-//        return command.execute(pipeline);
-//    }
+    // @PostMapping
+    // @ResponseStatus(HttpStatus.CREATED)
+    // public CreatedCustomerResponse createCustomer(@RequestBody CreateCustomerCommand command) {
+    //     return command.execute(pipeline);
+    // }
+
+    // @PutMapping
+    // @ResponseStatus(HttpStatus.OK)
+    // public UpdatedCustomerResponse updateCustomer(@RequestBody UpdateCustomerCommand command) {
+    //     return command.execute(pipeline);
+    // }
+
+    // @DeleteMapping
+    // @ResponseStatus(HttpStatus.NO_CONTENT)
+    // public DeletedCustomerResponse deleteCustomer(@RequestBody DeleteCustomerCommand command) {
+    //     return command.execute(pipeline);
+    // }
+
+    @PatchMapping("/status")
+    @ResponseStatus(HttpStatus.OK)
+    public UpdatedCustomerStatusResponse updateCustomerStatus(@RequestBody UpdateCustomerStatusCommand request) {
+        UpdateCustomerStatusCommand command = new UpdateCustomerStatusCommand();
+        return command.execute(pipeline);
+    }
 }
