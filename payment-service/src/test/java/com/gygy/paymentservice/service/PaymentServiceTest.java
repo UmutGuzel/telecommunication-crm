@@ -1,5 +1,5 @@
 package com.gygy.paymentservice.service;
-import com.gygy.paymentservice.application.payment.service.PaymentServiceImpl;
+import com.gygy.paymentservice.application.payment.service.impl.PaymentServiceImpl;
 import com.gygy.paymentservice.domain.entity.bill.Bill;
 import com.gygy.paymentservice.domain.entity.bill.BillStatus;
 import com.gygy.paymentservice.domain.entity.payment.Payment;

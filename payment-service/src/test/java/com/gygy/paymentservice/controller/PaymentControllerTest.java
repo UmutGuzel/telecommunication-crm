@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.gygy.paymentservice.application.bill.service.BillService;
-import com.gygy.paymentservice.application.bill.service.BillServiceImpl;
 import com.gygy.paymentservice.application.payment.command.create.CreatePaymentCommand;
 import com.gygy.paymentservice.domain.entity.bill.Bill;
 import com.gygy.paymentservice.domain.entity.bill.BillStatus;
@@ -27,8 +26,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;

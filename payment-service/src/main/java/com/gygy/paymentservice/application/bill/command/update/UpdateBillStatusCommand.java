@@ -28,7 +28,6 @@ public class UpdateBillStatusCommand implements Command<UpdatedBillStatusRespons
             implements Command.Handler<UpdateBillStatusCommand, UpdatedBillStatusResponse> {
 
         private final BillService billService;
-        private final EventProducer eventProducer;
 
         @Override
         @Transactional

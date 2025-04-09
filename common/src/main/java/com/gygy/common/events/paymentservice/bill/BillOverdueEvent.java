@@ -18,5 +18,4 @@ public class BillOverdueEvent extends BaseEvent {
     private UUID billId;
     private BigDecimal amount;
     private LocalDate dueDate;
-   // private int daysOverdue; TODO: bak eklenmeli mi?
 }

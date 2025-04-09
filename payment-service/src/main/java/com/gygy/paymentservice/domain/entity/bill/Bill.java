@@ -37,6 +37,9 @@ public class Bill {
     private UUID customerId;
 
     @Column(nullable = false)
+    private UUID contractId;
+
+    @Column(nullable = false)
     @NotNull(message = "Total amount cannot be null")
     @Positive(message = "Total amount must be greater than 0")
     private BigDecimal totalAmount;

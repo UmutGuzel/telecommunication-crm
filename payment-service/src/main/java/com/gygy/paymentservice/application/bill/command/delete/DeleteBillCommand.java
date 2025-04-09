@@ -30,7 +30,6 @@ public class DeleteBillCommand implements Command<DeletedBillResponse> {
             implements Command.Handler<DeleteBillCommand, DeletedBillResponse> {
 
         private final BillService billService;
-        private EventProducer eventProducer;
 
         @Override
         @Transactional
