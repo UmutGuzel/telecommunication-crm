@@ -15,7 +15,7 @@ import com.gygy.contractservice.repository.ContractDetailRepository;
 import com.gygy.contractservice.service.ContractDetailService;
 import com.gygy.contractservice.service.ContractService;
 import com.gygy.contractservice.service.DiscountService;
-import com.gygy.customerservice.application.customer.query.GetListCustomerItemDto;
+// import com.gygy.customerservice.application.customer.query.GetListCustomerItemDto;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
