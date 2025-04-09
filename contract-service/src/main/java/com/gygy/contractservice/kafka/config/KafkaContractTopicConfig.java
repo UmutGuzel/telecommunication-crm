@@ -6,13 +6,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.TopicBuilder;
 
 @Configuration
-public class KafkaContractDetailTopicConfig {
+public class KafkaContractTopicConfig {
     @Bean
-    public NewTopic contractdetailTopic(){
+    public NewTopic contractTopic(){
         return TopicBuilder
-                .name("contract_detail_created_topic")
+                .name("contract_created_topic")
                 .build();
     }
-
 
 }

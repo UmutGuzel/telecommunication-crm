@@ -1,23 +1,29 @@
 package com.gygy.contractservice.service.impl;
 
+import com.gygy.common.events.contractservice.ContractCreatedEvent;
 import com.gygy.common.events.contractservice.ContractDetailEvent;
 import com.gygy.contractservice.core.exception.type.BusinessException;
 import com.gygy.contractservice.dto.contractDetail.ContractDetailListiningDto;
 import com.gygy.contractservice.dto.contractDetail.CreateContractDetailDto;
 import com.gygy.contractservice.dto.contractDetail.DeleteContractDetailDto;
 import com.gygy.contractservice.dto.contractDetail.UpdateContractDetailDto;
+import com.gygy.contractservice.entity.BillingPlan;
 import com.gygy.contractservice.entity.Contract;
 import com.gygy.contractservice.entity.ContractDetail;
 import com.gygy.contractservice.entity.Discount;
 import com.gygy.contractservice.kafka.producer.KafkaProducerService;
 import com.gygy.contractservice.mapper.ContractDetailMapper;
+import com.gygy.contractservice.model.enums.BillingCycleType;
 import com.gygy.contractservice.repository.ContractDetailRepository;
+import com.gygy.contractservice.service.BillingPlanService;
 import com.gygy.contractservice.service.ContractDetailService;
 import com.gygy.contractservice.service.ContractService;
 import com.gygy.contractservice.service.DiscountService;
 // import com.gygy.customerservice.application.customer.query.GetListCustomerItemDto;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -36,15 +42,17 @@ public class ContractDetailServiceImpl implements ContractDetailService {
     private static final Logger logger = LoggerFactory.getLogger(ContractDetail.class);
     private final KafkaProducerService kafkaProducerService;
     private final DiscountService discountService;
+    private final BillingPlanService billingPlanService;
     //private final CustomerClient customerClient;
 
-    public ContractDetailServiceImpl(ContractDetailRepository contractDetailRepository, ContractService contractService , ContractDetailMapper contractDetailMapper, KafkaProducerService kafkaProducerService,@Lazy DiscountService discountService) {
+    public ContractDetailServiceImpl(ContractDetailRepository contractDetailRepository, ContractService contractService , ContractDetailMapper contractDetailMapper, KafkaProducerService kafkaProducerService, @Lazy DiscountService discountService, @Lazy  BillingPlanService billingPlanService) {
         this.contractDetailRepository = contractDetailRepository;
         this.contractService = contractService;
         this.contractDetailMapper = contractDetailMapper;
         this.kafkaProducerService = kafkaProducerService;
         //this.customerClient = customerClient;
         this.discountService = discountService;
+        this.billingPlanService = billingPlanService;
     }
 
     @Override
@@ -63,6 +71,7 @@ public class ContractDetailServiceImpl implements ContractDetailService {
     public void add(CreateContractDetailDto createContractDetailDto) {
        Contract contract=contractService.findById(createContractDetailDto.getContractId()).orElseThrow(()-> new RuntimeException("Contract not found"));
         Discount discount=discountService.findById(createContractDetailDto.getDiscountId());
+        BillingPlan billingPlan=billingPlanService.findById(createContractDetailDto.getBillingPlanId());
         logger.debug("Creating contract detail for contract: {}", contract.getId());
         try {
             ContractDetail contractDetail=contractDetailMapper.createContractDetailFromCreateContractDetailDto(createContractDetailDto);
@@ -86,6 +95,18 @@ public class ContractDetailServiceImpl implements ContractDetailService {
                                     .email(contractDetail.getEmail())
                                     .signatureDate(contractDetail.getSignatureDate())
                                     .build());
+            kafkaProducerService
+                    .sendCreatedContractEvent(
+                            ContractCreatedEvent
+                                    .builder()
+                                    .customerId(contractDetail.getCustomerId())
+                                    .contractId(contract.getId())
+                                    .startDate(contractDetail.getStartDate())
+                                    .durationInMonths(billingPlan.getCycleType().getMonths())
+                                    .totalAmount(BigDecimal.valueOf(billingPlan.getBaseAmount()))
+                                    .build());
+
+                    ;
         } catch (Exception e) {
             logger.error("Error creating contract detail: {}", e.getMessage(), e);
             throw e;

@@ -16,6 +16,7 @@ import java.util.UUID;
 public class ContractDetailListiningDto {
     private UUID contractId;
     private UUID customerId;
+    private UUID billingPlanId;
     private LocalDate startDate;
     private LocalDate endDate;
     private Status status;
