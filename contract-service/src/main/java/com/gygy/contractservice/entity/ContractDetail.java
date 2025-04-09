@@ -4,7 +4,6 @@ import com.gygy.contractservice.model.enums.Status;
 import com.gygy.contractservice.model.enums.ServiceType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,8 +25,12 @@ public class ContractDetail {
     @Id
     @UuidGenerator
     private UUID id;
+    //id değil customer number al
+
+    //TODO:contract No lOng tipinde oluştur
 
     private String name;
+
     @Column(name="customer_name")
     private String customerName;
 

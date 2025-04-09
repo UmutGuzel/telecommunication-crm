@@ -5,7 +5,6 @@ import com.gygy.contractservice.dto.commitment.CreateCommitmentDto;
 import com.gygy.contractservice.dto.commitment.DeleteCommitmentDto;
 import com.gygy.contractservice.dto.commitment.UpdateCommitmentDto;
 import com.gygy.contractservice.service.CommitmentService;
-import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +21,7 @@ public class CommitmentController {
 
     @GetMapping
     public List<CommitmentListiningDto> getAll() {
+
         return commitmentService.getAll();
     }
     @PostMapping
