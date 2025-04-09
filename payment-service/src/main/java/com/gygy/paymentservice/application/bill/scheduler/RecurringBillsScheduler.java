@@ -33,6 +33,7 @@ public class RecurringBillsScheduler {
                 CreateBillCommand command = new CreateBillCommand();
                 command.setCustomerId(schedule.getCustomerId());
                 command.setTotalAmount(schedule.getAmount());
+                command.setContractId(schedule.getContractId());
                 pipeline.send(command);
 
                 //güncelleriz
