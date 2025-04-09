@@ -7,6 +7,7 @@ import com.gygy.customerservice.application.customer.command.create.CreatedCusto
 import com.gygy.customerservice.application.customer.command.delete.DeletedCustomerResponse;
 import com.gygy.customerservice.application.customer.command.update.UpdateCustomerCommand;
 import com.gygy.customerservice.application.customer.command.update.UpdatedCustomerResponse;
+import com.gygy.customerservice.application.customer.command.update.UpdatedCustomerStatusResponse;
 import com.gygy.customerservice.application.customer.dto.AddressResponse;
 import com.gygy.customerservice.application.customer.query.GetCustomerByEmailResponse;
 import com.gygy.customerservice.application.customer.query.GetCustomerByPhoneNumberResponse;
@@ -93,6 +94,13 @@ public class CustomerMapper {
                 .email(customer.getEmail())
                 .phoneNumber(customer.getPhoneNumber())
                 .customerType(customer.getType().name())
+                .build();
+    }
+
+    public UpdatedCustomerStatusResponse convertCustomerToUpdatedCustomerStatusResponse(Customer customer) {
+        return UpdatedCustomerStatusResponse.builder()
+                .id(customer.getId())
+                .status(customer.getStatus())
                 .build();
     }
 }

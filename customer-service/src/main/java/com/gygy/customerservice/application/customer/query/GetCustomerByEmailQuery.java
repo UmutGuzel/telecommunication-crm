@@ -1,10 +1,10 @@
 package com.gygy.customerservice.application.customer.query;
 
-import java.util.Optional;
-
 import org.springframework.stereotype.Component;
 
 import com.gygy.customerservice.application.customer.mapper.CustomerMapper;
+import com.gygy.customerservice.application.customer.rule.CustomerRule;
+import com.gygy.customerservice.application.customer.validation.CustomerValidation;
 import com.gygy.customerservice.domain.entity.Customer;
 import com.gygy.customerservice.persistance.repository.CustomerRepository;
 
@@ -23,12 +23,17 @@ public class GetCustomerByEmailQuery implements Command<GetCustomerByEmailRespon
     public static class GetCustomerByEmailQueryHandler implements Command.Handler<GetCustomerByEmailQuery, GetCustomerByEmailResponse> {
         private final CustomerRepository customerRepository;
         private final CustomerMapper customerMapper;
+        private final CustomerValidation customerValidation;
+        private final CustomerRule customerRule;
 
         @Override
         public GetCustomerByEmailResponse handle(GetCustomerByEmailQuery query) {
-            Optional<Customer> customer = customerRepository.findByEmail(query.email);
-            return customer.map(customerMapper::convertCustomerToGetCustomerByEmailResponse)
-                    .orElse(null);
+            customerValidation.validateEmail(query.email);
+            
+            Customer customer = customerRepository.findByEmail(query.email).orElse(null);
+            customerRule.checkCustomerExists(customer);
+            
+            return customerMapper.convertCustomerToGetCustomerByEmailResponse(customer);
         }
     }
 } 

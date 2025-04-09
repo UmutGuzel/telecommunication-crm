@@ -1,5 +1,6 @@
 package com.gygy.customerservice.core.exception;
 
+import com.gygy.common.exception.GlobalExceptionHandler;
 import com.gygy.customerservice.core.exception.type.ValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.List;
 
 @RestControllerAdvice
-public class GlobalExceptionHandler {
+public class ServiceGlobalExceptionHandler extends GlobalExceptionHandler {
 
     @ExceptionHandler({ValidationException.class})
     public ResponseEntity<List<String>> validationException(ValidationException e) {

@@ -1,8 +1,10 @@
 package com.gygy.customerservice.application.customer.rule;
 
-import com.gygy.customerservice.domain.entity.Customer;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import com.gygy.customerservice.domain.entity.Customer;
+
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor

@@ -1,13 +1,15 @@
 package com.gygy.customerservice.application.customer.query;
 
-import an.awesome.pipelinr.Command;
-import com.gygy.customerservice.application.customer.mapper.CustomerMapper;
-import com.gygy.customerservice.domain.entity.Customer;
-import com.gygy.customerservice.persistance.repository.CustomerRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
+import com.gygy.customerservice.application.customer.mapper.CustomerMapper;
+import com.gygy.customerservice.application.customer.rule.CustomerRule;
+import com.gygy.customerservice.application.customer.validation.CustomerValidation;
+import com.gygy.customerservice.domain.entity.Customer;
+import com.gygy.customerservice.persistance.repository.CustomerRepository;
+
+import an.awesome.pipelinr.Command;
+import lombok.RequiredArgsConstructor;
 
 public class GetCustomerByPhoneNumberQuery implements Command<GetCustomerByPhoneNumberResponse> {
     private final String phoneNumber;
@@ -21,12 +23,17 @@ public class GetCustomerByPhoneNumberQuery implements Command<GetCustomerByPhone
     public static class GetCustomerByPhoneNumberQueryHandler implements Command.Handler<GetCustomerByPhoneNumberQuery, GetCustomerByPhoneNumberResponse> {
         private final CustomerRepository customerRepository;
         private final CustomerMapper customerMapper;
+        private final CustomerValidation customerValidation;
+        private final CustomerRule customerRule;
 
         @Override
         public GetCustomerByPhoneNumberResponse handle(GetCustomerByPhoneNumberQuery query) {
-            Optional<Customer> customer = customerRepository.findByPhoneNumber(query.phoneNumber);
-            return customer.map(customerMapper::convertCustomerToGetCustomerByPhoneNumberResponse)
-                    .orElse(null);
+            customerValidation.validatePhoneNumber(query.phoneNumber);
+            
+            Customer customer = customerRepository.findByPhoneNumber(query.phoneNumber).orElse(null);
+            customerRule.checkCustomerExists(customer);
+            
+            return customerMapper.convertCustomerToGetCustomerByPhoneNumberResponse(customer);
         }
     }
 } 

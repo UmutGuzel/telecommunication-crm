@@ -1,5 +1,9 @@
 package com.gygy.customerservice.application.individualCustomer.mapper;
 
+import java.time.LocalDateTime;
+
+import org.springframework.stereotype.Component;
+
 import com.gygy.customerservice.application.customer.dto.AddressResponse;
 import com.gygy.customerservice.application.customer.mapper.AddressMapper;
 import com.gygy.customerservice.application.individualCustomer.command.create.CreateIndividualCustomerCommand;
@@ -10,10 +14,10 @@ import com.gygy.customerservice.application.individualCustomer.command.update.Up
 import com.gygy.customerservice.application.individualCustomer.query.GetListIndividualCustomerItemDto;
 import com.gygy.customerservice.domain.entity.Address;
 import com.gygy.customerservice.domain.entity.IndividualCustomer;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import com.gygy.customerservice.infrastructure.messaging.event.CreatedIndividualCustomerEvent;
+import com.gygy.customerservice.infrastructure.messaging.event.UpdatedIndividualCustomerEvent;
 
-import java.time.LocalDateTime;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Component
@@ -125,6 +129,35 @@ public class IndividualCustomerMapper {
                 .surname(individualCustomer.getSurname())
                 .gender(individualCustomer.getGender() != null ? individualCustomer.getGender().name() : null)
                 .birthDate(individualCustomer.getBirthDate())
+                .build();
+    }
+
+    public CreatedIndividualCustomerEvent convertToCreatedIndividualCustomerEvent(IndividualCustomer customer) {
+        return CreatedIndividualCustomerEvent.builder()
+                .id(customer.getId())
+                .email(customer.getEmail())
+                .name(customer.getName())
+                .surname(customer.getSurname())
+                .customerType(customer.getType())
+                .allowEmailMessages(customer.isAllowEmailMessages())
+                .allowSmsMessages(customer.isAllowSmsMessages())
+                .allowPromotionalEmails(customer.isAllowPromotionalEmails())
+                .allowPromotionalSms(customer.isAllowPromotionalSms())
+                .build();
+    }
+
+    public UpdatedIndividualCustomerEvent convertToUpdatedIndividualCustomerEvent(IndividualCustomer customer) {
+        return UpdatedIndividualCustomerEvent.builder()
+                .id(customer.getId())
+                .email(customer.getEmail())
+                .phoneNumber(customer.getPhoneNumber())
+                .identityNumber(customer.getIdentityNumber())
+                .name(customer.getName())
+                .surname(customer.getSurname())
+                .fatherName(customer.getFatherName())
+                .motherName(customer.getMotherName())
+                .gender(customer.getGender())
+                .birthDate(customer.getBirthDate())
                 .build();
     }
 }
