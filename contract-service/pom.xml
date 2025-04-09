@@ -105,7 +105,7 @@
         <dependency>
             <groupId>io.github.umutguzel</groupId>
             <artifactId>common</artifactId>
-            <version>1.0.5</version>
+            <version>1.0.10</version>
         </dependency>
 
         <dependency>
@@ -152,18 +152,9 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.gygy</groupId>
-            <artifactId>customer-service</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.github.umutguzel</groupId>
-            <artifactId>common</artifactId>
-            <version>1.0.6</version>
-            <scope>compile</scope>
-        </dependency>
+
+
+
     </dependencies>
 
     <dependencyManagement>
