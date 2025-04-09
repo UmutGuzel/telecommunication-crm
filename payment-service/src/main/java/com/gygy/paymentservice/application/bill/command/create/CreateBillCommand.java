@@ -9,14 +9,11 @@ import com.gygy.paymentservice.application.bill.service.BillService;
 import com.gygy.paymentservice.domain.entity.bill.Bill;
 import com.gygy.paymentservice.domain.entity.bill.BillStatus;
 import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -28,18 +25,13 @@ import java.util.UUID;
 @NoArgsConstructor
 public class CreateBillCommand implements Command<CreatedBillResponse> {
 
-    // TODO: customerId dışarıdan alınmalı
     private UUID customerId;
 
-    // TODO: amount dışarıdan alınmalı
     @NotNull(message = "Total amount is required")
     @DecimalMin(value = "0.01", message = "Amount must be greater than 0")
     private BigDecimal totalAmount;
 
-    @NotNull(message = "Due date is required")
-    @Future(message = "Due date must be in the future")
-    private LocalDate dueDate;
-    //TODO: otomatize et
+    //dışarıdaki topicten geliyorlar
 
     @Slf4j
     @Component
@@ -54,7 +46,7 @@ public class CreateBillCommand implements Command<CreatedBillResponse> {
             Bill bill = new Bill();
             bill.setCustomerId(createBillCommand.getCustomerId());
             bill.setTotalAmount(createBillCommand.getTotalAmount());
-            bill.setDueDate(createBillCommand.getDueDate());
+            bill.setDueDate(LocalDate.now().plusDays(30));
             bill.setStatus(BillStatus.PENDING);
             bill.setPaidAmount(BigDecimal.ZERO);
             bill.setCreatedAt(LocalDateTime.now());

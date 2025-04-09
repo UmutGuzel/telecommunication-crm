@@ -6,12 +6,10 @@ import org.springframework.stereotype.Component;
 
 import com.gygy.customerservice.application.corporateCustomer.mapper.CorporateCustomerMapper;
 import com.gygy.customerservice.application.customer.dto.UpdateAddressDto;
-import com.gygy.customerservice.application.customer.mapper.AddressMapper;
 import com.gygy.customerservice.application.customer.rule.CustomerRule;
 import com.gygy.customerservice.application.customer.validation.AddressValidation;
 import com.gygy.customerservice.application.customer.validation.CustomerValidation;
 import com.gygy.customerservice.domain.entity.CorporateCustomer;
-import com.gygy.customerservice.infrastructure.messaging.event.UpdatedCorporateCustomerEvent;
 import com.gygy.customerservice.infrastructure.messaging.service.KafkaProducerService;
 import com.gygy.customerservice.persistance.repository.CorporateCustomerRepository;
 
@@ -63,19 +61,13 @@ public class UpdateCorporateCustomerCommand implements Command<UpdatedCorporateC
             customerRule.checkCustomerExists(corporateCustomer);
 
             corporateCustomerMapper.updateCorporateCustomer(corporateCustomer, command);
-            CorporateCustomer updatedCustomer = corporateCustomerRepository.save(corporateCustomer);
+            corporateCustomerRepository.save(corporateCustomer);
 
-            kafkaProducerService.sendUpdatedCorporateCustomerEvent(UpdatedCorporateCustomerEvent.builder()
-                    .id(updatedCustomer.getId())
-                    .email(updatedCustomer.getEmail())
-                    .phoneNumber(updatedCustomer.getPhoneNumber())
-                    .taxNumber(updatedCustomer.getTaxNumber())
-                    .companyName(updatedCustomer.getCompanyName())
-                    .contactPersonName(updatedCustomer.getContactPersonName())
-                    .contactPersonSurname(updatedCustomer.getContactPersonSurname())
-                    .build());
+            kafkaProducerService.sendUpdatedCorporateCustomerEvent(
+                corporateCustomerMapper.convertToUpdatedCorporateCustomerEvent(corporateCustomer)
+            );
 
-            return corporateCustomerMapper.convertCorporateCustomerToUpdatedCorporateCustomerResponse(updatedCustomer);
+            return corporateCustomerMapper.convertCorporateCustomerToUpdatedCorporateCustomerResponse(corporateCustomer);
         }
     }
 }

@@ -1,4 +1,5 @@
 configurl: http://localhost:8090
+
 spring:
   application:
     name: customer-service
@@ -7,24 +8,6 @@ spring:
       profile: local
   config:
     import: configserver:${configurl}
-  datasource:
-    url: "jdbc:postgresql://localhost:5432/customer-service"
-    username: postgres
-    password: test
-  jpa:
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-    showSql: true
-    hibernate:
-      ddlAuto: update
-  kafka:
-    producer:
-      bootstrap-servers: localhost:9092
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-      properties:
-        spring.json.type.mapping: createdIndividualCustomerEvent:com.gygy.customerservice.infrastructure.messaging.event.CreatedIndividualCustomerEvent,createdCorporateCustomerEvent:com.gygy.customerservice.infrastructure.messaging.event.CreatedCorporateCustomerEvent,updatedIndividualCustomerEvent:com.gygy.customerservice.infrastructure.messaging.event.UpdatedIndividualCustomerEvent,updatedCorporateCustomerEvent:com.gygy.customerservice.infrastructure.messaging.event.UpdatedCorporateCustomerEvent
 
 server:
   port: 9020
