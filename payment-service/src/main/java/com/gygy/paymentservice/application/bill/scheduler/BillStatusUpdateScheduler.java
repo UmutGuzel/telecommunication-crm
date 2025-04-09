@@ -1,5 +1,8 @@
 package com.gygy.paymentservice.application.bill.scheduler;
 
+import com.gygy.common.constants.KafkaTopics;
+import com.gygy.common.events.paymentservice.bill.BillOverdueEvent;
+import com.gygy.common.kafka.producer.EventProducer;
 import com.gygy.paymentservice.application.bill.service.BillService;
 import com.gygy.paymentservice.domain.entity.bill.Bill;
 import com.gygy.paymentservice.domain.entity.bill.BillStatus;
@@ -16,6 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BillStatusUpdateScheduler {
     private final BillService billService;
+    private final EventProducer eventProducer;
 
     @Scheduled(cron = "0 */5 * * * *") // Her 5 dakikada bir çalışır. TODO: test için her 5dk yaptım, 0 0 1 * * *  yapılacak.
     @Transactional
@@ -31,6 +35,12 @@ public class BillStatusUpdateScheduler {
                 try {
                     bill.updateStatus();
                     bill.setUpdatedAt(LocalDateTime.now());
+                    BillOverdueEvent event = new BillOverdueEvent();
+                    event.setBillId(bill.getBillId());
+                    event.setAmount(bill.getTotalAmount());
+                    event.setDueDate(bill.getDueDate());
+
+                    eventProducer.sendEvent(KafkaTopics.BILL_OVERDUE, event);
                 } catch (Exception e) {
                     // Fatura durumu güncellenirken hata oluştu, diğer faturalarla devam eder
                     continue;
@@ -61,6 +71,7 @@ public class BillStatusUpdateScheduler {
                 try {
                     bill.updateStatus();
                     bill.setUpdatedAt(LocalDateTime.now());
+
                 } catch (Exception e) {
                     continue;
                 }

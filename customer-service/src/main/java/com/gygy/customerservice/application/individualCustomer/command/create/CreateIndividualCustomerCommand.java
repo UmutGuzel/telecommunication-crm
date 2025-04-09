@@ -78,12 +78,9 @@ public class CreateIndividualCustomerCommand implements Command<CreatedIndividua
 
             individualCustomerRepository.save(newIndividualCustomer);
 
-//            kafkaProducerService.sendCreatedIndividualCustomerEvent(CreatedIndividualCustomerEvent.builder()
-//                    .id(newIndividualCustomer.getId())
-//                    .email(newIndividualCustomer.getEmail())
-//                    .name(newIndividualCustomer.getName())
-//                    .surname(newIndividualCustomer.getSurname())
-//                    .build());
+            kafkaProducerService.sendCreatedIndividualCustomerEvent(
+                individualCustomerMapper.convertToCreatedIndividualCustomerEvent(newIndividualCustomer)
+            );
 
             return individualCustomerMapper.convertIndividualCustomerToResponse(newIndividualCustomer);
         }

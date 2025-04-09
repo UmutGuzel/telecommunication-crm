@@ -1,6 +1,8 @@
 package com.gygy.paymentservice.application.bill.command.delete;
 
 import an.awesome.pipelinr.Command;
+import com.gygy.common.constants.KafkaTopics;
+import com.gygy.common.kafka.producer.EventProducer;
 import com.gygy.paymentservice.application.bill.command.delete.dto.DeletedBillResponse;
 import com.gygy.paymentservice.application.bill.service.BillService;
 import com.gygy.paymentservice.domain.entity.bill.Bill;
@@ -9,6 +11,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -24,10 +27,9 @@ public class DeleteBillCommand implements Command<DeletedBillResponse> {
     @Component
     @RequiredArgsConstructor
     public static class DeleteBillCommandHandler
-            implements Command.Handler<DeleteBillCommand, DeletedBillResponse>{
+            implements Command.Handler<DeleteBillCommand, DeletedBillResponse> {
 
         private final BillService billService;
-        // TODO: private final KafkaTemplate<String, BillDeletedEvent> kafkaTemplate;
 
         @Override
         @Transactional
@@ -39,8 +41,6 @@ public class DeleteBillCommand implements Command<DeletedBillResponse> {
             bill.setDeletedAt(LocalDateTime.now());
             billService.save(bill);
 
-            // TODO: kafka event gönderilir burada
-
             return new DeletedBillResponse(
                     bill.getBillId(),
                     bill.getDeletedAt(),
@@ -48,4 +48,5 @@ public class DeleteBillCommand implements Command<DeletedBillResponse> {
             );
 
         }
-}}
+    }
+}

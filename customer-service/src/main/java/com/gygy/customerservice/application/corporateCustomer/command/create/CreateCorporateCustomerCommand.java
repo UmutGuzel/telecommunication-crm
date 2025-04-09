@@ -10,7 +10,6 @@ import com.gygy.customerservice.application.customer.validation.CustomerValidati
 import com.gygy.customerservice.domain.entity.Address;
 import com.gygy.customerservice.domain.entity.CorporateCustomer;
 import com.gygy.customerservice.domain.entity.Customer;
-import com.gygy.customerservice.infrastructure.messaging.event.CreatedCorporateCustomerEvent;
 import com.gygy.customerservice.infrastructure.messaging.service.KafkaProducerService;
 import com.gygy.customerservice.persistance.repository.AddressRepository;
 import com.gygy.customerservice.persistance.repository.CorporateCustomerRepository;
@@ -73,14 +72,9 @@ public class CreateCorporateCustomerCommand implements Command<CreatedCorporateC
 
             CorporateCustomer newCorporateCustomer = corporateCustomerRepository.save(corporateCustomer);
 
-            kafkaProducerService.sendCreatedCorporateCustomerEvent(CreatedCorporateCustomerEvent.builder()
-                    .id(newCorporateCustomer.getId())
-                    .email(newCorporateCustomer.getEmail())
-                    .taxNumber(newCorporateCustomer.getTaxNumber())
-                    .companyName(newCorporateCustomer.getCompanyName())
-                    .contactPersonName(newCorporateCustomer.getContactPersonName())
-                    .contactPersonSurname(newCorporateCustomer.getContactPersonSurname())
-                    .build());
+            kafkaProducerService.sendCreatedCorporateCustomerEvent(
+                corporateCustomerMapper.convertToCreatedCorporateCustomerEvent(newCorporateCustomer)
+            );
 
             return corporateCustomerMapper.convertCorporateCustomerToResponse(newCorporateCustomer);
         }

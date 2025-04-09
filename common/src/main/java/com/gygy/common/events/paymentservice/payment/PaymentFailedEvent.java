@@ -1,20 +1,20 @@
 package com.gygy.common.events.paymentservice.payment;
 
 import com.gygy.common.events.base.BaseEvent;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
-
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class PaymentFailedEvent extends BaseEvent {
+    // Manuel setter metodları
 
     private UUID billId;
-    private UUID customerId;
-    private BigDecimal paidAmount;
-    private String reason;
+    private UUID paymentId;
+    private String errorMessage;
+
 }

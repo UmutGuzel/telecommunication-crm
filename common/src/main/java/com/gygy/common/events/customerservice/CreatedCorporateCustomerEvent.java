@@ -1,0 +1,25 @@
+package com.gygy.common.events.customerservice;
+
+import lombok.*;
+
+import java.util.UUID;
+import com.gygy.common.events.enums.CustomerType;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class CreatedCorporateCustomerEvent {
+    private UUID id;
+    private String email;
+    private String taxNumber;
+    private String companyName;
+    private String contactPersonName;
+    private String contactPersonSurname;
+    private CustomerType customerType;
+    private boolean allowEmailMessages;
+    private boolean allowSmsMessages;
+    private boolean allowPromotionalEmails;
+    private boolean allowPromotionalSms;
+} 

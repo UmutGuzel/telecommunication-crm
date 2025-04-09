@@ -21,7 +21,4 @@ public class BillDetailResponse {
     private BigDecimal paidAmount;
     private LocalDate dueDate;
     private BillStatus status;
-    //private LocalDateTime createdAt;
-    //private LocalDateTime updatedAt;
-    //TODO: hangileri olmalı??
 }

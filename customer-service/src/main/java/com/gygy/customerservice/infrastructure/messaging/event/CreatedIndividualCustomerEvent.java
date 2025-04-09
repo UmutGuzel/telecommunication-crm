@@ -1,5 +1,6 @@
 package com.gygy.customerservice.infrastructure.messaging.event;
 
+import com.gygy.customerservice.domain.enums.CustomerType;
 import lombok.*;
 
 import java.util.UUID;
@@ -14,4 +15,9 @@ public class CreatedIndividualCustomerEvent {
     private String email;
     private String name;
     private String surname;
+    private CustomerType customerType;
+    private boolean allowEmailMessages;
+    private boolean allowSmsMessages;
+    private boolean allowPromotionalEmails;
+    private boolean allowPromotionalSms;
 }

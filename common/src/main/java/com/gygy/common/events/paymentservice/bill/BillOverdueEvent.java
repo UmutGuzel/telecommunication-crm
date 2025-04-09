@@ -16,8 +16,6 @@ import java.util.UUID;
 @AllArgsConstructor
 public class BillOverdueEvent extends BaseEvent {
     private UUID billId;
-    private UUID customerId;
     private BigDecimal amount;
     private LocalDate dueDate;
-   // private int daysOverdue; TODO: bak eklenmeli mi?
 }

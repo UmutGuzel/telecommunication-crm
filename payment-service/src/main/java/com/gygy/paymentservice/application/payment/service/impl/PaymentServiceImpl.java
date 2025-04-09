@@ -1,5 +1,6 @@
-package com.gygy.paymentservice.application.payment.service;
+package com.gygy.paymentservice.application.payment.service.impl;
 
+import com.gygy.paymentservice.application.payment.service.PaymentService;
 import com.gygy.paymentservice.domain.entity.payment.Payment;
 import com.gygy.paymentservice.domain.entity.payment.PaymentStatus;
 import com.gygy.paymentservice.domain.exception.payment.PaymentNotFoundException;

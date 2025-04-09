@@ -9,15 +9,12 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
-
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class BillCreatedEvent extends BaseEvent {
     private UUID billId;
-    private UUID customerId;
     private BigDecimal totalAmount;
     private LocalDate dueDate;
 }

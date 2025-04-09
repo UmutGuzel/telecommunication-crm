@@ -3,6 +3,7 @@ package com.gygy.customerservice.application.customer.validation;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -14,6 +15,7 @@ import com.gygy.customerservice.application.corporateCustomer.command.update.Upd
 import com.gygy.customerservice.application.individualCustomer.command.create.CreateIndividualCustomerCommand;
 import com.gygy.customerservice.application.individualCustomer.command.update.UpdateIndividualCustomerCommand;
 import com.gygy.customerservice.core.exception.type.ValidationException;
+import com.gygy.customerservice.domain.enums.CustomerStatus;
 import com.gygy.customerservice.domain.enums.IndividualCustomerGender;
 
 @Component
@@ -38,11 +40,15 @@ public class CustomerValidation {
         }
     }
 
+    private <E extends Enum<E>> boolean isValidEnumValue(Class<E> enumClass, E value) {
+        return value != null && EnumSet.allOf(enumClass).contains(value);
+    }
+
     public void validateGender(IndividualCustomerGender gender) {
         List<String> errors = new ArrayList<>();
         if (gender == null) {
             errors.add("Gender cannot be null");
-        } else if (!isValidEnumValue(gender)) {
+        } else if (!isValidEnumValue(IndividualCustomerGender.class, gender)) {
             errors.add("Invalid gender value. Valid values are: " + Arrays.toString(IndividualCustomerGender.values()));
         }
         if (!errors.isEmpty()) {
@@ -50,8 +56,16 @@ public class CustomerValidation {
         }
     }
 
-    private boolean isValidEnumValue(IndividualCustomerGender gender) {
-        return Arrays.asList(IndividualCustomerGender.values()).contains(gender);
+    public void validateStatus(CustomerStatus status) {
+        List<String> errors = new ArrayList<>();
+        if (status == null) {
+            errors.add("Status cannot be null");
+        } else if (!isValidEnumValue(CustomerStatus.class, status)) {
+            errors.add("Invalid gender value. Valid values are: " + Arrays.toString(CustomerStatus.values()));
+        }
+        if (!errors.isEmpty()) {
+            throw new ValidationException(errors);
+        }
     }
 
     public void validateEmailIfProvided(String email) {

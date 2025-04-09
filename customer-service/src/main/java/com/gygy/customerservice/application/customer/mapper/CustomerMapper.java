@@ -1,19 +1,21 @@
 package com.gygy.customerservice.application.customer.mapper;
 
+import org.springframework.stereotype.Component;
+
 import com.gygy.customerservice.application.customer.command.create.CreateCustomerCommand;
 import com.gygy.customerservice.application.customer.command.create.CreatedCustomerResponse;
 import com.gygy.customerservice.application.customer.command.delete.DeletedCustomerResponse;
 import com.gygy.customerservice.application.customer.command.update.UpdateCustomerCommand;
 import com.gygy.customerservice.application.customer.command.update.UpdatedCustomerResponse;
+import com.gygy.customerservice.application.customer.command.update.UpdatedCustomerStatusResponse;
+import com.gygy.customerservice.application.customer.dto.AddressResponse;
+import com.gygy.customerservice.application.customer.query.GetCustomerByEmailResponse;
+import com.gygy.customerservice.application.customer.query.GetCustomerByPhoneNumberResponse;
 import com.gygy.customerservice.application.customer.query.GetListCustomerItemDto;
+import com.gygy.customerservice.domain.entity.Address;
 import com.gygy.customerservice.domain.entity.Customer;
 
 import lombok.RequiredArgsConstructor;
-
-import org.springframework.stereotype.Component;
-
-import com.gygy.customerservice.application.customer.dto.AddressResponse;
-import com.gygy.customerservice.domain.entity.Address;
 
 @Component
 @RequiredArgsConstructor
@@ -74,6 +76,31 @@ public class CustomerMapper {
                 .id(customer.getId())
                 .email(customer.getEmail())
                 .phoneNumber(customer.getPhoneNumber())
+                .build();
+    }
+
+    public GetCustomerByEmailResponse convertCustomerToGetCustomerByEmailResponse(Customer customer) {
+        return GetCustomerByEmailResponse.builder()
+                .id(customer.getId())
+                .email(customer.getEmail())
+                .phoneNumber(customer.getPhoneNumber())
+                .customerType(customer.getType().name())
+                .build();
+    }
+
+    public GetCustomerByPhoneNumberResponse convertCustomerToGetCustomerByPhoneNumberResponse(Customer customer) {
+        return GetCustomerByPhoneNumberResponse.builder()
+                .id(customer.getId())
+                .email(customer.getEmail())
+                .phoneNumber(customer.getPhoneNumber())
+                .customerType(customer.getType().name())
+                .build();
+    }
+
+    public UpdatedCustomerStatusResponse convertCustomerToUpdatedCustomerStatusResponse(Customer customer) {
+        return UpdatedCustomerStatusResponse.builder()
+                .id(customer.getId())
+                .status(customer.getStatus())
                 .build();
     }
 }

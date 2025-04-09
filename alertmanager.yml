@@ -11,6 +11,6 @@ route:
 receivers:
   - name: "email-alert"
     email_configs:
-      - to: "umut_guzelt@yahoo.com"
+      - to: "umut_guzel@yahoo.com"
         from: "alertmanager@example.com"
         require_tls: false

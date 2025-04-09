@@ -158,7 +158,7 @@ public class BillingPlanServiceImpl implements BillingPlanService {
             billingPlan1.setId(updateBillingPlanDto.getId());
             billingPlan1.setDiscounts(discounts);
             BillingPlan updatedBillingPlan=billingPlanRepository.save(billingPlan1);
-            logger.info("Successfully updated billing plan with ID: {}", updatedBillingPlan.getId());
+            logger.info("Successfully updated billing plan with ID: {}", updatedBillingPlan.getId()); //sabite bak
             return updatedBillingPlan;
         } catch (Exception e) {
             logger.error("Error updating billing plan: {}", e.getMessage(), e);
