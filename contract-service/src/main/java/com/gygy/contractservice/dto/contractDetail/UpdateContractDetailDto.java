@@ -22,6 +22,8 @@ public class UpdateContractDetailDto {
     @NotNull(message = "Contract ID is required")
     private UUID contractId;
     private UUID customerId;
+    private UUID billingPlanId;
+
     @NotNull(message = "Contract detail type is required")
     private ContractDetailType contractDetailType;
     private LocalDateTime signatureDate;

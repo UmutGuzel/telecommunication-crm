@@ -33,16 +33,14 @@ public class DiscountServiceImpl implements DiscountService {
     private final DiscountRepository discountRepository;
     private final BillingPlanService billingPlanService;
     private final ContractDetailService contractDetailService;
-    private final StreamBridge streamBridge;
     private static final Logger logger = LoggerFactory.getLogger(DiscountServiceImpl.class);
     private final DiscountMapper discountMapper;
 
     public DiscountServiceImpl(DiscountRepository discountRepository, BillingPlanService billingPlanService,
-                               ContractDetailService contractDetailService, StreamBridge streamBridge, DiscountMapper discountMapper) {
+                               ContractDetailService contractDetailService, DiscountMapper discountMapper) {
         this.discountRepository = discountRepository;
         this.billingPlanService = billingPlanService;
         this.contractDetailService = contractDetailService;
-        this.streamBridge = streamBridge;
         this.discountMapper = discountMapper;
     }
 
