@@ -22,6 +22,8 @@ import com.gygy.contractservice.service.DiscountService;
 // import com.gygy.customerservice.application.customer.query.GetListCustomerItemDto;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -101,7 +103,7 @@ public class ContractDetailServiceImpl implements ContractDetailService {
                                     .contractId(contract.getId())
                                     .startDate(contractDetail.getStartDate())
                                     .durationInMonths(billingPlan.getCycleType().getMonths())
-                                    .totalAmount(billingPlan.getBaseAmount())
+                                    .totalAmount(BigDecimal.valueOf(billingPlan.getBaseAmount()))
                                     .build());
 
                     ;
