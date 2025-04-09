@@ -285,6 +285,8 @@ services:
       - 9094:9093
     volumes:
       - ./alertmanager.yml:/etc/alertmanager/alertmanager.yml
+    depends_on:
+      - prometheus
   grafana:
     image: grafana/grafana
     container_name: grafana

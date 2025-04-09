@@ -16,7 +16,7 @@ scrape_configs:
     scrape_interval: 2s
     metrics_path: "/actuator/prometheus"
     static_configs:
-      - targets: ["config-server:8090"]
+      - targets: ['host.docker.internal:8090', 'config-server-app:8090']
 
   - job_name: "discovery-server-app"
     scrape_interval: 2s
@@ -58,7 +58,7 @@ scrape_configs:
     scrape_interval: 2s
     metrics_path: "/actuator/prometheus"
     static_configs:
-      - targets: ["payment-service:9050"]
+      - targets: ["host.docker.internal:9050"]
 
   - job_name: "customer-support-service-app"
     scrape_interval: 2s

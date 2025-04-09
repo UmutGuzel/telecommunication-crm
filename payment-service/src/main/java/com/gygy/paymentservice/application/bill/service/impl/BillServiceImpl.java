@@ -1,5 +1,6 @@
-package com.gygy.paymentservice.application.bill.service;
+package com.gygy.paymentservice.application.bill.service.impl;
 
+import com.gygy.paymentservice.application.bill.service.BillService;
 import com.gygy.paymentservice.domain.entity.bill.Bill;
 import com.gygy.paymentservice.domain.entity.bill.BillStatus;
 import com.gygy.paymentservice.domain.exception.bill.BillNotFoundException;

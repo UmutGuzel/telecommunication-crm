@@ -40,7 +40,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-//@WebMvcTest(BillController.class)
+//@WebMvcTest(controllers = BillController.class,  // TODO ??? çalışmıyor
+//        excludeAutoConfiguration = SecurityAutoConfiguration.class)
 class BillControllerTest {
 
     @Autowired
@@ -49,7 +50,7 @@ class BillControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean // TODO: araştır
+    @MockBean // Spring contextte olmayanları mocklamamı sağlar.
     private Pipeline pipeline;
 
     @BeforeEach
@@ -73,10 +74,9 @@ class BillControllerTest {
     void whenCreateBill_thenBillShouldBeCreated() throws Exception {
         // given
         UUID customerId = UUID.randomUUID();
-        CreateBillCommand command = new CreateBillCommand(
-                customerId,
-                new BigDecimal("100.00"),
-                LocalDate.now().plusDays(30));
+        CreateBillCommand command = new CreateBillCommand();
+        command.setCustomerId(customerId);
+        command.setTotalAmount(new BigDecimal("100.00"));
 
         CreatedBillResponse response = new CreatedBillResponse();
         response.setBillId(UUID.randomUUID());
