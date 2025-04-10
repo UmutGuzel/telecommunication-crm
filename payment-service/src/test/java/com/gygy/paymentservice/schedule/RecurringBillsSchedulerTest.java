@@ -84,9 +84,47 @@ class RecurringBillsSchedulerTest {
         assertEquals(scheduleId1, updatedSchedule.getId());
         assertEquals(1, updatedSchedule.getRemainingMonths());
         assertEquals(today.plusMonths(1), updatedSchedule.getNextBillingDate());
+    }
 
-        // Log verification'ı kaldırıyoruz çünkü static logger'ı doğrudan test etmek için
-        // PowerMockito gibi daha gelişmiş araçlar gerekiyor
+    @Test
+    void recurringBills_shouldGenerateLastBillAndNotUpdateNextDate_whenLastPayment() {
+        // Arrange
+        LocalDate today = LocalDate.now();
+        UUID contractId1 = UUID.randomUUID();
+        UUID customerId1 = UUID.randomUUID();
+        UUID scheduleId1 = UUID.randomUUID();
+
+        PaymentSchedule schedule1 = new PaymentSchedule();
+        schedule1.setId(scheduleId1);
+        schedule1.setContractId(contractId1);
+        schedule1.setCustomerId(customerId1);
+        schedule1.setAmount(BigDecimal.TEN);
+        schedule1.setNextBillingDate(today);
+        schedule1.setRemainingMonths(1); // Son ödeme
+
+        when(paymentScheduleRepository.findByNextBillingDate(today)).thenReturn(Arrays.asList(schedule1));
+
+        // ArgumentCaptor kullanarak türü yakalayın
+        ArgumentCaptor<CreateBillCommand> commandCaptor = ArgumentCaptor.forClass(CreateBillCommand.class);
+        ArgumentCaptor<PaymentSchedule> scheduleCaptor = ArgumentCaptor.forClass(PaymentSchedule.class);
+
+        // Act
+        recurringBillsScheduler.recurringBills();
+
+        // Assert
+        // `send` metodunun doğru çağrıldığından emin olun
+        verify(pipeline, times(1)).send(commandCaptor.capture());
+        CreateBillCommand capturedCommand = commandCaptor.getValue();
+        assertEquals(customerId1, capturedCommand.getCustomerId());
+        assertEquals(BigDecimal.TEN, capturedCommand.getTotalAmount());
+
+        // PaymentSchedule güncellemesini kontrol et
+        verify(paymentScheduleService, times(1)).save(scheduleCaptor.capture());
+        PaymentSchedule updatedSchedule = scheduleCaptor.getValue();
+        assertEquals(scheduleId1, updatedSchedule.getId());
+        assertEquals(0, updatedSchedule.getRemainingMonths());
+        // Son ödeme olduğundan, nextBillingDate değişmemeli
+        assertEquals(today, updatedSchedule.getNextBillingDate());
     }
 
     @Test
@@ -100,11 +138,8 @@ class RecurringBillsSchedulerTest {
 
         // Assert
         // `send` metodunun çağrılmaması gerektiğini kontrol et
-        // Açıkça Command<Object> tipini belirtiyoruz
         verify(pipeline, never()).send(any(Command.class));
         verify(paymentScheduleService, never()).save(any());
-
-        // Log verification'ı kaldırıyoruz
     }
 
     @Test
@@ -127,7 +162,5 @@ class RecurringBillsSchedulerTest {
         // Assert
         verify(pipeline).send(any(Command.class));
         verify(paymentScheduleService, never()).save(any());
-
-        // Log verification'ı kaldırıyoruz
     }
 }
