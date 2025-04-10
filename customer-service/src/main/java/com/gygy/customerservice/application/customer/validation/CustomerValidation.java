@@ -8,13 +8,13 @@ import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-import com.gygy.customerservice.core.exception.type.ValidationException;
 import org.springframework.stereotype.Component;
 
 import com.gygy.customerservice.application.corporateCustomer.command.create.CreateCorporateCustomerCommand;
 import com.gygy.customerservice.application.corporateCustomer.command.update.UpdateCorporateCustomerCommand;
 import com.gygy.customerservice.application.individualCustomer.command.create.CreateIndividualCustomerCommand;
 import com.gygy.customerservice.application.individualCustomer.command.update.UpdateIndividualCustomerCommand;
+import com.gygy.customerservice.core.exception.type.ValidationException;
 import com.gygy.customerservice.domain.enums.IndividualCustomerGender;
 
 @Component
@@ -140,6 +140,11 @@ public class CustomerValidation {
 
     public void validateEmailAndThrowValidationError(String email) {
         validateEmail(email);
+        throwIfErrorsExist();
+    }
+
+    public void validatePhoneNumberAndThrowValidationError(String phoneNumber) {
+        validatePhoneNumber(phoneNumber);
         throwIfErrorsExist();
     }
 

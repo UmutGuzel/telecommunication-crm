@@ -15,6 +15,8 @@ import com.gygy.customerservice.application.customer.command.delete.DeleteCustom
 import com.gygy.customerservice.application.customer.command.delete.DeletedCustomerResponse;
 import com.gygy.customerservice.application.customer.query.GetCustomerByEmailQuery;
 import com.gygy.customerservice.application.customer.query.GetCustomerByEmailResponse;
+import com.gygy.customerservice.application.customer.query.GetCustomerByPhoneNumberQuery;
+import com.gygy.customerservice.application.customer.query.GetCustomerByPhoneNumberResponse;
 import com.gygy.customerservice.application.customer.query.GetListCustomerItemDto;
 import com.gygy.customerservice.application.customer.query.GetListCustomerQuery;
 import com.gygy.customerservice.core.web.BaseController;
@@ -43,10 +45,16 @@ public class CustomerController extends BaseController {
         return query.execute(pipeline);
     }
 
+    @GetMapping("/by-phone/{phoneNumber}")
+    @ResponseStatus(HttpStatus.OK)
+    public GetCustomerByPhoneNumberResponse getCustomerByPhoneNumber(@PathVariable String phoneNumber) {
+        GetCustomerByPhoneNumberQuery query = new GetCustomerByPhoneNumberQuery(phoneNumber);
+        return query.execute(pipeline);
+    }
 
-     @DeleteMapping
-     @ResponseStatus(HttpStatus.NO_CONTENT)
-     public DeletedCustomerResponse deleteCustomer(@RequestBody DeleteCustomerCommand command) {
-         return command.execute(pipeline);
-     }
+    @DeleteMapping
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public DeletedCustomerResponse deleteCustomer(@RequestBody DeleteCustomerCommand command) {
+        return command.execute(pipeline);
+    }
 }
