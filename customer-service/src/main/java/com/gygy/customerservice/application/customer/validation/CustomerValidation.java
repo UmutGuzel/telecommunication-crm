@@ -94,7 +94,7 @@ public class CustomerValidation {
 
     public void validateCorporateCustomerFieldsIfProvided(String taxNumber, String companyName, String contactPersonName, String contactPersonSurname) {
         List<String> errors = new ArrayList<>();
-        
+
         if (taxNumber != null && !taxNumber.trim().isEmpty()) {
             if (!TAX_NUMBER_PATTERN.matcher(taxNumber).matches()) {
                 errors.add("Invalid tax number format. Must be 10 digits and cannot start with 0");
@@ -401,4 +401,4 @@ public class CustomerValidation {
             throw new ValidationException(errors);
         }
     }
-} 
+}

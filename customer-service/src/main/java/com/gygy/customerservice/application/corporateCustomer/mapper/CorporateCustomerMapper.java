@@ -1,12 +1,7 @@
 package com.gygy.customerservice.application.corporateCustomer.mapper;
 
-import java.time.LocalDateTime;
-
-import org.springframework.stereotype.Component;
-
 import com.gygy.customerservice.application.corporateCustomer.command.create.CreateCorporateCustomerCommand;
 import com.gygy.customerservice.application.corporateCustomer.command.create.CreatedCorporateCustomerResponse;
-import com.gygy.customerservice.application.corporateCustomer.command.delete.DeletedCorporateCustomerResponse;
 import com.gygy.customerservice.application.corporateCustomer.command.update.UpdateCorporateCustomerCommand;
 import com.gygy.customerservice.application.corporateCustomer.command.update.UpdatedCorporateCustomerResponse;
 import com.gygy.customerservice.application.corporateCustomer.query.GetListCorporateCustomerItemDto;
@@ -16,8 +11,10 @@ import com.gygy.customerservice.domain.entity.Address;
 import com.gygy.customerservice.domain.entity.CorporateCustomer;
 import com.gygy.customerservice.infrastructure.messaging.event.CreatedCorporateCustomerEvent;
 import com.gygy.customerservice.infrastructure.messaging.event.UpdatedCorporateCustomerEvent;
-
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
 @Component
@@ -95,12 +92,6 @@ public class CorporateCustomerMapper {
                 .contactPersonName(corporateCustomer.getContactPersonName())
                 .contactPersonSurname(corporateCustomer.getContactPersonSurname())
                 .address(addressResponse)
-                .build();
-    }
-
-    public DeletedCorporateCustomerResponse convertCorporateCustomerToDeletedCorporateCustomerResponse(CorporateCustomer corporateCustomer) {
-        return DeletedCorporateCustomerResponse.builder()
-                .id(corporateCustomer.getId())
                 .build();
     }
 

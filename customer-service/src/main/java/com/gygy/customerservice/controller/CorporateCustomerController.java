@@ -3,8 +3,6 @@ package com.gygy.customerservice.controller;
 import an.awesome.pipelinr.Pipeline;
 import com.gygy.customerservice.application.corporateCustomer.command.create.CreateCorporateCustomerCommand;
 import com.gygy.customerservice.application.corporateCustomer.command.create.CreatedCorporateCustomerResponse;
-import com.gygy.customerservice.application.corporateCustomer.command.delete.DeleteCorporateCustomerCommand;
-import com.gygy.customerservice.application.corporateCustomer.command.delete.DeletedCorporateCustomerResponse;
 import com.gygy.customerservice.application.corporateCustomer.command.update.UpdateCorporateCustomerCommand;
 import com.gygy.customerservice.application.corporateCustomer.command.update.UpdatedCorporateCustomerResponse;
 import com.gygy.customerservice.application.corporateCustomer.query.GetListCorporateCustomerItemDto;
@@ -38,12 +36,6 @@ public class CorporateCustomerController extends BaseController {
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
     public UpdatedCorporateCustomerResponse updateCorporateCustomer(@RequestBody UpdateCorporateCustomerCommand command) {
-        return command.execute(pipeline);
-    }
-
-    @DeleteMapping
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public DeletedCorporateCustomerResponse deleteCustomer(@RequestBody DeleteCorporateCustomerCommand command) {
         return command.execute(pipeline);
     }
 }

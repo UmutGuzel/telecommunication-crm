@@ -10,6 +10,7 @@ import com.gygy.customerservice.application.customer.validation.CustomerValidati
 import com.gygy.customerservice.domain.entity.Address;
 import com.gygy.customerservice.domain.entity.CorporateCustomer;
 import com.gygy.customerservice.domain.entity.Customer;
+import com.gygy.customerservice.domain.enums.CustomerType;
 import com.gygy.customerservice.infrastructure.messaging.service.KafkaProducerService;
 import com.gygy.customerservice.persistance.repository.AddressRepository;
 import com.gygy.customerservice.persistance.repository.CorporateCustomerRepository;
@@ -52,11 +53,10 @@ public class CreateCorporateCustomerCommand implements Command<CreatedCorporateC
 
         @Override
         public CreatedCorporateCustomerResponse handle(CreateCorporateCustomerCommand command) {
-            // Validate all fields at once
             customerValidation.validateCreateCorporateCustomer(command);
 
-            Customer customer = customerRepository.findByEmail(command.getEmail()).orElse(null);
-            customerRule.checkCustomerNotExists(customer);
+            // Validate all business rules at once
+            customerRule.validateCorporateCustomer(command.getEmail(), command.getPhoneNumber(), command.getTaxNumber());
 
             CreateAddressDto addressDto = command.getAddress();
             Address existingAddress = addressRepository.findByStreetAndDistrictAndCityAndCountry(

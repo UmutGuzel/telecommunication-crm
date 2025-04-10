@@ -1,14 +1,9 @@
 package com.gygy.customerservice.application.individualCustomer.mapper;
 
-import java.time.LocalDateTime;
-
-import org.springframework.stereotype.Component;
-
 import com.gygy.customerservice.application.customer.dto.AddressResponse;
 import com.gygy.customerservice.application.customer.mapper.AddressMapper;
 import com.gygy.customerservice.application.individualCustomer.command.create.CreateIndividualCustomerCommand;
 import com.gygy.customerservice.application.individualCustomer.command.create.CreatedIndividualCustomerResponse;
-import com.gygy.customerservice.application.individualCustomer.command.delete.DeletedIndividualCustomerResponse;
 import com.gygy.customerservice.application.individualCustomer.command.update.UpdateIndividualCustomerCommand;
 import com.gygy.customerservice.application.individualCustomer.command.update.UpdatedIndividualCustomerResponse;
 import com.gygy.customerservice.application.individualCustomer.query.GetListIndividualCustomerItemDto;
@@ -16,8 +11,10 @@ import com.gygy.customerservice.domain.entity.Address;
 import com.gygy.customerservice.domain.entity.IndividualCustomer;
 import com.gygy.customerservice.infrastructure.messaging.event.CreatedIndividualCustomerEvent;
 import com.gygy.customerservice.infrastructure.messaging.event.UpdatedIndividualCustomerEvent;
-
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
 @Component
@@ -111,12 +108,6 @@ public class IndividualCustomerMapper {
                 .gender(individualCustomer.getGender())
                 .birthDate(individualCustomer.getBirthDate())
                 .address(addressMapper.convertAddressToAddressResponse(individualCustomer.getAddress()))
-                .build();
-    }
-
-    public DeletedIndividualCustomerResponse convertIndividualCustomerToDeletedIndividualCustomerResponse(IndividualCustomer individualCustomer) {
-        return DeletedIndividualCustomerResponse.builder()
-                .id(individualCustomer.getId())
                 .build();
     }
 

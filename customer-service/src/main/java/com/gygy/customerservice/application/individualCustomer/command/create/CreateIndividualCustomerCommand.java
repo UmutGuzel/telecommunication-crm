@@ -12,6 +12,7 @@ import com.gygy.customerservice.application.individualCustomer.mapper.Individual
 import com.gygy.customerservice.domain.entity.Address;
 import com.gygy.customerservice.domain.entity.Customer;
 import com.gygy.customerservice.domain.entity.IndividualCustomer;
+import com.gygy.customerservice.domain.enums.CustomerType;
 import com.gygy.customerservice.domain.enums.IndividualCustomerGender;
 import com.gygy.customerservice.infrastructure.messaging.service.KafkaProducerService;
 import com.gygy.customerservice.persistance.repository.AddressRepository;
@@ -58,11 +59,10 @@ public class CreateIndividualCustomerCommand implements Command<CreatedIndividua
 
         @Override
         public CreatedIndividualCustomerResponse handle(CreateIndividualCustomerCommand command) {
-            // Validate all fields at once
             customerValidation.validateCreateIndividualCustomer(command);
 
-            Customer customer = customerRepository.findByEmail(command.getEmail()).orElse(null);
-            customerRule.checkCustomerNotExists(customer);
+            // Validate all business rules at once
+            customerRule.validateIndividualCustomer(command.getEmail(), command.getPhoneNumber(), command.getIdentityNumber());
 
             CreateAddressDto addressDto = command.getAddress();
             Address existingAddress = addressRepository.findByStreetAndDistrictAndCityAndCountry(
