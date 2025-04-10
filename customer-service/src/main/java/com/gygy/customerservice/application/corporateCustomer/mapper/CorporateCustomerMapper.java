@@ -46,7 +46,6 @@ public class CorporateCustomerMapper {
                 .id(corporateCustomer.getId())
                 .email(corporateCustomer.getEmail())
                 .phoneNumber(corporateCustomer.getPhoneNumber())
-                .taxNumber(corporateCustomer.getTaxNumber())
                 .companyName(corporateCustomer.getCompanyName())
                 .contactPersonName(corporateCustomer.getContactPersonName())
                 .contactPersonSurname(corporateCustomer.getContactPersonSurname())
@@ -64,9 +63,6 @@ public class CorporateCustomerMapper {
         if (command.getAddress() != null) {
             Address address = addressMapper.convertUpdateAddressDtoToAddress(corporateCustomer.getAddress(), command.getAddress());
             corporateCustomer.setAddress(address);
-        }
-        if (command.getTaxNumber() != null && !command.getTaxNumber().isEmpty()) {
-            corporateCustomer.setTaxNumber(command.getTaxNumber());
         }
         if (command.getCompanyName() != null && !command.getCompanyName().isEmpty()) {
             corporateCustomer.setCompanyName(command.getCompanyName());
@@ -87,7 +83,6 @@ public class CorporateCustomerMapper {
                 .id(corporateCustomer.getId())
                 .email(corporateCustomer.getEmail())
                 .phoneNumber(corporateCustomer.getPhoneNumber())
-                .taxNumber(corporateCustomer.getTaxNumber())
                 .companyName(corporateCustomer.getCompanyName())
                 .contactPersonName(corporateCustomer.getContactPersonName())
                 .contactPersonSurname(corporateCustomer.getContactPersonSurname())
@@ -111,7 +106,7 @@ public class CorporateCustomerMapper {
         return CreatedCorporateCustomerEvent.builder()
                 .id(customer.getId())
                 .email(customer.getEmail())
-                .taxNumber(customer.getTaxNumber())
+                .phoneNumber(customer.getPhoneNumber())
                 .companyName(customer.getCompanyName())
                 .contactPersonName(customer.getContactPersonName())
                 .contactPersonSurname(customer.getContactPersonSurname())
@@ -128,10 +123,10 @@ public class CorporateCustomerMapper {
                 .id(customer.getId())
                 .email(customer.getEmail())
                 .phoneNumber(customer.getPhoneNumber())
-                .taxNumber(customer.getTaxNumber())
                 .companyName(customer.getCompanyName())
                 .contactPersonName(customer.getContactPersonName())
                 .contactPersonSurname(customer.getContactPersonSurname())
+                .address(addressMapper.convertAddressToAddressResponse(customer.getAddress()))
                 .build();
     }
 }

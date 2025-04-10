@@ -1,14 +1,25 @@
 package com.gygy.customerservice.controller;
 
-import an.awesome.pipelinr.Pipeline;
+import java.util.List;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.gygy.customerservice.application.customer.command.delete.DeleteCustomerCommand;
 import com.gygy.customerservice.application.customer.command.delete.DeletedCustomerResponse;
-import com.gygy.customerservice.application.customer.query.*;
+import com.gygy.customerservice.application.customer.query.GetCustomerByEmailQuery;
+import com.gygy.customerservice.application.customer.query.GetCustomerByEmailResponse;
+import com.gygy.customerservice.application.customer.query.GetListCustomerItemDto;
+import com.gygy.customerservice.application.customer.query.GetListCustomerQuery;
 import com.gygy.customerservice.core.web.BaseController;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import an.awesome.pipelinr.Pipeline;
 
 @RestController
 @RequestMapping("api/v1/customers")

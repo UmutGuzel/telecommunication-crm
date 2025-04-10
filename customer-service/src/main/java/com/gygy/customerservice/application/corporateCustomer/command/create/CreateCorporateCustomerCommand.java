@@ -1,27 +1,20 @@
 package com.gygy.customerservice.application.corporateCustomer.command.create;
 
-import org.springframework.stereotype.Component;
-
+import an.awesome.pipelinr.Command;
 import com.gygy.customerservice.application.corporateCustomer.mapper.CorporateCustomerMapper;
 import com.gygy.customerservice.application.customer.dto.CreateAddressDto;
 import com.gygy.customerservice.application.customer.mapper.AddressMapper;
 import com.gygy.customerservice.application.customer.rule.CustomerRule;
+import com.gygy.customerservice.application.customer.validation.AddressValidation;
 import com.gygy.customerservice.application.customer.validation.CustomerValidation;
 import com.gygy.customerservice.domain.entity.Address;
 import com.gygy.customerservice.domain.entity.CorporateCustomer;
-import com.gygy.customerservice.domain.entity.Customer;
-import com.gygy.customerservice.domain.enums.CustomerType;
 import com.gygy.customerservice.infrastructure.messaging.service.KafkaProducerService;
 import com.gygy.customerservice.persistance.repository.AddressRepository;
 import com.gygy.customerservice.persistance.repository.CorporateCustomerRepository;
 import com.gygy.customerservice.persistance.repository.CustomerRepository;
-
-import an.awesome.pipelinr.Command;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.stereotype.Component;
 
 @Getter
 @Setter
@@ -50,12 +43,14 @@ public class CreateCorporateCustomerCommand implements Command<CreatedCorporateC
         private final AddressMapper addressMapper;
         private final KafkaProducerService kafkaProducerService;
         private final CustomerValidation customerValidation;
+        private final AddressValidation addressValidation;
 
         @Override
         public CreatedCorporateCustomerResponse handle(CreateCorporateCustomerCommand command) {
             customerValidation.validateCreateCorporateCustomer(command);
 
-            // Validate all business rules at once
+            addressValidation.validateCreateAddress(command.getAddress());
+
             customerRule.validateCorporateCustomer(command.getEmail(), command.getPhoneNumber(), command.getTaxNumber());
 
             CreateAddressDto addressDto = command.getAddress();

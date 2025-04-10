@@ -28,7 +28,7 @@ public class GetCustomerByEmailQuery implements Command<GetCustomerByEmailRespon
 
         @Override
         public GetCustomerByEmailResponse handle(GetCustomerByEmailQuery query) {
-            customerValidation.validateEmail(query.email);
+            customerValidation.validateEmailAndThrowValidationError(query.email);
             
             Customer customer = customerRepository.findByEmail(query.email).orElse(null);
             customerRule.checkCustomerExists(customer);

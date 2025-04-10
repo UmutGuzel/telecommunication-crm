@@ -49,11 +49,8 @@ public class IndividualCustomerMapper {
                 .id(individualCustomer.getId())
                 .email(individualCustomer.getEmail())
                 .phoneNumber(individualCustomer.getPhoneNumber())
-                .identityNumber(individualCustomer.getIdentityNumber())
                 .name(individualCustomer.getName())
                 .surname(individualCustomer.getSurname())
-                .fatherName(individualCustomer.getFatherName())
-                .motherName(individualCustomer.getMotherName())
                 .gender(individualCustomer.getGender())
                 .birthDate(individualCustomer.getBirthDate())
                 .address(addressResponse)
@@ -70,9 +67,6 @@ public class IndividualCustomerMapper {
         if (command.getAddress() != null) {
             Address updatedAddress = addressMapper.convertUpdateAddressDtoToAddress(individualCustomer.getAddress(), command.getAddress());
             individualCustomer.setAddress(updatedAddress);
-        }
-        if (command.getIdentityNumber() != null && !command.getIdentityNumber().isEmpty()) {
-            individualCustomer.setIdentityNumber(command.getIdentityNumber());
         }
         if (command.getName() != null && !command.getName().isEmpty()) {
             individualCustomer.setName(command.getName());
@@ -100,7 +94,6 @@ public class IndividualCustomerMapper {
                 .id(individualCustomer.getId())
                 .email(individualCustomer.getEmail())
                 .phoneNumber(individualCustomer.getPhoneNumber())
-                .identityNumber(individualCustomer.getIdentityNumber())
                 .name(individualCustomer.getName())
                 .surname(individualCustomer.getSurname())
                 .fatherName(individualCustomer.getFatherName())
@@ -127,6 +120,7 @@ public class IndividualCustomerMapper {
         return CreatedIndividualCustomerEvent.builder()
                 .id(customer.getId())
                 .email(customer.getEmail())
+                .phoneNumber(customer.getPhoneNumber())
                 .name(customer.getName())
                 .surname(customer.getSurname())
                 .customerType(customer.getType())
@@ -142,13 +136,13 @@ public class IndividualCustomerMapper {
                 .id(customer.getId())
                 .email(customer.getEmail())
                 .phoneNumber(customer.getPhoneNumber())
-                .identityNumber(customer.getIdentityNumber())
                 .name(customer.getName())
                 .surname(customer.getSurname())
                 .fatherName(customer.getFatherName())
                 .motherName(customer.getMotherName())
                 .gender(customer.getGender())
                 .birthDate(customer.getBirthDate())
+                .address(addressMapper.convertAddressToAddressResponse(customer.getAddress()))
                 .build();
     }
 }

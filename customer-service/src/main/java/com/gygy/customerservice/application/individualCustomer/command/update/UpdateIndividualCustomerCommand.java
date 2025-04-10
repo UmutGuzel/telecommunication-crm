@@ -32,7 +32,6 @@ public class UpdateIndividualCustomerCommand implements Command<UpdatedIndividua
     private String email;
     private String phoneNumber;
 
-    private String identityNumber;
     private String name;
     private String surname;
     private String fatherName;
@@ -54,13 +53,13 @@ public class UpdateIndividualCustomerCommand implements Command<UpdatedIndividua
 
         @Override
         public UpdatedIndividualCustomerResponse handle(UpdateIndividualCustomerCommand command) {
-            // Validate all fields at once
             customerValidation.validateUpdateIndividualCustomer(command);
 
-            // Validate address if provided
             if (command.getAddress() != null) {
                 addressValidation.validateUpdateAddress(command.getAddress());
             }
+
+            customerRule.validateUpdateIndividualCustomer(command.getEmail(), command.getPhoneNumber());;
 
             IndividualCustomer individualCustomer = individualCustomerRepository.findById(command.getId()).orElse(null);
             customerRule.checkCustomerExists(individualCustomer);

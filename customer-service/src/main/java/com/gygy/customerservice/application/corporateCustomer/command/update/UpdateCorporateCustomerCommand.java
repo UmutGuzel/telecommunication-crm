@@ -30,7 +30,6 @@ public class UpdateCorporateCustomerCommand implements Command<UpdatedCorporateC
     private String email;
     private String phoneNumber;
 
-    private String taxNumber;
     private String companyName;
     private String contactPersonName;
     private String contactPersonSurname;
@@ -49,13 +48,13 @@ public class UpdateCorporateCustomerCommand implements Command<UpdatedCorporateC
 
         @Override
         public UpdatedCorporateCustomerResponse handle(UpdateCorporateCustomerCommand command) {
-            // Validate all fields at once
             customerValidation.validateUpdateCorporateCustomer(command);
 
-            // Validate address if provided
             if (command.getAddress() != null) {
                 addressValidation.validateUpdateAddress(command.getAddress());
             }
+
+            customerRule.validateUpdateCorporateCustomer(command.getEmail(), command.getPhoneNumber());
 
             CorporateCustomer corporateCustomer = corporateCustomerRepository.findById(command.getId()).orElse(null);
             customerRule.checkCustomerExists(corporateCustomer);

@@ -2,6 +2,7 @@ package com.gygy.customerservice.application.individualCustomer.command.create;
 
 import java.time.LocalDate;
 
+import com.gygy.customerservice.application.customer.validation.AddressValidation;
 import org.springframework.stereotype.Component;
 
 import com.gygy.customerservice.application.customer.dto.CreateAddressDto;
@@ -56,12 +57,14 @@ public class CreateIndividualCustomerCommand implements Command<CreatedIndividua
         private final AddressMapper addressMapper;
         private final KafkaProducerService kafkaProducerService;
         private final CustomerValidation customerValidation;
+        private final AddressValidation addressValidation;
 
         @Override
         public CreatedIndividualCustomerResponse handle(CreateIndividualCustomerCommand command) {
             customerValidation.validateCreateIndividualCustomer(command);
 
-            // Validate all business rules at once
+            addressValidation.validateCreateAddress(command.getAddress());
+
             customerRule.validateIndividualCustomer(command.getEmail(), command.getPhoneNumber(), command.getIdentityNumber());
 
             CreateAddressDto addressDto = command.getAddress();
