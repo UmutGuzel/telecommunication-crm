@@ -35,7 +35,6 @@ public class CreateCorporateCustomerCommand implements Command<CreatedCorporateC
     @Component
     @RequiredArgsConstructor
     public static class CreateCorporateCustomerCommandHandler implements Handler<CreateCorporateCustomerCommand, CreatedCorporateCustomerResponse> {
-        private final CustomerRepository customerRepository;
         private final CorporateCustomerRepository corporateCustomerRepository;
         private final CorporateCustomerMapper corporateCustomerMapper;
         private final CustomerRule customerRule;

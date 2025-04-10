@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import com.gygy.customerservice.application.customer.dto.UpdateAddressDto;
 import com.gygy.customerservice.application.customer.rule.CustomerRule;
+import com.gygy.customerservice.application.customer.service.CustomerService;
 import com.gygy.customerservice.application.customer.validation.AddressValidation;
 import com.gygy.customerservice.application.customer.validation.CustomerValidation;
 import com.gygy.customerservice.application.individualCustomer.mapper.IndividualCustomerMapper;
@@ -27,8 +28,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UpdateIndividualCustomerCommand implements Command<UpdatedIndividualCustomerResponse> {
-
-    private UUID id;
+    // String format to check the UUID pattern format then convert it to UUID
+    private String id;
     private String email;
     private String phoneNumber;
 
@@ -50,6 +51,7 @@ public class UpdateIndividualCustomerCommand implements Command<UpdatedIndividua
         private final CustomerValidation customerValidation;
         private final AddressValidation addressValidation;
         private final KafkaProducerService kafkaProducerService;
+        private final CustomerService customerService;
 
         @Override
         public UpdatedIndividualCustomerResponse handle(UpdateIndividualCustomerCommand command) {
@@ -59,10 +61,12 @@ public class UpdateIndividualCustomerCommand implements Command<UpdatedIndividua
                 addressValidation.validateUpdateAddress(command.getAddress());
             }
 
-            customerRule.validateUpdateIndividualCustomer(command.getEmail(), command.getPhoneNumber());;
+            UUID customerId = customerService.convertStringToUUID(command.getId());
 
-            IndividualCustomer individualCustomer = individualCustomerRepository.findById(command.getId()).orElse(null);
+            IndividualCustomer individualCustomer = individualCustomerRepository.findById(customerId).orElse(null);
             customerRule.checkCustomerExists(individualCustomer);
+
+            customerRule.validateUpdateIndividualCustomer(command.getEmail(), command.getPhoneNumber());
 
             individualCustomerMapper.updateIndividualCustomer(individualCustomer, command);
             individualCustomerRepository.save(individualCustomer);

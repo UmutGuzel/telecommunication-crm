@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import com.gygy.customerservice.application.corporateCustomer.mapper.CorporateCustomerMapper;
 import com.gygy.customerservice.application.customer.dto.UpdateAddressDto;
 import com.gygy.customerservice.application.customer.rule.CustomerRule;
+import com.gygy.customerservice.application.customer.service.CustomerService;
 import com.gygy.customerservice.application.customer.validation.AddressValidation;
 import com.gygy.customerservice.application.customer.validation.CustomerValidation;
 import com.gygy.customerservice.domain.entity.CorporateCustomer;
@@ -25,8 +26,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UpdateCorporateCustomerCommand implements Command<UpdatedCorporateCustomerResponse> {
-
-    private UUID id;
+    // String format to check the UUID pattern format then convert it to UUID
+    private String id;
     private String email;
     private String phoneNumber;
 
@@ -45,6 +46,7 @@ public class UpdateCorporateCustomerCommand implements Command<UpdatedCorporateC
         private final CustomerValidation customerValidation;
         private final AddressValidation addressValidation;
         private final KafkaProducerService kafkaProducerService;
+        private final CustomerService customerService;
 
         @Override
         public UpdatedCorporateCustomerResponse handle(UpdateCorporateCustomerCommand command) {
@@ -54,10 +56,12 @@ public class UpdateCorporateCustomerCommand implements Command<UpdatedCorporateC
                 addressValidation.validateUpdateAddress(command.getAddress());
             }
 
-            customerRule.validateUpdateCorporateCustomer(command.getEmail(), command.getPhoneNumber());
+            UUID customerId = customerService.convertStringToUUID(command.getId());
 
-            CorporateCustomer corporateCustomer = corporateCustomerRepository.findById(command.getId()).orElse(null);
+            CorporateCustomer corporateCustomer = corporateCustomerRepository.findById(customerId).orElse(null);
             customerRule.checkCustomerExists(corporateCustomer);
+
+            customerRule.validateUpdateCorporateCustomer(command.getEmail(), command.getPhoneNumber());
 
             corporateCustomerMapper.updateCorporateCustomer(corporateCustomer, command);
             corporateCustomerRepository.save(corporateCustomer);

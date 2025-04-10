@@ -1,11 +1,7 @@
 package com.gygy.customerservice.application.customer.validation;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Component;
@@ -23,7 +19,7 @@ public class CustomerValidation {
     private static final Pattern PHONE_PATTERN = Pattern.compile("^\\+90[0-9]{10}$");
     private static final Pattern TAX_NUMBER_PATTERN = Pattern.compile("^[1-9][0-9]{9}$");
     private static final Pattern IDENTITY_NUMBER_PATTERN = Pattern.compile("^[1-9][0-9]{10}$");
-    private static final Pattern UUID_PATTERN = Pattern.compile("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$");
+    private static final Pattern UUID_PATTERN = Pattern.compile("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$");
     private static final Pattern NAME_PATTERN = Pattern.compile("^[a-zA-ZğüşıöçĞÜŞİÖÇ\\s]+$");
     private static final Pattern COMPANY_NAME_PATTERN = Pattern.compile("^[a-zA-ZğüşıöçĞÜŞİÖÇ0-9\\s.,&'-]+$");
 
@@ -44,13 +40,18 @@ public class CustomerValidation {
             throw new ValidationException(errorList);
         }
     }
-
-    public void validateId(UUID id) {
+    
+    public void validateId(String id) {
         if (id == null) {
             addError("ID cannot be null");
-        } else if (!UUID_PATTERN.matcher(id.toString()).matches()) {
+        } else if (!UUID_PATTERN.matcher(id).matches()) {
             addError("Invalid UUID format");
         }
+    }
+
+    public void validateIdAndThrowValidationError(String id) {
+        validateId(id);
+        throwIfErrorsExist();
     }
 
     private <E extends Enum<E>> boolean isValidEnumValue(Class<E> enumClass, E value) {

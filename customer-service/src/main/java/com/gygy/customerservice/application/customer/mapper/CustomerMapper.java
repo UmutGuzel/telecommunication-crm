@@ -1,5 +1,6 @@
 package com.gygy.customerservice.application.customer.mapper;
 
+import com.gygy.customerservice.infrastructure.messaging.event.NotificationPreferencesChangedEvent;
 import org.springframework.stereotype.Component;
 
 import com.gygy.customerservice.application.customer.command.delete.DeletedCustomerResponse;
@@ -57,5 +58,12 @@ public class CustomerMapper {
                 .contactPersonName(customer.getContactPersonName())
                 .contactPersonSurname(customer.getContactPersonSurname())
                 .build();
+    }
+
+    public void updateCustomerNotificationPreferences(Customer customer, NotificationPreferencesChangedEvent event) {
+        customer.setAllowEmailMessages(event.isAllowEmailMessages());
+        customer.setAllowSmsMessages(event.isAllowSmsMessages());
+        customer.setAllowPromotionalEmails(event.isAllowPromotionalEmails());
+        customer.setAllowPromotionalSms(event.isAllowPromotionalSms());
     }
 }
