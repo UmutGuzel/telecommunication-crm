@@ -8,12 +8,15 @@ import com.gygy.userservice.application.user.command.ChangePassword.ChangePasswo
 import com.gygy.userservice.core.configuration.ApplicationConfig;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import com.gygy.userservice.application.user.query.GetUserList.GetUserListDto;
+import com.gygy.userservice.application.user.query.GetUserById.GetUserByIdResponse;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Component
 @Data
@@ -131,5 +134,95 @@ public class UserMapper {
         user.setActivationToken(null);
         user.setActivationTokenExpiry(null);
         return user;
+    }
+
+    /**
+     * Maps a User entity to a GetUserListDto
+     * 
+     * @param user The User entity to map
+     * @return The mapped GetUserListDto
+     */
+    public GetUserListDto mapToGetUserListDto(User user) {
+        if (user == null) {
+            return null;
+        }
+
+        return new GetUserListDto(
+                user.getId(),
+                user.getName(),
+                user.getSurname(),
+                user.getEmail(),
+                user.getPhoneNumber(),
+                user.isActive(),
+                mapRoleNames(user),
+                mapPermissionNames(user));
+    }
+
+    /**
+     * Maps a list of User entities to a list of GetUserListDto
+     * 
+     * @param users The list of User entities to map
+     * @return The mapped list of GetUserListDto
+     */
+    public List<GetUserListDto> mapToGetUserListDtoList(List<User> users) {
+        if (users == null) {
+            return null;
+        }
+
+        return users.stream()
+                .map(this::mapToGetUserListDto)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Maps a User entity to a GetUserByIdResponse
+     * 
+     * @param user The User entity to map
+     * @return The mapped GetUserByIdResponse
+     */
+    public GetUserByIdResponse mapToGetUserByIdResponse(User user) {
+        if (user == null) {
+            return null;
+        }
+
+        return new GetUserByIdResponse(
+                user.getId(),
+                user.getName(),
+                user.getSurname(),
+                user.getEmail(),
+                user.getPhoneNumber(),
+                user.getAddress(),
+                user.getBirthDate(),
+                user.isActive(),
+                mapRoleNames(user),
+                mapPermissionNames(user));
+    }
+
+    /**
+     * Extracts role names from a User entity
+     * 
+     * @param user The User entity
+     * @return List of role names
+     */
+    private List<String> mapRoleNames(User user) {
+        return user.getRoles() != null
+                ? user.getRoles().stream()
+                        .map(role -> role.getName())
+                        .collect(Collectors.toList())
+                : null;
+    }
+
+    /**
+     * Extracts permission names from a User entity
+     * 
+     * @param user The User entity
+     * @return List of permission names
+     */
+    private List<String> mapPermissionNames(User user) {
+        return user.getPermissions() != null
+                ? user.getPermissions().stream()
+                        .map(permission -> permission.getName())
+                        .collect(Collectors.toList())
+                : null;
     }
 }

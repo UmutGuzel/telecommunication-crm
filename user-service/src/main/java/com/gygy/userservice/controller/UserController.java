@@ -26,7 +26,14 @@ import com.gygy.userservice.application.user.command.ActivateUser.ActivateUserCo
 import com.gygy.userservice.application.user.command.ActivateUser.ActivateUserResponse;
 import com.gygy.userservice.application.user.command.UpdateUserPermission.UpdateUserPermissionCommand;
 import com.gygy.userservice.application.user.command.UpdateUserPermission.UpdateUserPermissionResponse;
+import com.gygy.userservice.application.user.query.GetUserList.GetUserListQuery;
+import com.gygy.userservice.application.user.query.GetUserList.GetUserListDto;
+import com.gygy.userservice.application.user.query.GetUserById.GetUserByIdQuery;
+import com.gygy.userservice.application.user.query.GetUserById.GetUserByIdResponse;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PathVariable;
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("api/v1/auth")
@@ -84,4 +91,17 @@ public class UserController {
         return command.execute(pipeline);
     }
 
+    @GetMapping("/users")
+    @ResponseStatus(HttpStatus.OK)
+    public List<GetUserListDto> getUsers(@RequestParam(required = false) String searchTerm) {
+        GetUserListQuery query = new GetUserListQuery(searchTerm);
+        return query.execute(pipeline);
+    }
+
+    @GetMapping("/users/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public GetUserByIdResponse getUserById(@PathVariable UUID id) {
+        GetUserByIdQuery query = new GetUserByIdQuery(id);
+        return query.execute(pipeline);
+    }
 }

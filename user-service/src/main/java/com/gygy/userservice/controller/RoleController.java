@@ -19,6 +19,10 @@ import com.gygy.userservice.application.role.command.CreateRole.CreateRoleComman
 import com.gygy.userservice.application.role.command.CreateRole.CreateRoleResponse;
 import com.gygy.userservice.application.role.command.UpdateRolePermission.UpdateRolePermissionCommand;
 import com.gygy.userservice.application.role.command.UpdateRolePermission.UpdateRolePermissionResponse;
+import com.gygy.userservice.application.role.query.GetRoleList.GetRoleListQuery;
+import com.gygy.userservice.application.role.query.GetRoleList.GetRoleListDto;
+import com.gygy.userservice.application.role.query.GetRoleById.GetRoleByIdQuery;
+import com.gygy.userservice.application.role.query.GetRoleById.GetRoleByIdResponse;
 
 @RestController
 @RequestMapping("api/v1/role")
@@ -26,18 +30,19 @@ import com.gygy.userservice.application.role.command.UpdateRolePermission.Update
 public class RoleController {
     private final Pipeline pipeline;
 
-    // @GetMapping
-    // @ResponseStatus(HttpStatus.OK)
-    // public List<GetRoleListDto> getAllRoles(@RequestBody GetRoleListQuery query)
-    // {
-    // return query.execute(pipeline);
-    // }
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public List<GetRoleListDto> getAllRoles() {
+        GetRoleListQuery query = new GetRoleListQuery();
+        return query.execute(pipeline);
+    }
 
-    // @GetMapping("/{id}")
-    // @ResponseStatus(HttpStatus.OK)
-    // public RoleByIdResponse getRoleById(@RequestBody GetRoleByIdQuery query) {
-    // return query.execute(pipeline);
-    // }
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public GetRoleByIdResponse getRoleById(@PathVariable UUID id) {
+        GetRoleByIdQuery query = new GetRoleByIdQuery(id);
+        return query.execute(pipeline);
+    }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
