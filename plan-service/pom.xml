@@ -91,6 +91,11 @@
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.github.umutguzel</groupId>
+            <artifactId>common</artifactId>
+            <version>1.0.10</version>
+        </dependency>
     </dependencies>
     <dependencyManagement>
         <dependencies>

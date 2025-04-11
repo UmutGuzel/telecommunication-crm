@@ -34,4 +34,8 @@ public class KafkaConfig {
         return new DefaultKafkaProducerFactory<>(getCommonConfig());
     }
 
+    @Bean
+    public KafkaTemplate<String, PlanEvent> planKafkaTemplate() {
+        return new KafkaTemplate<>(planProducerFactory());
+    }
 }
