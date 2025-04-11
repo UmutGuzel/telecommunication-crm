@@ -33,15 +33,23 @@ public class RecurringBillsScheduler {
                 CreateBillCommand command = new CreateBillCommand();
                 command.setCustomerId(schedule.getCustomerId());
                 command.setTotalAmount(schedule.getAmount());
+                command.setContractId(schedule.getContractId());
                 pipeline.send(command);
 
                 //güncelleriz
                 schedule.setRemainingMonths(schedule.getRemainingMonths() - 1);
-                schedule.setNextBillingDate(schedule.getNextBillingDate().plusMonths(1));
+
+                // Ödenecek fatura kaldıysa bir sonraki fatura tarihini güncelle
+                if (schedule.getRemainingMonths() > 0) {
+                    schedule.setNextBillingDate(schedule.getNextBillingDate().plusMonths(1));
+                    log.info("Generated bill for contract: {},  remaining months: {}",
+                            schedule.getContractId(), schedule.getRemainingMonths());
+                } else {
+                    log.info("Last bill generated for contract: {}, no remaining payments",
+                            schedule.getContractId());
+                }
                 paymentScheduleService.save(schedule);
 
-                log.info("Generated bill for contract: {},  remaining months: {}",
-                        schedule.getContractId(), schedule.getRemainingMonths());
             }catch (Exception e){
                 log.error("Error generating bill for schedule {}: {}",
                         schedule.getId(), e.getMessage(), e);
