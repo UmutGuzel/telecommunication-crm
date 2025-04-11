@@ -152,12 +152,12 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
-        <dependency>
+       <!-- <dependency>
             <groupId>com.gygy</groupId>
             <artifactId>customer-service</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
-        </dependency>
+        </dependency> -->
 
 
     </dependencies>
