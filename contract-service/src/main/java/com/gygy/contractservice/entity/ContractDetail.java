@@ -25,9 +25,7 @@ public class ContractDetail {
     @Id
     @UuidGenerator
     private UUID id;
-    //id değil customer number al
 
-    //TODO:contract No lOng tipinde oluştur
 
     private String name;
 
@@ -79,8 +77,6 @@ public class ContractDetail {
     @OneToMany(mappedBy = "contractDetail")
     private Set<Commitment> commitments;
 
-    @OneToMany(mappedBy = "contractDetail")
-    private Set<BillingPlan> billingPlans;
     @OneToMany(mappedBy = "contractDetail")
     private Set<Discount> discounts;
 

@@ -4,4 +4,7 @@ public interface EmailService {
     void sendPasswordResetEmail(String email, String resetLink);
 
     void sendActivationEmail(String email, String name, String activationLink);
+
+    void sendGenericEmail(String email, String subject, String body);
+
 }

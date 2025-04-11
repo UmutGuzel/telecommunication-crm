@@ -17,7 +17,6 @@ import com.gygy.contractservice.service.ContractDetailService;
 import com.gygy.contractservice.service.DiscountService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -26,7 +25,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.gygy.contractservice.constant.GeneralConstant.*;
-import static com.gygy.contractservice.model.enums.EventType.DISCOUNT_APPLIED;
 
 @Service
 public class DiscountServiceImpl implements DiscountService {
@@ -71,22 +69,25 @@ public class DiscountServiceImpl implements DiscountService {
 
     @Override
     public void add(CreateDiscountDto createDiscountDto) {
-        List<BillingPlan> billingPlan = billingPlanService.findAll(createDiscountDto.getBillingPlanId());
-        ContractDetail contractDetail = contractDetailService.findById(createDiscountDto.getContractDetailId());
-
-
-        logger.info("Creating new billing plan with name: {}", createDiscountDto.getName());
+        logger.info("Creating new discount with name: {}", createDiscountDto.getName());
         try {
-            Discount discount=discountMapper.createDiscountFromCreateDiscountDto(createDiscountDto);
-            discount.setBillingPlans(billingPlan);
-            discount.setContractDetail(contractDetail);
+            Discount discount = discountMapper.createDiscountFromCreateDiscountDto(createDiscountDto);
+            
+            // BillingPlan ve ContractDetail ilişkilerini null kontrolü ile ekleyelim
+            if (createDiscountDto.getBillingPlanId() != null && !createDiscountDto.getBillingPlanId().isEmpty()) {
+                List<BillingPlan> billingPlans = billingPlanService.findAll(createDiscountDto.getBillingPlanId());
+                if (!billingPlans.isEmpty()) {
+                    // İlk billing plan'ı kullanıyoruz
+                    discount.setBillingPlan(billingPlans.get(0));
+                }
+            }
+            
             discountRepository.save(discount);
             logger.info("Successfully created discount with ID: {}", discount.getId());
         } catch (Exception e) {
             logger.error("Error creating discount: {}", e.getMessage(), e);
             throw e;
         }
-
     }
 
     @Override
@@ -109,7 +110,7 @@ public class DiscountServiceImpl implements DiscountService {
             Discount discount=discountMapper.updateDiscountFromUpdateDiscountDto(updateDiscountDto);
             discount.setId(updateDiscountDto.getId());
             discount.setContractDetail(contractDetail);
-            discount.setBillingPlans(billingPlan);
+         //   discount.setBillingPlans(billingPlan);
             Discount updatedDiscount=discountRepository.save(discount);
             logger.info("Successfully updated billing plan with ID: {}", updatedDiscount.getId());
             return updatedDiscount;
@@ -138,7 +139,6 @@ public class DiscountServiceImpl implements DiscountService {
     }
 
 
-//TODO: BİLLİNGPLAN BAK
 
     @Override
     public List<DiscountListiningDto> getActiveDiscounts() {

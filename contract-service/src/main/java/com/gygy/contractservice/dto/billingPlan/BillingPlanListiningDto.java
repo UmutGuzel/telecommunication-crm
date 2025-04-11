@@ -1,5 +1,6 @@
 package com.gygy.contractservice.dto.billingPlan;
 
+import com.gygy.contractservice.entity.Contract;
 import com.gygy.contractservice.entity.ContractDetail;
 import com.gygy.contractservice.model.enums.BillingCycleType;
 import com.gygy.contractservice.model.enums.PaymentMethod;
@@ -26,9 +27,9 @@ public class BillingPlanListiningDto {
     private Status status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-     private UUID contractDetailId;
+     private UUID contractId;
 
-    public BillingPlanListiningDto(String name, String description, Integer billingDay, BillingCycleType cycleType,LocalDateTime createdAt,LocalDateTime updatedAt, Integer baseAmount, ContractDetail contractDetail, Integer paymentDueDays, Status status, Double taxRate,PaymentMethod paymentMethod) {
+    public BillingPlanListiningDto(String name, String description, Integer billingDay, BillingCycleType cycleType,LocalDateTime createdAt,LocalDateTime updatedAt, Integer baseAmount, Contract contract, Integer paymentDueDays, Status status, Double taxRate,PaymentMethod paymentMethod) {
         this.name = name;
         this.description = description;
         this.billingDay = billingDay;
@@ -39,7 +40,7 @@ public class BillingPlanListiningDto {
         this.taxRate = taxRate;
         this.paymentDueDays = paymentDueDays;
         this.status = status;
-        this.contractDetailId = contractDetail.getId();
+        this.contractId = contract.getId();
         this.paymentMethod=paymentMethod;
     }
 

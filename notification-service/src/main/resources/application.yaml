@@ -1,20 +1,25 @@
-configurl: http://config-server:8090
 spring:
   application:
     name: notification-service
+
   cloud:
     config:
-      profile: local
-      fail-fast: true
-      retry:
-        initial-interval: 1500
-        multiplier: 1.5
-        max-attempts: 10
-        max-interval: 10000
-  config:
-    import: configserver:${configurl}
+      enabled: false  # config-server kullanmıyoruz, bu yüzden kapalı
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: gulcanbal098@gmail.com            # Gmail adresin
+    password: jule xtir jlso ziru                 # Gmail'den aldığın uygulama şifresi
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
   kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:kafka-1:9092}
+    bootstrap-servers: kafka:9092
     consumer:
       group-id: notification-service-group
       auto-offset-reset: earliest
@@ -23,6 +28,19 @@ kafka:
   topics:
     passwordResetEventsTopic: password-reset-events
     userActivationEventsTopic: user-activation-events
+    contractDetailCreatedTopic: contract_detail_created_topic
+    billCreatedEventsTopic: bill-created-events
+    billOverdueEventsTopic: bill-overdue-events
+    billPaidEventsTopic: bill-paid-events
+    paymentFailedEventsTopic: payment-failed-events
+    paymentSuccessEventsTopic: payment-success-events
+    userRoleChangedTopic: user-role-changed-topic
+    userPermissionChangedTopic: user-permission-changed-topic
+    individualCustomerCreatedTopic: individual-customer-created-topic
+    individualCustomerUpdatedTopic: individual-customer-updated-topic
+    corporateCustomerCreatedTopic: corporate-customer-created-topic
+    corporateCustomerUpdatedTopic: corporate-customer-updated-topic
+    planCampaignTopic: plan-campaign-topic
 
 server:
   port: 9080
