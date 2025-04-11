@@ -17,8 +17,9 @@ public class SecurityService {
     private final BaseSecurityService baseSecurityService;
 
     private static final String[] USER_SERVICE_WHITELIST = {
-            "/api/v1/auth/**",
-            "/actuator/**"
+            "/actuator/**",
+            "/swagger-ui.html",
+            "/api-docs/**"
     };
 
     @Bean

@@ -37,7 +37,7 @@ public class Ticket {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "ticket")
     private List<TicketResponse> responses;
 
     @ManyToOne(fetch = FetchType.EAGER)

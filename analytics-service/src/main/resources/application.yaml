@@ -1,3 +1,37 @@
+configurl: http://config-server:8090
 spring:
   application:
     name: analytics-service
+  cloud:
+    config:
+      profile: local
+      fail-fast: true
+      retry:
+        initial-interval: 1500
+        multiplier: 1.5
+        max-attempts: 10
+        max-interval: 10000
+  config:
+    import: configserver:${configurl}
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:kafka-1:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  data:
+    mongodb:
+      uri: ${MONGODB_URI:mongodb://localhost:27017/analytics-db}
+
+kafka:
+  topics:
+    userActivityTopic: user-activity-events
+    systemMetricsTopic: system-metrics-events
+    planUsageTopic: plan-usage-events
+
+server:
+  port: 9081
+
+logging:
+  level:
+    com.gygy.analyticsservice: INFO
+    org.springframework.kafka: INFO
