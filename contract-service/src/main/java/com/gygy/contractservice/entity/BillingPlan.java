@@ -10,7 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UuidGenerator;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -51,15 +51,12 @@ public class BillingPlan {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
     @ManyToOne
-    @JoinColumn(name = "contract_detail_id", nullable = false)
-    private ContractDetail contractDetail;
+    @JoinColumn(name = "contract_id")
+    private Contract contract;
 
-    @ManyToMany
-    @JoinTable(
-            name = "billingPlan_discount",
-            joinColumns = @JoinColumn(name = "billing_plan_id"),
-            inverseJoinColumns = @JoinColumn(name = "discount_id"))
-    private List<Discount> discounts;
+
+    @OneToMany(mappedBy = "billingPlan")
+    private Set<Discount> discounts;
 
 
 }

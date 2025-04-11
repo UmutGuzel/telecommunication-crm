@@ -47,19 +47,11 @@ public class Contract {
     private LocalDateTime updatedAt;
     @OneToMany(mappedBy = "contract")
     private Set<ContractDetail> contractDetails;
+    @OneToMany(mappedBy = "contract")
+    private Set<BillingPlan> billingPlans;
+
 
     public Contract() {
-
     }
 
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
 }
