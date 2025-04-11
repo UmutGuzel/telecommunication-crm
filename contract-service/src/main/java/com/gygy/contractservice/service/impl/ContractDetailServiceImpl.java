@@ -19,6 +19,7 @@ import com.gygy.contractservice.service.BillingPlanService;
 import com.gygy.contractservice.service.ContractDetailService;
 import com.gygy.contractservice.service.ContractService;
 import com.gygy.contractservice.service.DiscountService;
+import com.gygy.customerservice.application.customer.query.GetCustomerByEmailResponse;
 import com.gygy.customerservice.application.customer.query.GetCustomerByPhoneNumberResponse;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -74,7 +75,7 @@ public class ContractDetailServiceImpl implements ContractDetailService {
         try {
             ContractDetail contractDetail=contractDetailMapper.createContractDetailFromCreateContractDetailDto(createContractDetailDto);
             contractDetail.setContract(contract);
-            GetCustomerByPhoneNumberResponse response= customerClient.getCustomerByPhoneNumber(contractDetail.getPhoneNumber());
+            GetCustomerByEmailResponse response= customerClient.getCustomerByEmail(contractDetail.getEmail());
             contractDetail.setCustomerId(response.getId());
             contractDetail.setEmail(response.getEmail());
             contractDetail.setPhoneNumber(response.getPhoneNumber());
