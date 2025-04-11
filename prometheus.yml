@@ -40,7 +40,7 @@ scrape_configs:
     scrape_interval: 2s
     metrics_path: "/actuator/prometheus"
     static_configs:
-      - targets: ["customer-service:9020"]
+      - targets: ["host.docker.internal:9020", "customer-service:9020"]
 
   - job_name: "contract-service-app"
     scrape_interval: 2s
