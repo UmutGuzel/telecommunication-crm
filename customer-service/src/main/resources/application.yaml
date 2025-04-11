@@ -9,6 +9,36 @@ spring:
   config:
     import: configserver:${configurl}
 
+  kafka:
+    consumer:
+      group-id: notification-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: '*'
+        spring.json.type.mapping: notificationPreferencesChangedEvent:com.gygy.customerservice.infrastructure.messaging.event.NotificationPreferencesChangedEvent
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+logging:
+  level:
+    com.gygy.customerservice: DEBUG
+    org.springframework: INFO
+
+encryption:
+  secret-key: "GygyTelecomCRM2024!@#$%^&*()"
+
 server:
   port: 9020
-

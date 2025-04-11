@@ -13,7 +13,8 @@ import java.util.UUID;
 public class CreatedCorporateCustomerEvent {
     private UUID id;
     private String email;
-    private String taxNumber;
+    private String phoneNumber;
+
     private String companyName;
     private String contactPersonName;
     private String contactPersonSurname;

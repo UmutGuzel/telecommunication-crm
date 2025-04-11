@@ -1,14 +1,9 @@
 package com.gygy.customerservice.application.individualCustomer.mapper;
 
-import java.time.LocalDateTime;
-
-import org.springframework.stereotype.Component;
-
 import com.gygy.customerservice.application.customer.dto.AddressResponse;
 import com.gygy.customerservice.application.customer.mapper.AddressMapper;
 import com.gygy.customerservice.application.individualCustomer.command.create.CreateIndividualCustomerCommand;
 import com.gygy.customerservice.application.individualCustomer.command.create.CreatedIndividualCustomerResponse;
-import com.gygy.customerservice.application.individualCustomer.command.delete.DeletedIndividualCustomerResponse;
 import com.gygy.customerservice.application.individualCustomer.command.update.UpdateIndividualCustomerCommand;
 import com.gygy.customerservice.application.individualCustomer.command.update.UpdatedIndividualCustomerResponse;
 import com.gygy.customerservice.application.individualCustomer.query.GetListIndividualCustomerItemDto;
@@ -16,8 +11,10 @@ import com.gygy.customerservice.domain.entity.Address;
 import com.gygy.customerservice.domain.entity.IndividualCustomer;
 import com.gygy.customerservice.infrastructure.messaging.event.CreatedIndividualCustomerEvent;
 import com.gygy.customerservice.infrastructure.messaging.event.UpdatedIndividualCustomerEvent;
-
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
 @Component
@@ -52,11 +49,8 @@ public class IndividualCustomerMapper {
                 .id(individualCustomer.getId())
                 .email(individualCustomer.getEmail())
                 .phoneNumber(individualCustomer.getPhoneNumber())
-                .identityNumber(individualCustomer.getIdentityNumber())
                 .name(individualCustomer.getName())
                 .surname(individualCustomer.getSurname())
-                .fatherName(individualCustomer.getFatherName())
-                .motherName(individualCustomer.getMotherName())
                 .gender(individualCustomer.getGender())
                 .birthDate(individualCustomer.getBirthDate())
                 .address(addressResponse)
@@ -73,9 +67,6 @@ public class IndividualCustomerMapper {
         if (command.getAddress() != null) {
             Address updatedAddress = addressMapper.convertUpdateAddressDtoToAddress(individualCustomer.getAddress(), command.getAddress());
             individualCustomer.setAddress(updatedAddress);
-        }
-        if (command.getIdentityNumber() != null && !command.getIdentityNumber().isEmpty()) {
-            individualCustomer.setIdentityNumber(command.getIdentityNumber());
         }
         if (command.getName() != null && !command.getName().isEmpty()) {
             individualCustomer.setName(command.getName());
@@ -103,7 +94,6 @@ public class IndividualCustomerMapper {
                 .id(individualCustomer.getId())
                 .email(individualCustomer.getEmail())
                 .phoneNumber(individualCustomer.getPhoneNumber())
-                .identityNumber(individualCustomer.getIdentityNumber())
                 .name(individualCustomer.getName())
                 .surname(individualCustomer.getSurname())
                 .fatherName(individualCustomer.getFatherName())
@@ -114,28 +104,11 @@ public class IndividualCustomerMapper {
                 .build();
     }
 
-    public DeletedIndividualCustomerResponse convertIndividualCustomerToDeletedIndividualCustomerResponse(IndividualCustomer individualCustomer) {
-        return DeletedIndividualCustomerResponse.builder()
-                .id(individualCustomer.getId())
-                .build();
-    }
-
-    public GetListIndividualCustomerItemDto convertIndividualCustomerToGetListIndividualCustomerItemDto(IndividualCustomer individualCustomer) {
-        return GetListIndividualCustomerItemDto.builder()
-                .id(individualCustomer.getId())
-                .email(individualCustomer.getEmail())
-                .phoneNumber(individualCustomer.getPhoneNumber())
-                .name(individualCustomer.getName())
-                .surname(individualCustomer.getSurname())
-                .gender(individualCustomer.getGender() != null ? individualCustomer.getGender().name() : null)
-                .birthDate(individualCustomer.getBirthDate())
-                .build();
-    }
-
     public CreatedIndividualCustomerEvent convertToCreatedIndividualCustomerEvent(IndividualCustomer customer) {
         return CreatedIndividualCustomerEvent.builder()
                 .id(customer.getId())
                 .email(customer.getEmail())
+                .phoneNumber(customer.getPhoneNumber())
                 .name(customer.getName())
                 .surname(customer.getSurname())
                 .customerType(customer.getType())
@@ -151,13 +124,13 @@ public class IndividualCustomerMapper {
                 .id(customer.getId())
                 .email(customer.getEmail())
                 .phoneNumber(customer.getPhoneNumber())
-                .identityNumber(customer.getIdentityNumber())
                 .name(customer.getName())
                 .surname(customer.getSurname())
                 .fatherName(customer.getFatherName())
                 .motherName(customer.getMotherName())
                 .gender(customer.getGender())
                 .birthDate(customer.getBirthDate())
+                .address(addressMapper.convertAddressToAddressResponse(customer.getAddress()))
                 .build();
     }
 }

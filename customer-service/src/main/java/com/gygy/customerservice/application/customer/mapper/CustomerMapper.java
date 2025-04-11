@@ -1,19 +1,14 @@
 package com.gygy.customerservice.application.customer.mapper;
 
+import com.gygy.customerservice.infrastructure.messaging.event.NotificationPreferencesChangedEvent;
 import org.springframework.stereotype.Component;
 
-import com.gygy.customerservice.application.customer.command.create.CreateCustomerCommand;
-import com.gygy.customerservice.application.customer.command.create.CreatedCustomerResponse;
 import com.gygy.customerservice.application.customer.command.delete.DeletedCustomerResponse;
-import com.gygy.customerservice.application.customer.command.update.UpdateCustomerCommand;
-import com.gygy.customerservice.application.customer.command.update.UpdatedCustomerResponse;
-import com.gygy.customerservice.application.customer.command.update.UpdatedCustomerStatusResponse;
-import com.gygy.customerservice.application.customer.dto.AddressResponse;
 import com.gygy.customerservice.application.customer.query.GetCustomerByEmailResponse;
 import com.gygy.customerservice.application.customer.query.GetCustomerByPhoneNumberResponse;
-import com.gygy.customerservice.application.customer.query.GetListCustomerItemDto;
-import com.gygy.customerservice.domain.entity.Address;
+import com.gygy.customerservice.domain.entity.CorporateCustomer;
 import com.gygy.customerservice.domain.entity.Customer;
+import com.gygy.customerservice.domain.entity.IndividualCustomer;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,61 +16,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CustomerMapper {
     private final AddressMapper addressMapper;
-   
-    public Customer convertCreateCommandToCustomer(CreateCustomerCommand command) {
-        Address address = addressMapper.convertCreateAddressDtoToAddress(command.getAddress());
-        
-        return Customer.builder()
-                .email(command.getEmail())
-                .phoneNumber(command.getPhoneNumber())
-                .build();
-    }
-
-    public CreatedCustomerResponse convertCustomerToCreatedCustomerResponse(Customer customer) {
-        AddressResponse addressResponse = addressMapper.convertAddressToAddressResponse(customer.getAddress());
-
-        return CreatedCustomerResponse.builder()
-                .id(customer.getId())
-                .email(customer.getEmail())
-                .phoneNumber(customer.getPhoneNumber())
-                .address(addressResponse)
-                .build();
-    }
-
-    public void updateCustomer(Customer customer, UpdateCustomerCommand command) {
-        if (command.getEmail() != null && !command.getEmail().isEmpty()) {
-            customer.setEmail(command.getEmail());
-        }
-        if (command.getPhoneNumber() != null && !command.getPhoneNumber().isEmpty()) {
-            customer.setPhoneNumber(command.getPhoneNumber());
-        }
-
-        if (command.getAddress() != null) {
-            Address updatedAddress = addressMapper.convertUpdateAddressDtoToAddress(customer.getAddress(), command.getAddress());
-            customer.setAddress(updatedAddress);
-        }
-    }
-
-    public UpdatedCustomerResponse convertCustomerToUpdatedCustomerResponse(Customer customer) {
-        return UpdatedCustomerResponse.builder()
-                .id(customer.getId())
-                .email(customer.getEmail())
-                .phoneNumber(customer.getPhoneNumber())
-                .address(addressMapper.convertAddressToAddressResponse(customer.getAddress()))
-                .build();
-    }
 
     public DeletedCustomerResponse convertCustomerToDeletedCustomerResponse(Customer customer) {
         return DeletedCustomerResponse.builder()
                 .id(customer.getId())
-                .build();
-    }
-
-    public GetListCustomerItemDto convertCustomerToGetListCustomerItemDto(Customer customer) {
-        return GetListCustomerItemDto.builder()
-                .id(customer.getId())
-                .email(customer.getEmail())
-                .phoneNumber(customer.getPhoneNumber())
                 .build();
     }
 
@@ -88,19 +32,29 @@ public class CustomerMapper {
                 .build();
     }
 
-    public GetCustomerByPhoneNumberResponse convertCustomerToGetCustomerByPhoneNumberResponse(Customer customer) {
-        return GetCustomerByPhoneNumberResponse.builder()
+    public GetCustomerByPhoneNumberResponse.IndividualCustomerInfo convertToIndividualCustomerInfo(IndividualCustomer customer) {
+        return GetCustomerByPhoneNumberResponse.IndividualCustomerInfo.builder()
                 .id(customer.getId())
                 .email(customer.getEmail())
-                .phoneNumber(customer.getPhoneNumber())
-                .customerType(customer.getType().name())
+                .name(customer.getName())
+                .surname(customer.getSurname())
                 .build();
     }
 
-    public UpdatedCustomerStatusResponse convertCustomerToUpdatedCustomerStatusResponse(Customer customer) {
-        return UpdatedCustomerStatusResponse.builder()
+    public GetCustomerByPhoneNumberResponse.CorporateCustomerInfo convertToCorporateCustomerInfo(CorporateCustomer customer) {
+        return GetCustomerByPhoneNumberResponse.CorporateCustomerInfo.builder()
                 .id(customer.getId())
-                .status(customer.getStatus())
+                .email(customer.getEmail())
+                .companyName(customer.getCompanyName())
+                .contactPersonName(customer.getContactPersonName())
+                .contactPersonSurname(customer.getContactPersonSurname())
                 .build();
+    }
+
+    public void updateCustomerNotificationPreferences(Customer customer, NotificationPreferencesChangedEvent event) {
+        customer.setAllowEmailMessages(event.isAllowEmailMessages());
+        customer.setAllowSmsMessages(event.isAllowSmsMessages());
+        customer.setAllowPromotionalEmails(event.isAllowPromotionalEmails());
+        customer.setAllowPromotionalSms(event.isAllowPromotionalSms());
     }
 }
