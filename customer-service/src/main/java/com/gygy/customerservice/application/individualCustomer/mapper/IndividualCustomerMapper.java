@@ -104,18 +104,6 @@ public class IndividualCustomerMapper {
                 .build();
     }
 
-    public GetListIndividualCustomerItemDto convertIndividualCustomerToGetListIndividualCustomerItemDto(IndividualCustomer individualCustomer) {
-        return GetListIndividualCustomerItemDto.builder()
-                .id(individualCustomer.getId())
-                .email(individualCustomer.getEmail())
-                .phoneNumber(individualCustomer.getPhoneNumber())
-                .name(individualCustomer.getName())
-                .surname(individualCustomer.getSurname())
-                .gender(individualCustomer.getGender() != null ? individualCustomer.getGender().name() : null)
-                .birthDate(individualCustomer.getBirthDate())
-                .build();
-    }
-
     public CreatedIndividualCustomerEvent convertToCreatedIndividualCustomerEvent(IndividualCustomer customer) {
         return CreatedIndividualCustomerEvent.builder()
                 .id(customer.getId())

@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 import com.gygy.customerservice.application.customer.command.delete.DeletedCustomerResponse;
 import com.gygy.customerservice.application.customer.query.GetCustomerByEmailResponse;
 import com.gygy.customerservice.application.customer.query.GetCustomerByPhoneNumberResponse;
-import com.gygy.customerservice.application.customer.query.GetListCustomerItemDto;
 import com.gygy.customerservice.domain.entity.CorporateCustomer;
 import com.gygy.customerservice.domain.entity.Customer;
 import com.gygy.customerservice.domain.entity.IndividualCustomer;
@@ -21,14 +20,6 @@ public class CustomerMapper {
     public DeletedCustomerResponse convertCustomerToDeletedCustomerResponse(Customer customer) {
         return DeletedCustomerResponse.builder()
                 .id(customer.getId())
-                .build();
-    }
-
-    public GetListCustomerItemDto convertCustomerToGetListCustomerItemDto(Customer customer) {
-        return GetListCustomerItemDto.builder()
-                .id(customer.getId())
-                .email(customer.getEmail())
-                .phoneNumber(customer.getPhoneNumber())
                 .build();
     }
 

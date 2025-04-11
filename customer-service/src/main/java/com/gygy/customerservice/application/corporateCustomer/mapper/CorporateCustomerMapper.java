@@ -90,18 +90,6 @@ public class CorporateCustomerMapper {
                 .build();
     }
 
-    public GetListCorporateCustomerItemDto convertCorporateCustomerToGetListCorporateCustomerItemDto(CorporateCustomer corporateCustomer) {
-        return GetListCorporateCustomerItemDto.builder()
-                .id(corporateCustomer.getId())
-                .email(corporateCustomer.getEmail())
-                .phoneNumber(corporateCustomer.getPhoneNumber())
-                .taxNumber(corporateCustomer.getTaxNumber())
-                .companyName(corporateCustomer.getCompanyName())
-                .contactPersonName(corporateCustomer.getContactPersonName())
-                .contactPersonSurname(corporateCustomer.getContactPersonSurname())
-                .build();
-    }
-
     public CreatedCorporateCustomerEvent convertToCreatedCorporateCustomerEvent(CorporateCustomer customer) {
         return CreatedCorporateCustomerEvent.builder()
                 .id(customer.getId())

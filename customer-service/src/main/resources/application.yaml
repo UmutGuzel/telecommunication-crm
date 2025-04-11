@@ -32,5 +32,13 @@ management:
       prometheus:
         enabled: true
 
+logging:
+  level:
+    com.gygy.customerservice: DEBUG
+    org.springframework: INFO
+
+encryption:
+  secret-key: "GygyTelecomCRM2024!@#$%^&*()"
+
 server:
   port: 9020

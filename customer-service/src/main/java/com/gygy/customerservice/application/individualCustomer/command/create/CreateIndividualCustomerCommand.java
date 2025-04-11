@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 import com.gygy.customerservice.application.customer.validation.AddressValidation;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gygy.customerservice.application.customer.dto.CreateAddressDto;
 import com.gygy.customerservice.application.customer.mapper.AddressMapper;
@@ -26,6 +27,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 @Getter
 @Setter
@@ -46,6 +48,7 @@ public class CreateIndividualCustomerCommand implements Command<CreatedIndividua
 
     private CreateAddressDto address;
 
+    @Slf4j
     @Component
     @RequiredArgsConstructor
     public static class CreateIndividualCustomerCommandHandler implements Handler<CreateIndividualCustomerCommand, CreatedIndividualCustomerResponse> {
@@ -60,6 +63,7 @@ public class CreateIndividualCustomerCommand implements Command<CreatedIndividua
         private final AddressValidation addressValidation;
 
         @Override
+        @Transactional
         public CreatedIndividualCustomerResponse handle(CreateIndividualCustomerCommand command) {
             customerValidation.validateCreateIndividualCustomer(command);
             addressValidation.validateCreateAddress(command.getAddress());
@@ -72,6 +76,7 @@ public class CreateIndividualCustomerCommand implements Command<CreatedIndividua
             newIndividualCustomer.setAddress(newAddress);
 
             individualCustomerRepository.save(newIndividualCustomer);
+            log.debug("Customer saved to database");
 
             kafkaProducerService.sendCreatedIndividualCustomerEvent(
                 individualCustomerMapper.convertToCreatedIndividualCustomerEvent(newIndividualCustomer)

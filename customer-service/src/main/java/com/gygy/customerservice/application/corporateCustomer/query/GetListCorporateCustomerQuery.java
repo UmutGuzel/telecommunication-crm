@@ -1,11 +1,10 @@
 package com.gygy.customerservice.application.corporateCustomer.query;
 
 import an.awesome.pipelinr.Command;
-import com.gygy.customerservice.application.corporateCustomer.mapper.CorporateCustomerMapper;
-import com.gygy.customerservice.domain.entity.CorporateCustomer;
-import com.gygy.customerservice.persistance.repository.CorporateCustomerRepository;
+import com.gygy.customerservice.application.corporateCustomer.service.CorporateCustomerQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -13,18 +12,12 @@ public class GetListCorporateCustomerQuery implements Command<List<GetListCorpor
     @Component
     @RequiredArgsConstructor
     public static class GetListCustomerQueryHandler implements Command.Handler<GetListCorporateCustomerQuery, List<GetListCorporateCustomerItemDto>> {
-        private final CorporateCustomerRepository corporateCustomerRepository;
-        private final CorporateCustomerMapper corporateCustomerMapper;
+        private final CorporateCustomerQueryService corporateCustomerQueryService;
 
         @Override
+        @Transactional(readOnly = true)
         public List<GetListCorporateCustomerItemDto> handle(GetListCorporateCustomerQuery query) {
-            List<CorporateCustomer> corporateCustomers = corporateCustomerRepository.findAll();
-
-            List<GetListCorporateCustomerItemDto> corporateCustomerList = corporateCustomers.stream()
-                    .map(corporateCustomerMapper::convertCorporateCustomerToGetListCorporateCustomerItemDto)
-                    .toList();
-
-            return corporateCustomerList;
+            return corporateCustomerQueryService.getAllCorporateCustomers();
         }
     }
 }
