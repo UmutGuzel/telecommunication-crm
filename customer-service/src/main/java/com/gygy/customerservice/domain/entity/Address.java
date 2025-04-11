@@ -1,14 +1,10 @@
 package com.gygy.customerservice.domain.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -32,6 +28,6 @@ public class Address {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "address")
-    private List<Customer> customers;
+    @OneToOne(mappedBy = "address")
+    private Customer customer;
 } 

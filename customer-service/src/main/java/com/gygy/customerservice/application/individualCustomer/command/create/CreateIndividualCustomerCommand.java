@@ -62,22 +62,14 @@ public class CreateIndividualCustomerCommand implements Command<CreatedIndividua
         @Override
         public CreatedIndividualCustomerResponse handle(CreateIndividualCustomerCommand command) {
             customerValidation.validateCreateIndividualCustomer(command);
-
             addressValidation.validateCreateAddress(command.getAddress());
-
             customerRule.validateIndividualCustomer(command.getEmail(), command.getPhoneNumber(), command.getIdentityNumber());
 
-            CreateAddressDto addressDto = command.getAddress();
-            Address existingAddress = addressRepository.findByStreetAndDistrictAndCityAndCountry(
-            addressDto.getStreet(), addressDto.getDistrict(), addressDto.getCity(), addressDto.getCountry()).orElse(null);
-
-            Address finalAddress = (existingAddress != null) ? existingAddress : addressMapper.convertCreateAddressDtoToAddress(addressDto);
-            if (existingAddress == null) {
-                addressRepository.save(finalAddress);
-            }
+            Address newAddress = addressMapper.convertCreateAddressDtoToAddress(command.getAddress());
+            addressRepository.save(newAddress);
 
             IndividualCustomer newIndividualCustomer = individualCustomerMapper.convertCreateCommandToIndividualCustomer(command);
-            newIndividualCustomer.setAddress(finalAddress);
+            newIndividualCustomer.setAddress(newAddress);
 
             individualCustomerRepository.save(newIndividualCustomer);
 

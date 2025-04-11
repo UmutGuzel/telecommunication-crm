@@ -47,22 +47,14 @@ public class CreateCorporateCustomerCommand implements Command<CreatedCorporateC
         @Override
         public CreatedCorporateCustomerResponse handle(CreateCorporateCustomerCommand command) {
             customerValidation.validateCreateCorporateCustomer(command);
-
             addressValidation.validateCreateAddress(command.getAddress());
-
             customerRule.validateCorporateCustomer(command.getEmail(), command.getPhoneNumber(), command.getTaxNumber());
 
-            CreateAddressDto addressDto = command.getAddress();
-            Address existingAddress = addressRepository.findByStreetAndDistrictAndCityAndCountry(
-            addressDto.getStreet(), addressDto.getDistrict(), addressDto.getCity(), addressDto.getCountry()).orElse(null);
-
-            Address finalAddress = (existingAddress != null) ? existingAddress : addressMapper.convertCreateAddressDtoToAddress(addressDto);
-            if (existingAddress == null) {
-                addressRepository.save(finalAddress);
-            }
+            Address newAddress = addressMapper.convertCreateAddressDtoToAddress(command.getAddress());
+            addressRepository.save(newAddress);
 
             CorporateCustomer corporateCustomer = corporateCustomerMapper.convertCreateCommandToCorporateCustomer(command);
-            corporateCustomer.setAddress(finalAddress);
+            corporateCustomer.setAddress(newAddress);
 
             CorporateCustomer newCorporateCustomer = corporateCustomerRepository.save(corporateCustomer);
 
