@@ -55,10 +55,11 @@ public class Discount {
     @Column(name="updated_at")
     private LocalDate updatedAt;
     @ManyToOne
-    @JoinColumn(name="contract_detail_id",nullable = false)
+    @JoinColumn(name="contract_detail_id", nullable = true)
     private ContractDetail contractDetail;
-    @ManyToMany(mappedBy = "discounts")
-    @JsonIgnore
-    private List<BillingPlan> billingPlans;
+    @ManyToOne
+    @JoinColumn(name="billing_plan_id")
+    private BillingPlan billingPlan;
+
 
 }

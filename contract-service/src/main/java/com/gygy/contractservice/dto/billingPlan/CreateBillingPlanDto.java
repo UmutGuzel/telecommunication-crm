@@ -1,6 +1,5 @@
 package com.gygy.contractservice.dto.billingPlan;
 
-import com.gygy.contractservice.entity.Discount;
 import com.gygy.contractservice.model.enums.BillingCycleType;
 import com.gygy.contractservice.model.enums.PaymentMethod;
 import com.gygy.contractservice.model.enums.Status;
@@ -10,16 +9,12 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.math.BigDecimal;
-import java.util.List;
 import java.util.UUID;
 
 @Getter
 @Setter
 public class CreateBillingPlanDto {
-    @NotNull(message = "Contract detail ID is required")
-    private UUID contractDetailId;
+    private UUID contract;
 
     @NotBlank(message = "Name is required")
     private String name;
@@ -51,6 +46,5 @@ public class CreateBillingPlanDto {
     @NotNull(message = "Status is required")
     private Status status;
 
-    private List<UUID> discountIds;
 
 }
