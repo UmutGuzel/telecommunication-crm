@@ -2,6 +2,7 @@ package com.gygy.planservice.exception;
 
 import com.gygy.planservice.dto.response.ErrorResponse;
 import com.gygy.common.exception.GlobalExceptionHandler;
+import com.gygy.common.exception.BaseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -49,9 +50,21 @@ public class PlanServiceExceptionHandler extends GlobalExceptionHandler {
                 return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
         }
 
-        @ExceptionHandler(InvalidInputException.class)
-        public ResponseEntity<ErrorResponse> handleInvalidInputException(
-                        InvalidInputException ex, WebRequest request) {
+        @ExceptionHandler({ CategoryRequestNullException.class, CategoryNameNullException.class,
+                        CategoryIdNullException.class })
+        public ResponseEntity<ErrorResponse> handleCategoryValidationExceptions(
+                        BaseException ex, WebRequest request) {
+                ErrorResponse errorResponse = new ErrorResponse(
+                                LocalDateTime.now(),
+                                ex.getMessage(),
+                                request.getDescription(false));
+                return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        }
+
+        @ExceptionHandler({ ContractRequestNullException.class, ContractIdNullException.class,
+                        PlanIdNullException.class, PlanRequestNullException.class })
+        public ResponseEntity<ErrorResponse> handleContractValidationExceptions(
+                        BaseException ex, WebRequest request) {
                 ErrorResponse errorResponse = new ErrorResponse(
                                 LocalDateTime.now(),
                                 ex.getMessage(),
