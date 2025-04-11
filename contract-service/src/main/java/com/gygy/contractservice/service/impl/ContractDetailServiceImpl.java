@@ -2,6 +2,7 @@ package com.gygy.contractservice.service.impl;
 
 import com.gygy.common.events.contractservice.ContractCreatedEvent;
 import com.gygy.common.events.contractservice.ContractDetailEvent;
+import com.gygy.contractservice.client.CustomerClient;
 import com.gygy.contractservice.core.exception.type.BusinessException;
 import com.gygy.contractservice.dto.contractDetail.ContractDetailListiningDto;
 import com.gygy.contractservice.dto.contractDetail.CreateContractDetailDto;
@@ -13,16 +14,14 @@ import com.gygy.contractservice.entity.ContractDetail;
 import com.gygy.contractservice.entity.Discount;
 import com.gygy.contractservice.kafka.producer.KafkaProducerService;
 import com.gygy.contractservice.mapper.ContractDetailMapper;
-import com.gygy.contractservice.model.enums.BillingCycleType;
 import com.gygy.contractservice.repository.ContractDetailRepository;
 import com.gygy.contractservice.service.BillingPlanService;
 import com.gygy.contractservice.service.ContractDetailService;
 import com.gygy.contractservice.service.ContractService;
 import com.gygy.contractservice.service.DiscountService;
-// import com.gygy.customerservice.application.customer.query.GetListCustomerItemDto;
+import com.gygy.customerservice.application.customer.query.GetCustomerByPhoneNumberResponse;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -30,7 +29,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import static com.gygy.contractservice.constant.GeneralConstant.*;
 
 @Service
@@ -43,16 +41,16 @@ public class ContractDetailServiceImpl implements ContractDetailService {
     private final KafkaProducerService kafkaProducerService;
     private final DiscountService discountService;
     private final BillingPlanService billingPlanService;
-    //private final CustomerClient customerClient;
+    private final CustomerClient customerClient;
 
-    public ContractDetailServiceImpl(ContractDetailRepository contractDetailRepository, ContractService contractService , ContractDetailMapper contractDetailMapper, KafkaProducerService kafkaProducerService, @Lazy DiscountService discountService, @Lazy  BillingPlanService billingPlanService) {
+    public ContractDetailServiceImpl(ContractDetailRepository contractDetailRepository, ContractService contractService , ContractDetailMapper contractDetailMapper, KafkaProducerService kafkaProducerService, @Lazy DiscountService discountService, @Lazy  BillingPlanService billingPlanService, CustomerClient customerClient) {
         this.contractDetailRepository = contractDetailRepository;
         this.contractService = contractService;
         this.contractDetailMapper = contractDetailMapper;
         this.kafkaProducerService = kafkaProducerService;
-        //this.customerClient = customerClient;
         this.discountService = discountService;
         this.billingPlanService = billingPlanService;
+        this.customerClient = customerClient;
     }
 
     @Override
@@ -76,10 +74,10 @@ public class ContractDetailServiceImpl implements ContractDetailService {
         try {
             ContractDetail contractDetail=contractDetailMapper.createContractDetailFromCreateContractDetailDto(createContractDetailDto);
             contractDetail.setContract(contract);
-           // List<GetListCustomerItemDto> response= customerClient.getAllCustomers();
-            //contractDetail.setCustomerId(response.get(0).getId());
-            //contractDetail.setEmail(response.get(0).getEmail());
-            //contractDetail.setPhoneNumber(response.get(0).getPhoneNumber());
+            GetCustomerByPhoneNumberResponse response= customerClient.getCustomerByPhoneNumber(contractDetail.getPhoneNumber());
+            contractDetail.setCustomerId(response.getId());
+            contractDetail.setEmail(response.getEmail());
+            contractDetail.setPhoneNumber(response.getPhoneNumber());
 
             contractDetailRepository.save(contractDetail);
             logger.info("Contract detail created successfully");

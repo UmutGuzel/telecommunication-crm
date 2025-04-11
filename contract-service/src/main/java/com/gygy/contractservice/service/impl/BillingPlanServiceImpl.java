@@ -5,20 +5,19 @@ import com.gygy.contractservice.dto.billingPlan.CreateBillingPlanDto;
 import com.gygy.contractservice.dto.billingPlan.DeleteBillingPlanDto;
 import com.gygy.contractservice.dto.billingPlan.UpdateBillingPlanDto;
 import com.gygy.contractservice.entity.BillingPlan;
+import com.gygy.contractservice.entity.Contract;
 import com.gygy.contractservice.entity.ContractDetail;
-import com.gygy.contractservice.entity.Discount;
 import com.gygy.contractservice.mapper.BillingPlanMapper;
 import com.gygy.contractservice.repository.BillingPlanRepository;
 import com.gygy.contractservice.rules.BillingPlanBusinessRules;
 import com.gygy.contractservice.service.BillingPlanService;
-import com.gygy.contractservice.service.ContractDetailService;
-import com.gygy.contractservice.service.DiscountService;
 import com.gygy.contractservice.core.exception.type.BusinessException;
+import com.gygy.contractservice.service.ContractService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -27,21 +26,17 @@ import static com.gygy.contractservice.constant.GeneralConstant.FETCHING_ALL_BIL
 @Service
 public class BillingPlanServiceImpl implements BillingPlanService {
     private final BillingPlanRepository billingPlanRepository;
-    private final ContractDetailService contractDetailService;
-    private final DiscountService discountService;
+    private final ContractService contractService;
     private final BillingPlanBusinessRules billingPlanBusinessRules;
     private final BillingPlanMapper billingPlanMapper;
     private static final Logger logger = LoggerFactory.getLogger(BillingPlanServiceImpl.class);
 
 
     public BillingPlanServiceImpl(
-            BillingPlanRepository billingPlanRepository,
-            ContractDetailService contractDetailService,
-            @Lazy DiscountService discountService,
+            BillingPlanRepository billingPlanRepository, ContractService contractService,
             BillingPlanBusinessRules billingPlanBusinessRules, BillingPlanMapper billingPlanMapper) {
         this.billingPlanRepository = billingPlanRepository;
-        this.contractDetailService = contractDetailService;
-        this.discountService = discountService;
+        this.contractService = contractService;
         this.billingPlanBusinessRules = billingPlanBusinessRules;
         this.billingPlanMapper = billingPlanMapper;
     }
@@ -95,15 +90,12 @@ public class BillingPlanServiceImpl implements BillingPlanService {
             createBillingPlanDto.getTaxRate()
         );
         
-        List<Discount> discounts = discountService.findAllById(createBillingPlanDto.getDiscountIds());
-        ContractDetail contractDetail = contractDetailService.findById(createBillingPlanDto.getContractDetailId());
-
+        Contract contract = contractService.findById(createBillingPlanDto.getContract()).orElseThrow(()-> new RuntimeException("Contract Not Found"));
 
         logger.info("Creating new billing plan with name: {}", createBillingPlanDto.getName());
         try {
             BillingPlan billingPlan=billingPlanMapper.createBillingPlanFromCreateBillingPlanDto(createBillingPlanDto);
-            billingPlan.setContractDetail(contractDetail);
-            billingPlan.setDiscounts(discounts);
+            billingPlan.setContract(contract);
             billingPlanRepository.save(billingPlan);
             logger.info("Successfully created billing plan with ID: {}", billingPlan.getId());
         } catch (Exception e) {
@@ -146,17 +138,15 @@ public class BillingPlanServiceImpl implements BillingPlanService {
             updateBillingPlanDto.getTaxRate()
         );
 
-        ContractDetail contractDetail = contractDetailService.findById(updateBillingPlanDto.getContractDetailId());
-        List<Discount> discounts = discountService.findAllById(updateBillingPlanDto.getDiscountIds());
+        Contract contract = contractService.findById(updateBillingPlanDto.getContractId()).orElseThrow(()->new RuntimeException("Contract Not Found"));
 
 
 
         logger.info("Updating billing plan with ID: {}", updateBillingPlanDto.getId());
         try {
             BillingPlan billingPlan1 =billingPlanMapper.updateBillingPlanFromUpdateBillingPlanDto(updateBillingPlanDto);
-            billingPlan1.setContractDetail(contractDetail);
+            billingPlan1.setContract(contract);
             billingPlan1.setId(updateBillingPlanDto.getId());
-            billingPlan1.setDiscounts(discounts);
             BillingPlan updatedBillingPlan=billingPlanRepository.save(billingPlan1);
             logger.info("Successfully updated billing plan with ID: {}", updatedBillingPlan.getId()); //sabite bak
             return updatedBillingPlan;

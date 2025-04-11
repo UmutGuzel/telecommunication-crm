@@ -16,10 +16,8 @@ import java.util.UUID;
 @Setter
 public class UpdateBillingPlanDto {
     private UUID id;
-    @NotNull(message = "Contract detail ID is required")
-    private UUID contractDetailId;
+    private UUID contractId;
 
-    private List<UUID> discountIds;
 
     @NotBlank(message = "Name is required")
     private String name;
