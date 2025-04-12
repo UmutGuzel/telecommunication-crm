@@ -13,7 +13,7 @@ import com.gygy.customerservice.application.corporateCustomer.query.GetListCorpo
 
 @Repository
 public interface CorporateCustomerRepository extends JpaRepository<CorporateCustomer, UUID> {
-    Optional<CorporateCustomer> findByTaxNumber(String taxNumber);
+    Optional<CorporateCustomer> findByTaxNumberHash(String taxNumberHash);
 
     @Query("SELECT new com.gygy.customerservice.application.corporateCustomer.query.GetListCorporateCustomerItemDto(" +
            "c.id, c.email, c.phoneNumber, c.companyName, c.contactPersonName, c.contactPersonSurname) " +

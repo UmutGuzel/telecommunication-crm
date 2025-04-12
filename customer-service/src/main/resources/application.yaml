@@ -38,6 +38,7 @@ logging:
 
 encryption:
   secret-key: "GygyTelecomCRM2024!@#$%^&*()"
+  salt-key: "4202MRCmoceleTygyG!@#$%^&*()"
 
 server:
   port: 9020
