@@ -1,13 +1,10 @@
 package com.gygy.contractservice.controller;
 
 import com.gygy.contractservice.core.exception.type.BusinessException;
-import com.gygy.contractservice.dto.contract.DeleteContractDto;
-import com.gygy.contractservice.dto.contract.UpdateContractDto;
 import com.gygy.contractservice.dto.discount.CreateDiscountDto;
 import com.gygy.contractservice.dto.discount.DeleteDiscountDto;
 import com.gygy.contractservice.dto.discount.DiscountListiningDto;
 import com.gygy.contractservice.dto.discount.UpdateDiscountDto;
-import com.gygy.contractservice.entity.BillingPlan;
 import com.gygy.contractservice.entity.ContractDetail;
 import com.gygy.contractservice.entity.Discount;
 import com.gygy.contractservice.model.enums.Status;
@@ -28,7 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-public class DiscountControllerTest {
+ class DiscountControllerTest {
     @Mock
     private DiscountService discountService;
     @InjectMocks
@@ -37,7 +34,6 @@ public class DiscountControllerTest {
     private UUID billingPlanId;
     private UUID contractDetailId;
     private UUID customerId;
-    private List<BillingPlan> billingPlans;
     private ContractDetail contractDetail;
     @BeforeEach
     void setup(){
@@ -123,7 +119,6 @@ public class DiscountControllerTest {
         updatedDiscount.setAmount(100);
         updatedDiscount.setCustomerId(customerId);
         updatedDiscount.setPercentage(0.1);
-        updatedDiscount.setBillingPlans(billingPlans);
         updatedDiscount.setStatus(Status.ACTIVE);
         updatedDiscount.setStartDate(LocalDate.now());
         updatedDiscount.setEndDate(LocalDate.now());

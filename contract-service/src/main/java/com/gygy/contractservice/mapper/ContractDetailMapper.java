@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 public class ContractDetailMapper {
     public ContractDetail createContractDetailFromCreateContractDetailDto(CreateContractDetailDto createContractDetailDto){
         return ContractDetail.builder()
-        .customerId(createContractDetailDto.getCustomerId())
         .contractDetailType(createContractDetailDto.getContractDetailType())
         .serviceType(createContractDetailDto.getServiceType())
         .createdAt(LocalDateTime.now())

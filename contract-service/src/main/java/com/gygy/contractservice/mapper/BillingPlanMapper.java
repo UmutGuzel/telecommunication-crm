@@ -16,15 +16,14 @@ public class BillingPlanMapper {
         return BillingPlan.builder()
                 .createdAt(LocalDateTime.now())
                 .billingDay(createBillingPlanDto.getBillingDay())
-                .name(createBillingPlanDto.getName())
                 .baseAmount(createBillingPlanDto.getBaseAmount())
                 .cycleType(createBillingPlanDto.getCycleType())
-                .description(createBillingPlanDto.getDescription())
                 .status(createBillingPlanDto.getStatus())
                 .paymentDueDays(createBillingPlanDto.getPaymentDueDays())
                 .updatedAt(LocalDateTime.now())
                 .taxRate(createBillingPlanDto.getTaxRate())
                 .paymentMethod(createBillingPlanDto.getPaymentMethod())
+                .planId(createBillingPlanDto.getPlanId())
                 .build();
 
     }
