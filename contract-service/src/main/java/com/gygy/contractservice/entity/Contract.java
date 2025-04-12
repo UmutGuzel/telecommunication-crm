@@ -50,6 +50,8 @@ public class Contract {
     @OneToMany(mappedBy = "contract")
     private Set<BillingPlan> billingPlans;
 
+    @OneToMany(mappedBy = "contract")
+    private Set<Discount> discounts;
 
     public Contract() {
     }

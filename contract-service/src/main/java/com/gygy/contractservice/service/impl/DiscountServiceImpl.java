@@ -6,14 +6,14 @@ import com.gygy.contractservice.dto.discount.DeleteDiscountDto;
 import com.gygy.contractservice.dto.discount.DiscountListiningDto;
 import com.gygy.contractservice.dto.discount.UpdateDiscountDto;
 import com.gygy.contractservice.entity.BillingPlan;
-import com.gygy.contractservice.entity.ContractDetail;
+import com.gygy.contractservice.entity.Contract;
 import com.gygy.contractservice.entity.Discount;
 import com.gygy.contractservice.mapper.DiscountMapper;
 import com.gygy.contractservice.model.enums.DiscountType;
 import com.gygy.contractservice.model.enums.Status;
 import com.gygy.contractservice.repository.DiscountRepository;
 import com.gygy.contractservice.service.BillingPlanService;
-import com.gygy.contractservice.service.ContractDetailService;
+import com.gygy.contractservice.service.ContractService;
 import com.gygy.contractservice.service.DiscountService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,15 +30,15 @@ import static com.gygy.contractservice.constant.GeneralConstant.*;
 public class DiscountServiceImpl implements DiscountService {
     private final DiscountRepository discountRepository;
     private final BillingPlanService billingPlanService;
-    private final ContractDetailService contractDetailService;
+    private final ContractService contractService;
     private static final Logger logger = LoggerFactory.getLogger(DiscountServiceImpl.class);
     private final DiscountMapper discountMapper;
 
     public DiscountServiceImpl(DiscountRepository discountRepository, BillingPlanService billingPlanService,
-                               ContractDetailService contractDetailService, DiscountMapper discountMapper) {
+                                ContractService contractService, DiscountMapper discountMapper) {
         this.discountRepository = discountRepository;
         this.billingPlanService = billingPlanService;
-        this.contractDetailService = contractDetailService;
+        this.contractService = contractService;
         this.discountMapper = discountMapper;
     }
 
@@ -105,11 +105,11 @@ public class DiscountServiceImpl implements DiscountService {
     public Discount update(UpdateDiscountDto updateDiscountDto) {
         logger.info("Updating discount  with ID: {}", updateDiscountDto.getId());
         try {
-            ContractDetail contractDetail = contractDetailService.findById(updateDiscountDto.getContractDetailId());
+            Contract contract = contractService.findById(updateDiscountDto.getContractId()).orElseThrow(()->new RuntimeException("Contract Not Found."));
             List<BillingPlan> billingPlan = billingPlanService.findAll(updateDiscountDto.getBillingPlanId());
             Discount discount=discountMapper.updateDiscountFromUpdateDiscountDto(updateDiscountDto);
             discount.setId(updateDiscountDto.getId());
-            discount.setContractDetail(contractDetail);
+            discount.setContract(contract);
          //   discount.setBillingPlans(billingPlan);
             Discount updatedDiscount=discountRepository.save(discount);
             logger.info("Successfully updated billing plan with ID: {}", updatedDiscount.getId());
@@ -147,7 +147,7 @@ public class DiscountServiceImpl implements DiscountService {
                 .map(discount -> new DiscountListiningDto(      discount.getDiscountType()
                         ,discount.getAmount()
                         ,discount.getPercentage()
-                        ,discount.getContractDetail()
+                        ,discount.getContract()
                         ,discount.getEndDate()
                         ,discount.getStartDate()
                         ,discount.getCreatedAt(),
@@ -176,7 +176,7 @@ public class DiscountServiceImpl implements DiscountService {
         logger.debug(FETCHING_ALL_DISCOUNT);
         List<Discount> discounts = discountRepository.findAll();
         List<DiscountListiningDto> discountListiningDtos = discounts.stream()
-                .filter(discount -> discount.getContractDetail().getId().equals(contractId))
+                .filter(discount -> discount.getContract().getId().equals(contractId))
                 .map(discountMapper::toDiscountListiningDto)
                 .collect(Collectors.toList());
         logger.info("Found {} active contracts", discounts.size());
@@ -205,8 +205,6 @@ public class DiscountServiceImpl implements DiscountService {
         throw new IllegalArgumentException("Invalid billing cycle type: " + createDiscountDto.getBillingCycleType());
     }
 
-    private double calculateDiscountedPrice(double originalPrice, double discountPercentage) {
-        double discount = originalPrice * (discountPercentage / 100);
-        return originalPrice - discount;
-    }
+
+
 }

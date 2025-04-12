@@ -16,11 +16,10 @@ import java.util.UUID;
 @Setter
 public class CreateDiscountDto {
     private String name;
-   // @NotNull(message = "Contract detail ID is required")
-   // private UUID contractDetailId;
+
     @NotNull(message = "Billing Plan  ID is required")
     private List<UUID> billingPlanId;
-
+    private UUID contractId;
     @NotBlank(message = "Discount type is required")
     private DiscountType discountType;
     private BillingCycleType billingCycleType;

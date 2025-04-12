@@ -1,7 +1,6 @@
 package com.gygy.contractservice.dto.discount;
 
-import com.gygy.contractservice.entity.BillingPlan;
-import com.gygy.contractservice.entity.ContractDetail;
+import com.gygy.contractservice.entity.Contract;
 import com.gygy.contractservice.model.enums.DiscountType;
 import com.gygy.contractservice.model.enums.Status;
 import lombok.Getter;
@@ -14,7 +13,7 @@ import java.util.UUID;
 @Setter
 public class DiscountListiningDto {
     private UUID customerId;
-    private UUID contractDetailId;
+    private UUID contractId;
     private DiscountType discountType;
     private double amount;
     private double percentage;
@@ -27,11 +26,11 @@ public class DiscountListiningDto {
     private Status status;
 
 
-    public DiscountListiningDto(DiscountType discountType, double amount, double percentage, ContractDetail contractDetail, LocalDate endDate, LocalDate startDate, LocalDate createdAt, LocalDate updatedAt, UUID customerId, Status status, String description) {
+    public DiscountListiningDto(DiscountType discountType, double amount, double percentage, Contract contract, LocalDate endDate, LocalDate startDate, LocalDate createdAt, LocalDate updatedAt, UUID customerId, Status status, String description) {
         this.discountType = discountType;
         this.amount = amount;
         this.percentage = percentage;
-        this.contractDetailId = contractDetail.getId();
+        this.contractId = contract.getId();
         this.endDate = endDate;
         this.startDate = startDate;
         this.createDate = createdAt;
