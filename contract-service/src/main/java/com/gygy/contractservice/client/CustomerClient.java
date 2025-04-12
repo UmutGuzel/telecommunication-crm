@@ -1,6 +1,7 @@
 package com.gygy.contractservice.client;
 
-import com.gygy.contractservice.dto.contract.GetCustomerByEmailResponse;
+import com.gygy.contractservice.dto.contractDetail.GetCustomerByEmailResponse;
+
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,7 +13,8 @@ public interface CustomerClient {
     GetCustomerByEmailResponse getCustomerByEmail(@PathVariable("email") String email);
 }
 
-    
+
+
 
 
 

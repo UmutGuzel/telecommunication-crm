@@ -15,11 +15,7 @@ import java.util.UUID;
 @Setter
 public class CreateBillingPlanDto {
     private UUID contract;
-
-    @NotBlank(message = "Name is required")
-    private String name;
-
-    private String description;
+    private UUID planId;
 
     @NotNull(message = "Cycle type is required")
     private BillingCycleType cycleType;

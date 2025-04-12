@@ -10,9 +10,8 @@ import com.gygy.customerservice.application.customer.validation.CustomerValidati
 import com.gygy.customerservice.domain.entity.Address;
 import com.gygy.customerservice.domain.entity.CorporateCustomer;
 import com.gygy.customerservice.infrastructure.messaging.service.KafkaProducerService;
-import com.gygy.customerservice.persistance.repository.AddressRepository;
-import com.gygy.customerservice.persistance.repository.CorporateCustomerRepository;
-import com.gygy.customerservice.persistance.repository.CustomerRepository;
+import com.gygy.customerservice.infrastructure.persistence.repository.AddressRepository;
+import com.gygy.customerservice.infrastructure.persistence.repository.CorporateCustomerRepository;
 import lombok.*;
 import org.springframework.stereotype.Component;
 

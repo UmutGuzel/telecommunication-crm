@@ -4,10 +4,11 @@ import org.springframework.stereotype.Component;
 
 import com.gygy.customerservice.application.customer.mapper.CustomerMapper;
 import com.gygy.customerservice.application.customer.service.CustomerMessageService;
+import com.gygy.customerservice.application.customer.validation.CustomerValidation;
 import com.gygy.customerservice.domain.entity.CorporateCustomer;
 import com.gygy.customerservice.domain.entity.IndividualCustomer;
 import com.gygy.customerservice.domain.enums.CustomerType;
-import com.gygy.customerservice.persistance.repository.CustomerRepository;
+import com.gygy.customerservice.infrastructure.persistence.repository.CustomerRepository;
 
 import an.awesome.pipelinr.Command;
 import lombok.RequiredArgsConstructor;
@@ -25,11 +26,13 @@ public class GetCustomerByPhoneNumberQuery implements Command<GetCustomerByPhone
         private final CustomerRepository customerRepository;
         private final CustomerMapper customerMapper;
         private final CustomerMessageService customerMessageService;
+        private final CustomerValidation customerValidation;
 
         @Override
         public GetCustomerByPhoneNumberResponse handle(GetCustomerByPhoneNumberQuery query) {
             GetCustomerByPhoneNumberResponse response = GetCustomerByPhoneNumberResponse.builder().build();
 
+            customerValidation.validatePhoneNumberAndThrowValidationError(query.phoneNumber);
             // Check for individual customer
             customerRepository.findByPhoneNumberAndType(query.phoneNumber, CustomerType.INDIVIDUAL)
                     .ifPresent(customer -> {

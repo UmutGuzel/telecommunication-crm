@@ -15,12 +15,12 @@ import java.util.UUID;
 public class CreateContractDetailDto {
     @NotNull(message = "Contract ID is required")
     private UUID contractId;
-    private UUID customerId;
+    //private UUID customerId;
     private UUID billingPlanId;
     private UUID discountId;
     private String name;
     private String customerName;
-    private String phoneNumber;
+   // private String phoneNumber;
     private String email;
 
 
