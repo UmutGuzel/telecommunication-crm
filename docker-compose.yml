@@ -65,6 +65,16 @@ services:
       - POSTGRES_DB=postgres
     volumes:
       - customer-service_data:/var/lib/postgresql/data
+  analytics-service-db:
+    image: mongo
+    container_name: "analytics-service-db"
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    volumes:
+      - analytics-service_data:/data/db
   kafka:
     image: bitnami/kafka
     container_name: "kafka-1"
@@ -266,6 +276,8 @@ services:
         condition: service_healthy
       discovery-server:
         condition: service_healthy
+      analytics-service-db:
+        condition: service_started
     ports:
       - "9070:9070"
     environment:
@@ -325,4 +337,5 @@ volumes:
     customer-service_data:
     prometheus_data:
     grafana_data:
+    analytics-service_data:
     customer-service-mongodb-data:

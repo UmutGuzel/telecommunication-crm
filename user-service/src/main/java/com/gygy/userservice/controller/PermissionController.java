@@ -17,6 +17,10 @@ import org.springframework.http.HttpStatus;
 import an.awesome.pipelinr.Pipeline;
 import com.gygy.userservice.application.permission.command.CreatePermission.CreatePermissionCommand;
 import com.gygy.userservice.application.permission.command.CreatePermission.CreatePermissionResponse;
+import com.gygy.userservice.application.permission.query.GetPermissionList.GetPermissionListQuery;
+import com.gygy.userservice.application.permission.query.GetPermissionList.GetPermissionListDto;
+import com.gygy.userservice.application.permission.query.GetPermissionById.GetPermissionByIdQuery;
+import com.gygy.userservice.application.permission.query.GetPermissionById.GetPermissionByIdResponse;
 
 @RestController
 @RequestMapping("api/v1/permission")
@@ -24,19 +28,19 @@ import com.gygy.userservice.application.permission.command.CreatePermission.Crea
 public class PermissionController {
     private final Pipeline pipeline;
 
-    // @GetMapping
-    // @ResponseStatus(HttpStatus.OK)
-    // public List<GetPermissionListDto> getAllPermissions(@RequestBody
-    // GetPermissionListQuery query) {
-    // return query.execute(pipeline);
-    // }
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public List<GetPermissionListDto> getAllPermissions() {
+        GetPermissionListQuery query = new GetPermissionListQuery();
+        return query.execute(pipeline);
+    }
 
-    // @GetMapping("/{id}")
-    // @ResponseStatus(HttpStatus.OK)
-    // public PermissionByIdResponse getPermissionById(@RequestBody
-    // GetPermissionByIdQuery query) {
-    // return query.execute(pipeline);
-    // }
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public GetPermissionByIdResponse getPermissionById(@PathVariable UUID id) {
+        GetPermissionByIdQuery query = new GetPermissionByIdQuery(id);
+        return query.execute(pipeline);
+    }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

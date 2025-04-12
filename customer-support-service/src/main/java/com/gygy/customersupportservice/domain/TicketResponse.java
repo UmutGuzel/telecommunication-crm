@@ -21,7 +21,6 @@ import java.util.UUID;
 @AllArgsConstructor
 public class TicketResponse {
     @Id
-    @GeneratedValue
     @UuidGenerator
     private UUID id;
 
@@ -31,7 +30,7 @@ public class TicketResponse {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "ticket_id", nullable = false)
     private Ticket ticket;
 

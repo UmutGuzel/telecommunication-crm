@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: payment-service
-        image: umutgu/payment-service:latest
+        image: 884574953537.dkr.ecr.eu-central-1.amazonaws.com/gygy/payment-service
         imagePullPolicy: Always
         ports:
         - containerPort: 9050
