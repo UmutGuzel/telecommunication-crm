@@ -47,7 +47,7 @@ public class DiscountMapper {
                 discount.getDiscountType()
                 ,discount.getAmount()
                 ,discount.getPercentage()
-                ,discount.getContractDetail()
+                ,discount.getContract()
                 ,discount.getEndDate()
                 ,discount.getStartDate()
                 ,discount.getCreatedAt(),

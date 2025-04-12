@@ -19,7 +19,7 @@ public class UpdateDiscountDto {
     @NotNull(message = "Discount  ID is required")
     private UUID id;
     @NotNull(message = "Contract detail ID is required")
-    private UUID contractDetailId;
+    private UUID contractId;
     @NotNull(message = "Billing Plan  ID is required")
     private List<UUID> billingPlanId;
     private UUID customerId;

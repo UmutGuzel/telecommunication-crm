@@ -77,8 +77,7 @@ public class ContractDetail {
     @OneToMany(mappedBy = "contractDetail")
     private Set<Commitment> commitments;
 
-    @OneToMany(mappedBy = "contractDetail")
-    private Set<Discount> discounts;
+
 
     public ContractDetail() {
 
