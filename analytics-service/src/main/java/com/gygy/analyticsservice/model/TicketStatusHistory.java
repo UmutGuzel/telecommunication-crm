@@ -8,23 +8,21 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
-/**
- * User activity model for storing in MongoDB.
- */
-@Document(collection = "user_activities")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserActivity {
+@Document(collection = "ticket_status_history")
+public class TicketStatusHistory {
+
     @Id
     private String id;
-    private String userId;
-    private String username;
-    private String activityType;
-    private String description;
-    private LocalDateTime timestamp;
-    private String ipAddress;
-    private String userAgent;
+
+    private UUID ticketId;
+    private String previousStatus;
+    private String newStatus;
+    private LocalDateTime changedAt;
+    private Long durationInPreviousStatusMinutes;
 }

@@ -1,61 +1,80 @@
 package com.gygy.analyticsservice.core.configuration;
 
-import org.apache.kafka.clients.admin.NewTopic;
-import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.common.serialization.StringSerializer;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.kafka.annotation.EnableKafka;
-import org.springframework.kafka.core.DefaultKafkaProducerFactory;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.core.ProducerFactory;
-import org.springframework.kafka.support.serializer.JsonSerializer;
+import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
+import org.springframework.kafka.core.ConsumerFactory;
+import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+import org.springframework.kafka.support.serializer.JsonDeserializer;
+import org.apache.kafka.common.serialization.StringDeserializer;
+import org.apache.kafka.clients.admin.NewTopic;
+import lombok.RequiredArgsConstructor;
 
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Kafka configuration for the analytics service.
- * Sets up producer configuration and defines the Kafka topics.
- */
-@Configuration
-@EnableKafka
-public class KafkaConfig {
+import com.gygy.common.events.customersupportservice.TicketCreatedEvent;
+import com.gygy.common.events.customersupportservice.TicketResponseEvent;
+import com.gygy.common.events.customersupportservice.TicketStatusChangeEvent;
 
+@Configuration
+@RequiredArgsConstructor
+public class KafkaConfig {
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
+    @Value("${spring.kafka.consumer.group-id}")
+    private String groupId;
 
-    @Bean
-    public ProducerFactory<String, Object> producerFactory() {
-        Map<String, Object> configProps = new HashMap<>();
-        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-        configProps.put(JsonSerializer.TYPE_MAPPINGS,
-                "userActivity:com.gygy.analyticsservice.event.UserActivityEvent," +
-                        "systemMetrics:com.gygy.analyticsservice.event.SystemMetricsEvent," +
-                        "planUsage:com.gygy.analyticsservice.event.PlanUsageEvent");
-        return new DefaultKafkaProducerFactory<>(configProps);
+    private final KafkaTopic kafkaTopic;
+
+    private <T> ConsumerFactory<String, T> createConsumerFactory(Class<T> clazz) {
+        JsonDeserializer<T> deserializer = new JsonDeserializer<>(clazz);
+        deserializer.addTrustedPackages("*");
+        deserializer.setUseTypeMapperForKey(true);
+
+        Map<String, Object> props = new HashMap<>();
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+
+        return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), deserializer);
+    }
+
+    private <T> ConcurrentKafkaListenerContainerFactory<String, T> createFactory(Class<T> clazz) {
+        ConcurrentKafkaListenerContainerFactory<String, T> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(createConsumerFactory(clazz));
+        return factory;
     }
 
     @Bean
-    public KafkaTemplate<String, Object> kafkaTemplate() {
-        return new KafkaTemplate<>(producerFactory());
+    public ConcurrentKafkaListenerContainerFactory<String, TicketCreatedEvent> ticketCreatedKafkaListenerContainerFactory() {
+        return createFactory(TicketCreatedEvent.class);
     }
 
     @Bean
-    public NewTopic userActivityTopic(@Value("${kafka.topics.userActivityTopic}") String topicName) {
-        return new NewTopic(topicName, 1, (short) 1);
+    public ConcurrentKafkaListenerContainerFactory<String, TicketResponseEvent> ticketResponseKafkaListenerContainerFactory() {
+        return createFactory(TicketResponseEvent.class);
     }
 
     @Bean
-    public NewTopic systemMetricsTopic(@Value("${kafka.topics.systemMetricsTopic}") String topicName) {
-        return new NewTopic(topicName, 1, (short) 1);
+    public ConcurrentKafkaListenerContainerFactory<String, TicketStatusChangeEvent> ticketStatusChangeKafkaListenerContainerFactory() {
+        return createFactory(TicketStatusChangeEvent.class);
     }
 
     @Bean
-    public NewTopic planUsageTopic(@Value("${kafka.topics.planUsageTopic}") String topicName) {
-        return new NewTopic(topicName, 1, (short) 1);
+    public NewTopic ticketCreatedTopic() {
+        return new NewTopic(kafkaTopic.getTicketCreatedTopic(), 1, (short) 1);
     }
+
+    @Bean
+    public NewTopic ticketResponseTopic() {
+        return new NewTopic(kafkaTopic.getTicketResponseTopic(), 1, (short) 1);
+    }
+
+    @Bean
+    public NewTopic ticketStatusChangeTopic() {
+        return new NewTopic(kafkaTopic.getTicketStatusChangeTopic(), 1, (short) 1);
+    }
+
 }

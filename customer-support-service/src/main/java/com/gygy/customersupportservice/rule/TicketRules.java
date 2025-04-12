@@ -34,7 +34,7 @@ public class TicketRules {
         return ticket;
     }
 
-    public void validateTicketExists(Ticket ticket) {
+    public void validateTicket(Ticket ticket) {
         if (ticket == null) {
             throw new EntityNotFoundException("Ticket not found");
         }

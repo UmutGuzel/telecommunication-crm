@@ -1,4 +1,4 @@
-configurl: http://config-server:8090
+configurl: http://localhost:8090
 spring:
   application:
     name: analytics-service
@@ -14,24 +14,26 @@ spring:
   config:
     import: configserver:${configurl}
   kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:kafka-1:9092}
+    bootstrap-servers: localhost:9092
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      group-id: analytics-service-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: com.gygy.common.events.*
   data:
     mongodb:
-      uri: ${MONGODB_URI:mongodb://localhost:27017/analytics-db}
+      uri: mongodb://root:root@localhost:27017/analytics-service?authSource=admin
 
 kafka:
   topics:
-    userActivityTopic: user-activity-events
-    systemMetricsTopic: system-metrics-events
-    planUsageTopic: plan-usage-events
+    ticket-created: ticket-created-events
+    ticket-response: ticket-response-events
+    ticket-status-change: ticket-status-change-events
 
 server:
-  port: 9081
+  port: 9070
 
-logging:
-  level:
-    com.gygy.analyticsservice: INFO
-    org.springframework.kafka: INFO

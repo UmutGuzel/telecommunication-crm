@@ -21,7 +21,6 @@ import java.util.UUID;
 @AllArgsConstructor
 public class TicketResponse {
     @Id
-    @GeneratedValue
     @UuidGenerator
     private UUID id;
 

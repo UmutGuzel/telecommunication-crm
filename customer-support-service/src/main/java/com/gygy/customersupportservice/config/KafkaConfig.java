@@ -10,6 +10,10 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
+import com.gygy.common.events.customersupportservice.TicketCreatedEvent;
+import com.gygy.common.events.customersupportservice.TicketResponseEvent;
+import com.gygy.common.events.customersupportservice.TicketStatusChangeEvent;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,12 +32,32 @@ public class KafkaConfig {
     }
 
     @Bean
-    public ProducerFactory<String, Object> customerSupportProducerFactory() {
+    public ProducerFactory<String, TicketCreatedEvent> ticketCreatedProducerFactory() {
         return new DefaultKafkaProducerFactory<>(getCommonConfig());
     }
 
     @Bean
-    public KafkaTemplate<String, Object> customerSupportKafkaTemplate() {
-        return new KafkaTemplate<>(customerSupportProducerFactory());
+    public KafkaTemplate<String, TicketCreatedEvent> ticketCreatedKafkaTemplate() {
+        return new KafkaTemplate<>(ticketCreatedProducerFactory());
+    }
+
+    @Bean
+    public ProducerFactory<String, TicketResponseEvent> ticketResponseProducerFactory() {
+        return new DefaultKafkaProducerFactory<>(getCommonConfig());
+    }
+
+    @Bean
+    public KafkaTemplate<String, TicketResponseEvent> ticketResponseKafkaTemplate() {
+        return new KafkaTemplate<>(ticketResponseProducerFactory());
+    }
+
+    @Bean
+    public ProducerFactory<String, TicketStatusChangeEvent> ticketStatusChangeProducerFactory() {
+        return new DefaultKafkaProducerFactory<>(getCommonConfig());
+    }
+
+    @Bean
+    public KafkaTemplate<String, TicketStatusChangeEvent> ticketStatusChangeKafkaTemplate() {
+        return new KafkaTemplate<>(ticketStatusChangeProducerFactory());
     }
 }

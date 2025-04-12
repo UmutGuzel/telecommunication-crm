@@ -1,10 +1,9 @@
-package com.gygy.customersupportservice.config;
+package com.gygy.analyticsservice.core.configuration;
 
 import com.gygy.common.security.BaseSecurityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -26,7 +25,6 @@ public class SecurityService {
 
         securityConfig.authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(USER_SERVICE_WHITELIST).permitAll()
-
                 .anyRequest().permitAll());
 
         return securityConfig.build();

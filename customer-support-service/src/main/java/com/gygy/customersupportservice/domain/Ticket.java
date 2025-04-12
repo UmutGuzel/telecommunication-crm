@@ -40,7 +40,7 @@ public class Ticket {
     @OneToMany(mappedBy = "ticket")
     private List<TicketResponse> responses;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "status_id", nullable = false)
     private TicketStatus status;
 
