@@ -5,7 +5,6 @@ import com.gygy.contractservice.dto.billingPlan.CreateBillingPlanDto;
 import com.gygy.contractservice.dto.billingPlan.UpdateBillingPlanDto;
 import com.gygy.contractservice.entity.BillingPlan;
 import lombok.Data;
-import org.mapstruct.Mapper;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -17,15 +16,14 @@ public class BillingPlanMapper {
         return BillingPlan.builder()
                 .createdAt(LocalDateTime.now())
                 .billingDay(createBillingPlanDto.getBillingDay())
-                .name(createBillingPlanDto.getName())
                 .baseAmount(createBillingPlanDto.getBaseAmount())
                 .cycleType(createBillingPlanDto.getCycleType())
-                .description(createBillingPlanDto.getDescription())
                 .status(createBillingPlanDto.getStatus())
                 .paymentDueDays(createBillingPlanDto.getPaymentDueDays())
                 .updatedAt(LocalDateTime.now())
                 .taxRate(createBillingPlanDto.getTaxRate())
                 .paymentMethod(createBillingPlanDto.getPaymentMethod())
+                .planId(createBillingPlanDto.getPlanId())
                 .build();
 
     }
@@ -54,7 +52,7 @@ public class BillingPlanMapper {
                 ,billingPlan.getCreatedAt(),
                 billingPlan.getUpdatedAt()
                 ,billingPlan.getBaseAmount()
-                ,billingPlan.getContractDetail()
+                ,billingPlan.getContract()
                 ,billingPlan.getPaymentDueDays()
                 ,billingPlan.getStatus()
                 ,billingPlan.getTaxRate()

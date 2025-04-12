@@ -1,9 +1,10 @@
+
 package com.gygy.contractservice.service;
 
 import com.gygy.contractservice.core.exception.type.BusinessException;
 import com.gygy.contractservice.dto.billingPlan.CreateBillingPlanDto;
 import com.gygy.contractservice.entity.BillingPlan;
-import com.gygy.contractservice.entity.ContractDetail;
+import com.gygy.contractservice.entity.Contract;
 import com.gygy.contractservice.entity.Discount;
 import com.gygy.contractservice.mapper.BillingPlanMapper;
 import com.gygy.contractservice.repository.BillingPlanRepository;
@@ -15,12 +16,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
-
 import static com.gygy.contractservice.model.enums.BillingCycleType.MONTHLY;
 import static com.gygy.contractservice.model.enums.PaymentMethod.CREDIT_CARD;
 import static com.gygy.contractservice.model.enums.Status.ACTIVE;
@@ -40,25 +38,22 @@ import static org.mockito.Mockito.*;
     private BillingPlanMapper billingPlanMapper;
 
     @Mock
-    private DiscountService discountService;
-
-    @Mock
-    private ContractDetailService contractDetailService; // Mock olarak eklendi
+    private ContractService contractService;
 
     @InjectMocks
     private BillingPlanServiceImpl billingPlanService;
 
     private UUID id;
-    private UUID contractDetailId;
+    private UUID contractId;
     private BillingPlan billingPlan;
     private CreateBillingPlanDto createBillingPlanDto;
-    private ContractDetail contractDetail;
+    private Contract contract;
     private Discount discount;
 
     @BeforeEach
     void setup() {
         id = UUID.randomUUID();
-        contractDetailId = UUID.randomUUID();
+        contractId = UUID.randomUUID();
 
         // BillingPlan nesnesi başlatılıyor
         billingPlan = new BillingPlan();
@@ -66,7 +61,7 @@ import static org.mockito.Mockito.*;
         billingPlan.setStatus(ACTIVE);
         billingPlan.setBillingDay(2);
         billingPlan.setPaymentMethod(CREDIT_CARD);
-        billingPlan.setContractDetail(contractDetail);
+        billingPlan.setContract(contract);
         billingPlan.setTaxRate(12.2);
         billingPlan.setCycleType(MONTHLY);
         billingPlan.setPaymentDueDays(2);
@@ -76,9 +71,9 @@ import static org.mockito.Mockito.*;
         billingPlan.setCreatedAt(LocalDateTime.now());
         billingPlan.setName("Test Name");
 
-        // ContractDetail nesnesi başlatılıyor
-        contractDetail = new ContractDetail();
-        contractDetail.setId(UUID.randomUUID());
+        // Contract nesnesi başlatılıyor
+        contract = new Contract();
+        contract.setId(UUID.randomUUID());
 
         // Discount nesnesi başlatılıyor
         discount = new Discount();
@@ -86,7 +81,7 @@ import static org.mockito.Mockito.*;
         discount.setAmount(10.0);
 
         createBillingPlanDto = new CreateBillingPlanDto();
-        createBillingPlanDto.setContractDetailId(contractDetailId);
+        createBillingPlanDto.setContract(contractId);
         createBillingPlanDto.setName("Test Name");
         createBillingPlanDto.setCycleType(MONTHLY);
         createBillingPlanDto.setTaxRate(12.2);
@@ -95,7 +90,6 @@ import static org.mockito.Mockito.*;
         createBillingPlanDto.setBillingDay(2);
         createBillingPlanDto.setPaymentDueDays(2);
         createBillingPlanDto.setBaseAmount(12);
-        createBillingPlanDto.setDiscountIds(Arrays.asList(discount.getId()));
     }
 
     @Test
@@ -106,10 +100,9 @@ import static org.mockito.Mockito.*;
         doNothing().when(billingPlanBusinessRules).checkIfPaymentMethodAndDueDaysAreConsistent(any(String.class), any(Integer.class));
         doNothing().when(billingPlanBusinessRules).checkIfBaseAmountAndTaxRateAreValid(any(Integer.class), any(Double.class));
 
-        when(contractDetailService.findById(any(UUID.class))).thenReturn(contractDetail);
+        when(contractService.findById(any(UUID.class))).thenReturn(Optional.of(contract));
 
-        // DiscountService'in findAllById metodunu mock'lıyoruz
-        when(discountService.findAllById(any())).thenReturn(Arrays.asList(discount));
+
 
         // BillingPlan Repository'sini mock'lıyoruz
         when(billingPlanRepository.save(any(BillingPlan.class))).thenReturn(billingPlan);
@@ -123,8 +116,7 @@ import static org.mockito.Mockito.*;
         // Assert: save metodunun bir kez çağrıldığını doğruluyoruz
         verify(billingPlanRepository, times(1)).save(any(BillingPlan.class));
 
-        // Assert: DiscountService'in findAllById metodunun çağrıldığını doğruluyoruz
-        verify(discountService, times(1)).findAllById(any());
+
     }
 
     @Test
