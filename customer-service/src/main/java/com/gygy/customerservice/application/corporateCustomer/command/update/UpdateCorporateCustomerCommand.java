@@ -12,7 +12,7 @@ import com.gygy.customerservice.application.customer.validation.AddressValidatio
 import com.gygy.customerservice.application.customer.validation.CustomerValidation;
 import com.gygy.customerservice.domain.entity.CorporateCustomer;
 import com.gygy.customerservice.infrastructure.messaging.service.KafkaProducerService;
-import com.gygy.customerservice.persistance.repository.CorporateCustomerRepository;
+import com.gygy.customerservice.infrastructure.persistence.repository.CorporateCustomerRepository;
 
 import an.awesome.pipelinr.Command;
 import lombok.AllArgsConstructor;

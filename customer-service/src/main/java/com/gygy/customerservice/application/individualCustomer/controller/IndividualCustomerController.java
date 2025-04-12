@@ -1,4 +1,4 @@
-package com.gygy.customerservice.controller;
+package com.gygy.customerservice.application.individualCustomer.controller;
 
 import an.awesome.pipelinr.Pipeline;
 import com.gygy.customerservice.application.individualCustomer.command.create.CreateIndividualCustomerCommand;

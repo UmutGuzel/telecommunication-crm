@@ -303,12 +303,26 @@ services:
     image: openzipkin/zipkin
     ports:
       - 9411:9411
+
+  customer-service-mongodb:
+    image: mongo
+    container_name: "customer-service-mongodb"
+    ports:
+      - "27020:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=mongo
+      - MONGO_INITDB_ROOT_PASSWORD=test
+      - MONGO_INITDB_DATABASE=customer-service
+    volumes:
+      - customer-service-mongodb-data:/data/db
+
 volumes:
     user-service_data:
     plan-service_data:
     payment-service_data:
-    customer-support-service_data:
+    customer-support-service_data: 
     contract-service_data:
     customer-service_data:
     prometheus_data:
     grafana_data:
+    customer-service-mongodb-data:

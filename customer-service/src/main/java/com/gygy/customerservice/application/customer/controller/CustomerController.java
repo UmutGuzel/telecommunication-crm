@@ -1,4 +1,4 @@
-package com.gygy.customerservice.controller;
+package com.gygy.customerservice.application.customer.controller;
 
 import java.util.List;
 
