@@ -28,6 +28,7 @@ public class ContractEventConsumer {
                 CreateBillCommand command = new CreateBillCommand();
                 command.setCustomerId(event.getCustomerId());
                 command.setTotalAmount(event.getTotalAmount());
+                command.setContractId(event.getContractId());
 
                 pipeline.send(command);
                 log.info("Initial bill created for contract");

@@ -46,7 +46,7 @@ public class Customer {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id")
     private Address address;
 

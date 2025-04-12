@@ -3,8 +3,6 @@ package com.gygy.customerservice.controller;
 import an.awesome.pipelinr.Pipeline;
 import com.gygy.customerservice.application.individualCustomer.command.create.CreateIndividualCustomerCommand;
 import com.gygy.customerservice.application.individualCustomer.command.create.CreatedIndividualCustomerResponse;
-import com.gygy.customerservice.application.individualCustomer.command.delete.DeleteIndividualCustomerCommand;
-import com.gygy.customerservice.application.individualCustomer.command.delete.DeletedIndividualCustomerResponse;
 import com.gygy.customerservice.application.individualCustomer.command.update.UpdateIndividualCustomerCommand;
 import com.gygy.customerservice.application.individualCustomer.command.update.UpdatedIndividualCustomerResponse;
 import com.gygy.customerservice.application.individualCustomer.query.GetListIndividualCustomerItemDto;
@@ -39,12 +37,6 @@ public class IndividualCustomerController extends BaseController {
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
     public UpdatedIndividualCustomerResponse updateIndividualCustomer(@RequestBody UpdateIndividualCustomerCommand command) {
-        return command.execute(pipeline);
-    }
-
-    @DeleteMapping
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public DeletedIndividualCustomerResponse deleteCustomer(@RequestBody DeleteIndividualCustomerCommand command) {
         return command.execute(pipeline);
     }
 }

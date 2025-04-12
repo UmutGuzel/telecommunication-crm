@@ -1,11 +1,9 @@
 package com.gygy.paymentservice.domain.entity.bill;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -14,9 +12,10 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
+@Table(name = "payment_schedules")
 public class PaymentSchedule {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @UuidGenerator
     private UUID id;
 
     private UUID contractId;

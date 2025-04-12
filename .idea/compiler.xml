@@ -18,6 +18,10 @@
           <entry name="$MAVEN_REPOSITORY$/org/mapstruct/mapstruct/1.6.0/mapstruct-1.6.0.jar" />
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok-mapstruct-binding/0.2.0/lombok-mapstruct-binding-0.2.0.jar" />
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/mapstruct/mapstruct-processor/1.6.0/mapstruct-processor-1.6.0.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/mapstruct/mapstruct/1.6.0/mapstruct-1.6.0.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok-mapstruct-binding/0.2.0/lombok-mapstruct-binding-0.2.0.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
         </processorPath>
         <module name="contract-service" />
       </profile>
@@ -31,6 +35,7 @@
         <module name="customer-service" />
         <module name="plan-service" />
       </profile>
+<<<<<<< HEAD
       <profile name="Annotation profile for payment-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
@@ -44,6 +49,9 @@
         <module name="notification-service" />
       </profile>
       <profile name="Annotation profile for user-service" enabled="true">
+=======
+      <profile name="Annotation profile for notification-service" enabled="true">
+>>>>>>> 38c519a3f1518ca2b22fd9470594f586d6313478
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />

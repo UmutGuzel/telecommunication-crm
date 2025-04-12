@@ -31,6 +31,9 @@ public class CreateBillCommand implements Command<CreatedBillResponse> {
     @DecimalMin(value = "0.01", message = "Amount must be greater than 0")
     private BigDecimal totalAmount;
 
+    private UUID contractId;
+
+
     //dışarıdaki topicten geliyorlar
 
     @Slf4j
@@ -46,6 +49,7 @@ public class CreateBillCommand implements Command<CreatedBillResponse> {
             Bill bill = new Bill();
             bill.setCustomerId(createBillCommand.getCustomerId());
             bill.setTotalAmount(createBillCommand.getTotalAmount());
+            bill.setContractId(createBillCommand.getContractId());
             bill.setDueDate(LocalDate.now().plusDays(30));
             bill.setStatus(BillStatus.PENDING);
             bill.setPaidAmount(BigDecimal.ZERO);
