@@ -12,3 +12,10 @@ spring:
 
 server:
   port: 9060
+
+app-config:
+  kafka:
+    topics:
+      ticket-created: ticket-created-events
+      ticket-response: ticket-response-events
+      ticket-status-change: ticket-status-change-events

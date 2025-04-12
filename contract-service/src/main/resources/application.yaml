@@ -2,55 +2,11 @@ configurl: http://localhost:8090
 spring:
   application:
     name: contract-service
-  config:
-    import: configserver:${configurl}
-  datasource:
-    url: "jdbc:postgresql://localhost:5436/contract_service"
-    username: postgres
-    password: test
-  jpa:
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-    showSql: true
-    hibernate:
-      ddlAuto: update
   cloud:
     config:
       profile: local
-  kafka:
-    bootstrap-servers: localhost:9092
-    consumer:
-      group-id: contract-service-group
-      auto-offset-reset: earliest
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-      properties:
-        spring.json.trusted.packages: "com.gygy.common.events.contractservice"
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-      properties:
-        spring.json.trusted.packages: "com.gygy.common.events.contractservice"
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"
-  endpoint:
-    health:
-      show-details: always
-  prometheus:
-    metrics:
-      export:
-        enabled: true
-  tracing:
-    propagation:
-      type:
-        - b3
-    sampling:
-      probability: 1.0
+  config:
+    import: configserver:${configurl}
 
 server:
   port: 9030

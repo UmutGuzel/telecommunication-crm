@@ -1,5 +1,6 @@
 package com.gygy.common.events.customerservice;
 
+import com.gygy.common.events.dto.AddressResponse;
 import com.gygy.common.events.enums.CustomerType;
 import lombok.*;
 
@@ -22,4 +23,6 @@ public class CreatedIndividualCustomerEvent {
     private boolean allowSmsMessages;
     private boolean allowPromotionalEmails;
     private boolean allowPromotionalSms;
+
+    private AddressResponse address;
 }

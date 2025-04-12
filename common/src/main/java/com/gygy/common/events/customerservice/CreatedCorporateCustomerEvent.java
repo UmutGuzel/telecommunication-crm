@@ -1,5 +1,6 @@
 package com.gygy.common.events.customerservice;
 
+import com.gygy.common.events.dto.AddressResponse;
 import lombok.*;
 
 import java.util.UUID;
@@ -23,4 +24,6 @@ public class CreatedCorporateCustomerEvent {
     private boolean allowSmsMessages;
     private boolean allowPromotionalEmails;
     private boolean allowPromotionalSms;
+
+    private AddressResponse address;
 } 

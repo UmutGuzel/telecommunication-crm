@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/contract-service/contract-service.iml" filepath="$PROJECT_DIR$/contract-service/contract-service.iml" />
       <module fileurl="file://$PROJECT_DIR$/telecommunication-crm.iml" filepath="$PROJECT_DIR$/telecommunication-crm.iml" />
     </modules>
   </component>

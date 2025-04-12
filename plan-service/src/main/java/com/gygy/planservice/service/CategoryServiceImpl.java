@@ -4,7 +4,9 @@ import com.gygy.planservice.dto.CategoryDto;
 import com.gygy.planservice.dto.CategoryRequestDto;
 import com.gygy.planservice.entity.Category;
 import com.gygy.planservice.exception.CategoryNotFoundException;
-import com.gygy.planservice.exception.InvalidInputException;
+import com.gygy.planservice.exception.CategoryIdNullException;
+import com.gygy.planservice.exception.CategoryNameNullException;
+import com.gygy.planservice.exception.CategoryRequestNullException;
 import com.gygy.planservice.mapper.CategoryMapper;
 import com.gygy.planservice.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,10 +27,10 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     public CategoryDto createCategory(CategoryRequestDto requestDto) {
         if (requestDto == null) {
-            throw new InvalidInputException("Category request cannot be null");
+            throw new CategoryRequestNullException();
         }
         if (requestDto.getName() == null) {
-            throw new InvalidInputException("Category name cannot be null");
+            throw new CategoryNameNullException();
         }
 
         Category category = categoryMapper.toEntity(requestDto);
@@ -46,7 +48,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDto getCategoryById(UUID id) {
         if (id == null) {
-            throw new InvalidInputException("Category ID cannot be null");
+            throw new CategoryIdNullException();
         }
 
         Category category = categoryRepository.findById(id)
@@ -58,13 +60,13 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     public CategoryDto updateCategory(UUID id, CategoryRequestDto requestDto) {
         if (id == null) {
-            throw new InvalidInputException("Category ID cannot be null");
+            throw new CategoryIdNullException();
         }
         if (requestDto == null) {
-            throw new InvalidInputException("Category request cannot be null");
+            throw new CategoryRequestNullException();
         }
         if (requestDto.getName() == null) {
-            throw new InvalidInputException("Category name cannot be null");
+            throw new CategoryNameNullException();
         }
 
         Category category = categoryRepository.findById(id)
@@ -81,7 +83,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     public void deleteCategory(UUID id) {
         if (id == null) {
-            throw new InvalidInputException("Category ID cannot be null");
+            throw new CategoryIdNullException();
         }
 
         Category category = categoryRepository.findById(id)

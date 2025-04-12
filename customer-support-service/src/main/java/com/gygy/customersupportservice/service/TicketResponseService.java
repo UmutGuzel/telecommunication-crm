@@ -2,8 +2,7 @@ package com.gygy.customersupportservice.service;
 
 import com.gygy.customersupportservice.domain.TicketResponse;
 import com.gygy.customersupportservice.repository.TicketResponseRepository;
-import com.gygy.customersupportservice.rule.RuleEngine;
-
+import com.gygy.customersupportservice.rule.TicketResponseRules;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -18,15 +17,22 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class TicketResponseService {
     private final TicketResponseRepository ticketResponseRepository;
-    private final RuleEngine ruleEngine;
+    private final TicketResponseRules ticketResponseRules;
+    private final AnalyticsEventService analyticsEventService;
 
     @Transactional
     public TicketResponse createResponse(TicketResponse response) {
+        ticketResponseRules.validateResponse(response);
         // Process the response through the rule engine
-        TicketResponse processedResponse = ruleEngine.processNewResponse(response);
+        TicketResponse processedResponse = ticketResponseRules.applyNewResponseRules(response);
 
         // Save to repository
-        return ticketResponseRepository.save(processedResponse);
+        TicketResponse savedResponse = ticketResponseRepository.save(processedResponse);
+
+        // Publish the response analytics event
+        analyticsEventService.publishTicketResponseEvent(savedResponse);
+
+        return savedResponse;
     }
 
     @Transactional(readOnly = true)

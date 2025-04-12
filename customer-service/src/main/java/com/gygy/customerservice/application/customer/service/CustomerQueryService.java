@@ -1,7 +1,7 @@
 package com.gygy.customerservice.application.customer.service;
 
 import com.gygy.customerservice.application.customer.query.GetListCustomerItemDto;
-import com.gygy.customerservice.persistance.repository.CustomerRepository;
+import com.gygy.customerservice.infrastructure.persistence.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

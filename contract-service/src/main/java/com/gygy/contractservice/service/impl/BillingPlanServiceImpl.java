@@ -1,9 +1,7 @@
 package com.gygy.contractservice.service.impl;
 
-import com.gygy.contractservice.dto.billingPlan.BillingPlanListiningDto;
-import com.gygy.contractservice.dto.billingPlan.CreateBillingPlanDto;
-import com.gygy.contractservice.dto.billingPlan.DeleteBillingPlanDto;
-import com.gygy.contractservice.dto.billingPlan.UpdateBillingPlanDto;
+import com.gygy.contractservice.client.PlanClient;
+import com.gygy.contractservice.dto.billingPlan.*;
 import com.gygy.contractservice.entity.BillingPlan;
 import com.gygy.contractservice.entity.Contract;
 import com.gygy.contractservice.entity.ContractDetail;
@@ -30,15 +28,17 @@ public class BillingPlanServiceImpl implements BillingPlanService {
     private final BillingPlanBusinessRules billingPlanBusinessRules;
     private final BillingPlanMapper billingPlanMapper;
     private static final Logger logger = LoggerFactory.getLogger(BillingPlanServiceImpl.class);
+    private final PlanClient planClient;
 
 
     public BillingPlanServiceImpl(
             BillingPlanRepository billingPlanRepository, ContractService contractService,
-            BillingPlanBusinessRules billingPlanBusinessRules, BillingPlanMapper billingPlanMapper) {
+            BillingPlanBusinessRules billingPlanBusinessRules, BillingPlanMapper billingPlanMapper, PlanClient planClient) {
         this.billingPlanRepository = billingPlanRepository;
         this.contractService = contractService;
         this.billingPlanBusinessRules = billingPlanBusinessRules;
         this.billingPlanMapper = billingPlanMapper;
+        this.planClient = planClient;
     }
     @Override
     public List<BillingPlan> findAll(List<UUID> billingPlanId) {
@@ -70,7 +70,7 @@ public class BillingPlanServiceImpl implements BillingPlanService {
     @Override
     public void add(CreateBillingPlanDto createBillingPlanDto) {
 
-        billingPlanBusinessRules.checkIfBillingPlanNameExists(createBillingPlanDto.getName());
+       // billingPlanBusinessRules.checkIfBillingPlanNameExists(createBillingPlanDto.getName());
         
         // 2. Döngü tipi ve faturalama günü tutarlılığı
         billingPlanBusinessRules.checkIfCycleTypeAndBillingDayAreConsistent(
@@ -92,10 +92,12 @@ public class BillingPlanServiceImpl implements BillingPlanService {
         
         Contract contract = contractService.findById(createBillingPlanDto.getContract()).orElseThrow(()-> new RuntimeException("Contract Not Found"));
 
-        logger.info("Creating new billing plan with name: {}", createBillingPlanDto.getName());
         try {
             BillingPlan billingPlan=billingPlanMapper.createBillingPlanFromCreateBillingPlanDto(createBillingPlanDto);
             billingPlan.setContract(contract);
+            PlanDto response=planClient.getCustomerByPhoneNumber(billingPlan.getPlanId());
+            billingPlan.setName(response.getName());
+            billingPlan.setDescription(response.getDescription());
             billingPlanRepository.save(billingPlan);
             logger.info("Successfully created billing plan with ID: {}", billingPlan.getId());
         } catch (Exception e) {

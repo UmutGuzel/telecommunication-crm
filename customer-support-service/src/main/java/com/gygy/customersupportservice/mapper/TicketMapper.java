@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
@@ -42,7 +41,7 @@ public class TicketMapper {
         }
 
         Ticket ticket = new Ticket();
-        ticket.setId(dto.getId());
+        // ticket.setId(dto.getId());
         ticket.setTitle(dto.getTitle());
         ticket.setDescription(dto.getDescription());
         ticket.setType(dto.getType());

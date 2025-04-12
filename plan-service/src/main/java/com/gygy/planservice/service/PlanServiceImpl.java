@@ -5,7 +5,9 @@ import com.gygy.planservice.dto.PlanRequestDto;
 import com.gygy.planservice.entity.Category;
 import com.gygy.planservice.entity.Plan;
 import com.gygy.planservice.exception.CategoryNotFoundException;
-import com.gygy.planservice.exception.InvalidInputException;
+import com.gygy.planservice.exception.CategoryIdNullException;
+import com.gygy.planservice.exception.PlanIdNullException;
+import com.gygy.planservice.exception.PlanRequestNullException;
 import com.gygy.planservice.exception.PlanNotFoundException;
 import com.gygy.planservice.mapper.PlanMapper;
 import com.gygy.planservice.repository.CategoryRepository;
@@ -29,10 +31,10 @@ public class PlanServiceImpl implements PlanService {
     @Transactional
     public PlanDto createPlan(PlanRequestDto requestDto) {
         if (requestDto == null) {
-            throw new InvalidInputException("Plan request cannot be null");
+            throw new PlanRequestNullException();
         }
         if (requestDto.getCategoryId() == null) {
-            throw new InvalidInputException("Category ID cannot be null");
+            throw new CategoryIdNullException();
         }
 
         Category category = categoryRepository.findById(requestDto.getCategoryId())
@@ -54,7 +56,7 @@ public class PlanServiceImpl implements PlanService {
     @Override
     public PlanDto getPlanById(UUID id) {
         if (id == null) {
-            throw new InvalidInputException("Plan ID cannot be null");
+            throw new PlanIdNullException();
         }
 
         Plan plan = planRepository.findById(id)
@@ -66,13 +68,13 @@ public class PlanServiceImpl implements PlanService {
     @Transactional
     public PlanDto updatePlan(UUID id, PlanRequestDto requestDto) {
         if (id == null) {
-            throw new InvalidInputException("Plan ID cannot be null");
+            throw new PlanIdNullException();
         }
         if (requestDto == null) {
-            throw new InvalidInputException("Plan request cannot be null");
+            throw new PlanRequestNullException();
         }
         if (requestDto.getCategoryId() == null) {
-            throw new InvalidInputException("Category ID cannot be null");
+            throw new CategoryIdNullException();
         }
 
         Plan plan = planRepository.findById(id)
@@ -95,7 +97,7 @@ public class PlanServiceImpl implements PlanService {
     @Transactional
     public void deletePlan(UUID id) {
         if (id == null) {
-            throw new InvalidInputException("Plan ID cannot be null");
+            throw new PlanIdNullException();
         }
 
         Plan plan = planRepository.findById(id)

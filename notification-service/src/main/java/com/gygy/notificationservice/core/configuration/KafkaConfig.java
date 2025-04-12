@@ -50,23 +50,12 @@ public class KafkaConfig {
         return factory;
     }
 
-    @Bean public ConcurrentKafkaListenerContainerFactory<String, PasswordResetEvent> passwordResetKafkaListenerContainerFactory() { return createFactory(PasswordResetEvent.class); }
-    @Bean public ConcurrentKafkaListenerContainerFactory<String, UserActivationEvent> userActivationKafkaListenerContainerFactory() { return createFactory(UserActivationEvent.class); }
-    @Bean public ConcurrentKafkaListenerContainerFactory<String, ContractDetailEvent> contractDetailKafkaListenerContainerFactory() { return createFactory(ContractDetailEvent.class); }
-    @Bean public ConcurrentKafkaListenerContainerFactory<String, BillCreatedEvent> billCreatedKafkaListenerContainerFactory() { return createFactory(BillCreatedEvent.class); }
-    @Bean public ConcurrentKafkaListenerContainerFactory<String, BillOverdueEvent> billOverdueKafkaListenerContainerFactory() { return createFactory(BillOverdueEvent.class); }
-    @Bean public ConcurrentKafkaListenerContainerFactory<String, BillPaidEvent> billPaidKafkaListenerContainerFactory() { return createFactory(BillPaidEvent.class); }
-    @Bean public ConcurrentKafkaListenerContainerFactory<String, PaymentFailedEvent> paymentFailedKafkaListenerContainerFactory() { return createFactory(PaymentFailedEvent.class); }
-    @Bean public ConcurrentKafkaListenerContainerFactory<String, PaymentSuccessEvent> paymentSuccessKafkaListenerContainerFactory() { return createFactory(PaymentSuccessEvent.class); }
-    @Bean public ConcurrentKafkaListenerContainerFactory<String, UserRoleChangedEvent> userRoleChangedKafkaListenerContainerFactory() { return createFactory(UserRoleChangedEvent.class); }
-    @Bean public ConcurrentKafkaListenerContainerFactory<String, UserPermissionChangedEvent> userPermissionChangedKafkaListenerContainerFactory() { return createFactory(UserPermissionChangedEvent.class); }
-    @Bean public ConcurrentKafkaListenerContainerFactory<String, IndividualCustomerCreatedEvent> individualCustomerCreatedKafkaListenerContainerFactory() { return createFactory(IndividualCustomerCreatedEvent.class); }
-    @Bean public ConcurrentKafkaListenerContainerFactory<String, IndividualCustomerUpdatedEvent> individualCustomerUpdatedKafkaListenerContainerFactory() { return createFactory(IndividualCustomerUpdatedEvent.class); }
-    @Bean public ConcurrentKafkaListenerContainerFactory<String, CorporateCustomerCreatedEvent> corporateCustomerCreatedKafkaListenerContainerFactory() { return createFactory(CorporateCustomerCreatedEvent.class); }
-    @Bean public ConcurrentKafkaListenerContainerFactory<String, CorporateCustomerUpdatedEvent> corporateCustomerUpdatedKafkaListenerContainerFactory() { return createFactory(CorporateCustomerUpdatedEvent.class); }
-    @Bean public ConcurrentKafkaListenerContainerFactory<String, PlanCampaignEvent> planCampaignKafkaListenerContainerFactory() { return createFactory(PlanCampaignEvent.class); }
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, PasswordResetEvent> passwordResetKafkaListenerContainerFactory() {
+        return createFactory(PasswordResetEvent.class);
+    }
 
-    // Producer Configurations
+    roducer Configurations
     @Bean
     public ProducerFactory<String, Object> producerFactory() {
         Map<String, Object> configProps = new HashMap<>();
@@ -83,7 +72,11 @@ public class KafkaConfig {
 
     // Topic Definitions
     @Bean public NewTopic passwordResetEventsTopic(@Value("${kafka.topics.passwordResetEventsTopic}") String topic) { return new NewTopic(topic, 1, (short) 1); }
-    @Bean public NewTopic userActivationEventsTopic(@Value("${kafka.topics.userActivationEventsTopic}") String topic) { return new NewTopic(topic, 1, (short) 1); }
+    @Bean
+    public NewTopic userActivationEventsTopic(@Value("${kafka.topics.userActivationEventsTopic}") String topic)
+        { return new NewTopic(topic, 1, (short) 1
+    ;
+
     @Bean public NewTopic contractDetailCreatedTopic(@Value("${kafka.topics.contractDetailCreatedTopic}") String topic) { return new NewTopic(topic, 1, (short) 1); }
     @Bean public NewTopic billCreatedEventsTopic(@Value("${kafka.topics.billCreatedEventsTopic}") String topic) { return new NewTopic(topic, 1, (short) 1); }
     @Bean public NewTopic billOverdueEventsTopic(@Value("${kafka.topics.billOverdueEventsTopic}") String topic) { return new NewTopic(topic, 1, (short) 1); }
@@ -95,7 +88,19 @@ public class KafkaConfig {
     @Bean public NewTopic individualCustomerCreatedTopic(@Value("${kafka.topics.individualCustomerCreatedTopic}") String topic) { return new NewTopic(topic, 1, (short) 1); }
     @Bean public NewTopic individualCustomerUpdatedTopic(@Value("${kafka.topics.individualCustomerUpdatedTopic}") String topic) { return new NewTopic(topic, 1, (short) 1); }
     @Bean public NewTopic corporateCustomerCreatedTopic(@Value("${kafka.topics.corporateCustomerCreatedTopic}") String topic) { return new NewTopic(topic, 1, (short) 1); }
-    @Bean public NewTopic corporateCustomerUpdatedTopic(@Value("${kafka.topics.corporateCustomerUpdatedTopic}") String topic) { return new NewTopic(topic, 1, (short) 1); }
-    @Bean public NewTopic planCampaignTopic(@Value("${kafka.topics.planCampaignTopic}") String topic) { return new NewTopic(topic, 1, (short) 1); }
-    @Bean public NewTopic notificationPreferencesChangedTopic(@Value("${kafka.topics.notificationPreferencesChangedTopic}") String topic) { return new NewTopic(topic, 1, (short) 1); }
-}
+    @Bean public NewTopic corporateCustomerUpdatedTopic(@Value("${kafka.topics.corporateCustomerUpdatedTopic}") St
+
+    n public NewTopic planCampaignTopic
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+

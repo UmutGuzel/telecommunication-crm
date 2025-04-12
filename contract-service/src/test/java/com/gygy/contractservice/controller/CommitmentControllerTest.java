@@ -4,6 +4,7 @@ import com.gygy.contractservice.dto.commitment.CommitmentListiningDto;
 import com.gygy.contractservice.dto.commitment.CreateCommitmentDto;
 import com.gygy.contractservice.dto.commitment.DeleteCommitmentDto;
 import com.gygy.contractservice.dto.commitment.UpdateCommitmentDto;
+import com.gygy.contractservice.entity.Commitment;
 import com.gygy.contractservice.model.enums.Status;
 import com.gygy.contractservice.service.CommitmentService;
 import org.junit.jupiter.api.BeforeEach;
@@ -88,7 +89,7 @@ class CommitmentControllerTest {
         updateCommitmentDto.setBillingDay(1);
         updateCommitmentDto.setCycleType(MONTHLY);
 
-        doNothing().when(commitmentService).update(any(UpdateCommitmentDto.class));
+        when(commitmentService.update(any(UpdateCommitmentDto.class))).thenReturn(new Commitment());
         commitmentController.update(updateCommitmentDto);
 
         verify(commitmentService,times(1)).update(any(UpdateCommitmentDto.class));

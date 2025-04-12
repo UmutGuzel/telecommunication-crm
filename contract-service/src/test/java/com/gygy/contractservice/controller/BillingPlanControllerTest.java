@@ -6,7 +6,7 @@ import com.gygy.contractservice.dto.billingPlan.CreateBillingPlanDto;
 import com.gygy.contractservice.dto.billingPlan.DeleteBillingPlanDto;
 import com.gygy.contractservice.dto.billingPlan.UpdateBillingPlanDto;
 import com.gygy.contractservice.entity.BillingPlan;
-import com.gygy.contractservice.entity.ContractDetail;
+import com.gygy.contractservice.entity.Contract;
 import com.gygy.contractservice.rules.BillingPlanBusinessRules;
 import com.gygy.contractservice.service.BillingPlanService;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
     private BillingPlanController billingPlanController;
 
     private UUID id;
-    private ContractDetail contractDetail;
+    private Contract contract;
 
     @BeforeEach
     void setup(){
@@ -51,8 +51,8 @@ import static org.mockito.Mockito.*;
     }
     @Test
     void getAllBillingPlan() {
-        contractDetail=new ContractDetail();
-        contractDetail.setId(UUID.randomUUID());
+        contract=new Contract();
+        contract.setId(UUID.randomUUID());
         BillingPlanListiningDto billingPlanListiningDto=new BillingPlanListiningDto();
         billingPlanListiningDto.setBillingDay(12);
         billingPlanListiningDto.setName("Test Name");
@@ -64,7 +64,7 @@ import static org.mockito.Mockito.*;
         billingPlanListiningDto.setTaxRate(0.1);
         billingPlanListiningDto.setUpdatedAt(LocalDateTime.now());
         billingPlanListiningDto.setPaymentMethod(CREDIT_CARD);
-        billingPlanListiningDto.setContractDetailId(contractDetail.getId());
+        billingPlanListiningDto.setContractId(contract.getId());
 
 
         List<BillingPlanListiningDto> billingPlanListiningDtos= List.of(billingPlanListiningDto);
@@ -78,7 +78,7 @@ import static org.mockito.Mockito.*;
         assertEquals(12,response.get(0).getPaymentDueDays());
         assertEquals(0.1,response.get(0).getTaxRate());
         assertEquals(CREDIT_CARD,response.get(0).getPaymentMethod());
-        assertEquals(contractDetail.getId(),response.get(0).getContractDetailId());
+        assertEquals(contract.getId(),response.get(0).getContractId());
         assertEquals(LocalDateTime.now().toLocalDate(),response.get(0).getCreatedAt().toLocalDate());
         assertEquals(LocalDateTime.now().toLocalDate(),response.get(0).getUpdatedAt().toLocalDate());
         assertEquals("Test Name",response.get(0).getName());
@@ -115,7 +115,7 @@ import static org.mockito.Mockito.*;
          updateBillingPlanDto.setPaymentDueDays(10);
          updateBillingPlanDto.setTaxRate(0.15);
          updateBillingPlanDto.setPaymentMethod(CREDIT_CARD);
-         updateBillingPlanDto.setContractDetailId(UUID.randomUUID());
+         updateBillingPlanDto.setContractId(UUID.randomUUID());
 
          // Mock service response
          BillingPlan updatedBillingPlan = new BillingPlan();
@@ -154,9 +154,4 @@ import static org.mockito.Mockito.*;
              });
          }
      }
-
-
-
-
-
 

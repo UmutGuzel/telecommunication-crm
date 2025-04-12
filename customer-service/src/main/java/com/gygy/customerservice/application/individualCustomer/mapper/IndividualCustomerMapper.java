@@ -116,6 +116,7 @@ public class IndividualCustomerMapper {
                 .allowSmsMessages(customer.isAllowSmsMessages())
                 .allowPromotionalEmails(customer.isAllowPromotionalEmails())
                 .allowPromotionalSms(customer.isAllowPromotionalSms())
+                .address(addressMapper.convertAddressToAddressResponse(customer.getAddress()))
                 .build();
     }
 

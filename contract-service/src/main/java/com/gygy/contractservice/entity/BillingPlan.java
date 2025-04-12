@@ -25,6 +25,7 @@ public class BillingPlan {
     private UUID id;
     private String name;
     private String description;
+    private UUID planId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "cycle_type", nullable = false)
