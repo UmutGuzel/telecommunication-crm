@@ -4,6 +4,7 @@ import com.gygy.common.events.contractservice.ContractCreatedEvent;
 import com.gygy.common.events.contractservice.ContractDetailEvent;
 import com.gygy.contractservice.client.CustomerClient;
 import com.gygy.contractservice.core.exception.type.BusinessException;
+import com.gygy.contractservice.dto.contract.GetCustomerByEmailResponse;
 import com.gygy.contractservice.dto.contractDetail.ContractDetailListiningDto;
 import com.gygy.contractservice.dto.contractDetail.CreateContractDetailDto;
 import com.gygy.contractservice.dto.contractDetail.DeleteContractDetailDto;
@@ -19,7 +20,6 @@ import com.gygy.contractservice.service.BillingPlanService;
 import com.gygy.contractservice.service.ContractDetailService;
 import com.gygy.contractservice.service.ContractService;
 import com.gygy.contractservice.service.DiscountService;
-import com.gygy.customerservice.application.customer.query.GetCustomerByPhoneNumberResponse;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
@@ -74,7 +74,7 @@ public class ContractDetailServiceImpl implements ContractDetailService {
         try {
             ContractDetail contractDetail=contractDetailMapper.createContractDetailFromCreateContractDetailDto(createContractDetailDto);
             contractDetail.setContract(contract);
-            GetCustomerByPhoneNumberResponse response= customerClient.getCustomerByPhoneNumber(contractDetail.getPhoneNumber());
+            GetCustomerByEmailResponse response= customerClient.getCustomerByEmail(contractDetail.getEmail());
             contractDetail.setCustomerId(response.getId());
             contractDetail.setEmail(response.getEmail());
             contractDetail.setPhoneNumber(response.getPhoneNumber());
