@@ -1,8 +1,10 @@
 package com.gygy.customerservice.domain.entity;
 
 import com.gygy.customerservice.domain.enums.CustomerType;
+import com.gygy.customerservice.infrastructure.persistence.listener.CorporateCustomerListener;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,9 +14,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
+@EntityListeners(CorporateCustomerListener.class)
 @Table(name = "corporate_customers")
 public class CorporateCustomer extends Customer {
-    @Column(name = "tax_number")
+    @Column(name = "tax_number", nullable = false)
     private String taxNumber;
 
     @Column(name = "company_name")

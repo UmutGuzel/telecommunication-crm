@@ -1,12 +1,7 @@
 package com.gygy.customerservice.application.corporateCustomer.mapper;
 
-import java.time.LocalDateTime;
-
-import org.springframework.stereotype.Component;
-
 import com.gygy.customerservice.application.corporateCustomer.command.create.CreateCorporateCustomerCommand;
 import com.gygy.customerservice.application.corporateCustomer.command.create.CreatedCorporateCustomerResponse;
-import com.gygy.customerservice.application.corporateCustomer.command.delete.DeletedCorporateCustomerResponse;
 import com.gygy.customerservice.application.corporateCustomer.command.update.UpdateCorporateCustomerCommand;
 import com.gygy.customerservice.application.corporateCustomer.command.update.UpdatedCorporateCustomerResponse;
 import com.gygy.customerservice.application.corporateCustomer.query.GetListCorporateCustomerItemDto;
@@ -16,8 +11,10 @@ import com.gygy.customerservice.domain.entity.Address;
 import com.gygy.customerservice.domain.entity.CorporateCustomer;
 import com.gygy.customerservice.infrastructure.messaging.event.CreatedCorporateCustomerEvent;
 import com.gygy.customerservice.infrastructure.messaging.event.UpdatedCorporateCustomerEvent;
-
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
 @Component
@@ -49,7 +46,6 @@ public class CorporateCustomerMapper {
                 .id(corporateCustomer.getId())
                 .email(corporateCustomer.getEmail())
                 .phoneNumber(corporateCustomer.getPhoneNumber())
-                .taxNumber(corporateCustomer.getTaxNumber())
                 .companyName(corporateCustomer.getCompanyName())
                 .contactPersonName(corporateCustomer.getContactPersonName())
                 .contactPersonSurname(corporateCustomer.getContactPersonSurname())
@@ -67,9 +63,6 @@ public class CorporateCustomerMapper {
         if (command.getAddress() != null) {
             Address address = addressMapper.convertUpdateAddressDtoToAddress(corporateCustomer.getAddress(), command.getAddress());
             corporateCustomer.setAddress(address);
-        }
-        if (command.getTaxNumber() != null && !command.getTaxNumber().isEmpty()) {
-            corporateCustomer.setTaxNumber(command.getTaxNumber());
         }
         if (command.getCompanyName() != null && !command.getCompanyName().isEmpty()) {
             corporateCustomer.setCompanyName(command.getCompanyName());
@@ -90,7 +83,6 @@ public class CorporateCustomerMapper {
                 .id(corporateCustomer.getId())
                 .email(corporateCustomer.getEmail())
                 .phoneNumber(corporateCustomer.getPhoneNumber())
-                .taxNumber(corporateCustomer.getTaxNumber())
                 .companyName(corporateCustomer.getCompanyName())
                 .contactPersonName(corporateCustomer.getContactPersonName())
                 .contactPersonSurname(corporateCustomer.getContactPersonSurname())
@@ -98,29 +90,11 @@ public class CorporateCustomerMapper {
                 .build();
     }
 
-    public DeletedCorporateCustomerResponse convertCorporateCustomerToDeletedCorporateCustomerResponse(CorporateCustomer corporateCustomer) {
-        return DeletedCorporateCustomerResponse.builder()
-                .id(corporateCustomer.getId())
-                .build();
-    }
-
-    public GetListCorporateCustomerItemDto convertCorporateCustomerToGetListCorporateCustomerItemDto(CorporateCustomer corporateCustomer) {
-        return GetListCorporateCustomerItemDto.builder()
-                .id(corporateCustomer.getId())
-                .email(corporateCustomer.getEmail())
-                .phoneNumber(corporateCustomer.getPhoneNumber())
-                .taxNumber(corporateCustomer.getTaxNumber())
-                .companyName(corporateCustomer.getCompanyName())
-                .contactPersonName(corporateCustomer.getContactPersonName())
-                .contactPersonSurname(corporateCustomer.getContactPersonSurname())
-                .build();
-    }
-
     public CreatedCorporateCustomerEvent convertToCreatedCorporateCustomerEvent(CorporateCustomer customer) {
         return CreatedCorporateCustomerEvent.builder()
                 .id(customer.getId())
                 .email(customer.getEmail())
-                .taxNumber(customer.getTaxNumber())
+                .phoneNumber(customer.getPhoneNumber())
                 .companyName(customer.getCompanyName())
                 .contactPersonName(customer.getContactPersonName())
                 .contactPersonSurname(customer.getContactPersonSurname())
@@ -129,6 +103,7 @@ public class CorporateCustomerMapper {
                 .allowSmsMessages(customer.isAllowSmsMessages())
                 .allowPromotionalEmails(customer.isAllowPromotionalEmails())
                 .allowPromotionalSms(customer.isAllowPromotionalSms())
+                .address(addressMapper.convertAddressToAddressResponse(customer.getAddress()))
                 .build();
     }
 
@@ -137,10 +112,10 @@ public class CorporateCustomerMapper {
                 .id(customer.getId())
                 .email(customer.getEmail())
                 .phoneNumber(customer.getPhoneNumber())
-                .taxNumber(customer.getTaxNumber())
                 .companyName(customer.getCompanyName())
                 .contactPersonName(customer.getContactPersonName())
                 .contactPersonSurname(customer.getContactPersonSurname())
+                .address(addressMapper.convertAddressToAddressResponse(customer.getAddress()))
                 .build();
     }
 }

@@ -7,11 +7,12 @@ import org.springframework.stereotype.Component;
 import com.gygy.customerservice.application.corporateCustomer.mapper.CorporateCustomerMapper;
 import com.gygy.customerservice.application.customer.dto.UpdateAddressDto;
 import com.gygy.customerservice.application.customer.rule.CustomerRule;
+import com.gygy.customerservice.application.customer.service.CustomerService;
 import com.gygy.customerservice.application.customer.validation.AddressValidation;
 import com.gygy.customerservice.application.customer.validation.CustomerValidation;
 import com.gygy.customerservice.domain.entity.CorporateCustomer;
 import com.gygy.customerservice.infrastructure.messaging.service.KafkaProducerService;
-import com.gygy.customerservice.persistance.repository.CorporateCustomerRepository;
+import com.gygy.customerservice.infrastructure.persistence.repository.CorporateCustomerRepository;
 
 import an.awesome.pipelinr.Command;
 import lombok.AllArgsConstructor;
@@ -25,12 +26,11 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UpdateCorporateCustomerCommand implements Command<UpdatedCorporateCustomerResponse> {
-
-    private UUID id;
+    // String format to check the UUID pattern format then convert it to UUID
+    private String id;
     private String email;
     private String phoneNumber;
 
-    private String taxNumber;
     private String companyName;
     private String contactPersonName;
     private String contactPersonSurname;
@@ -46,19 +46,22 @@ public class UpdateCorporateCustomerCommand implements Command<UpdatedCorporateC
         private final CustomerValidation customerValidation;
         private final AddressValidation addressValidation;
         private final KafkaProducerService kafkaProducerService;
+        private final CustomerService customerService;
 
         @Override
         public UpdatedCorporateCustomerResponse handle(UpdateCorporateCustomerCommand command) {
-            // Validate all fields at once
             customerValidation.validateUpdateCorporateCustomer(command);
 
-            // Validate address if provided
             if (command.getAddress() != null) {
                 addressValidation.validateUpdateAddress(command.getAddress());
             }
 
-            CorporateCustomer corporateCustomer = corporateCustomerRepository.findById(command.getId()).orElse(null);
+            UUID customerId = customerService.convertStringToUUID(command.getId());
+
+            CorporateCustomer corporateCustomer = corporateCustomerRepository.findById(customerId).orElse(null);
             customerRule.checkCustomerExists(corporateCustomer);
+
+            customerRule.validateUpdateCorporateCustomer(command.getEmail(), command.getPhoneNumber());
 
             corporateCustomerMapper.updateCorporateCustomer(corporateCustomer, command);
             corporateCustomerRepository.save(corporateCustomer);

@@ -6,7 +6,7 @@ import com.gygy.customerservice.application.customer.mapper.CustomerMapper;
 import com.gygy.customerservice.application.customer.rule.CustomerRule;
 import com.gygy.customerservice.application.customer.validation.CustomerValidation;
 import com.gygy.customerservice.domain.entity.Customer;
-import com.gygy.customerservice.persistance.repository.CustomerRepository;
+import com.gygy.customerservice.infrastructure.persistence.repository.CustomerRepository;
 
 import an.awesome.pipelinr.Command;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +28,7 @@ public class GetCustomerByEmailQuery implements Command<GetCustomerByEmailRespon
 
         @Override
         public GetCustomerByEmailResponse handle(GetCustomerByEmailQuery query) {
-            customerValidation.validateEmail(query.email);
+            customerValidation.validateEmailAndThrowValidationError(query.email);
             
             Customer customer = customerRepository.findByEmail(query.email).orElse(null);
             customerRule.checkCustomerExists(customer);

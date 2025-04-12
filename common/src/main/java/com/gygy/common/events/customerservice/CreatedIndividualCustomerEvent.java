@@ -1,5 +1,6 @@
 package com.gygy.common.events.customerservice;
 
+import com.gygy.common.events.dto.AddressResponse;
 import com.gygy.common.events.enums.CustomerType;
 import lombok.*;
 
@@ -13,6 +14,8 @@ import java.util.UUID;
 public class CreatedIndividualCustomerEvent {
     private UUID id;
     private String email;
+    private String phoneNumber;
+
     private String name;
     private String surname;
     private CustomerType customerType;
@@ -20,4 +23,6 @@ public class CreatedIndividualCustomerEvent {
     private boolean allowSmsMessages;
     private boolean allowPromotionalEmails;
     private boolean allowPromotionalSms;
+
+    private AddressResponse address;
 }

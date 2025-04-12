@@ -13,6 +13,7 @@ import com.gygy.customerservice.core.exception.type.ValidationException;
 public class AddressValidation {
     private static final int MAX_STREET_LENGTH = 200;
     private static final int MAX_DISTRICT_LENGTH = 100;
+    private static final int MAX_APARTMENT_NUMBER_LENGTH = 10;
     private static final int MAX_CITY_LENGTH = 100;
     private static final int MAX_COUNTRY_LENGTH = 100;
 
@@ -24,6 +25,7 @@ public class AddressValidation {
         } else {
             validateStreet(address.getStreet(), errors);
             validateDistrict(address.getDistrict(), errors);
+            validateApartmentNumber(address.getApartmentNumber(), errors);
             validateCity(address.getCity(), errors);
             validateCountry(address.getCountry(), errors);
         }
@@ -35,12 +37,23 @@ public class AddressValidation {
 
     public void validateUpdateAddress(UpdateAddressDto address) {
         List<String> errors = new ArrayList<>();
-        
+
         if (address != null) {
-            validateStreet(address.getStreet(), errors);
-            validateDistrict(address.getDistrict(), errors);
-            validateCity(address.getCity(), errors);
-            validateCountry(address.getCountry(), errors);
+            if (address.getStreet() != null && !address.getStreet().trim().isEmpty()) {
+                validateStreet(address.getStreet(), errors);
+            }
+            if (address.getDistrict() != null && !address.getDistrict().trim().isEmpty()) {
+                validateDistrict(address.getDistrict(), errors);
+            }
+            if (address.getApartmentNumber() != null && !address.getApartmentNumber().trim().isEmpty()) {
+                validateApartmentNumber(address.getApartmentNumber(), errors);
+            }
+            if (address.getCity() != null && !address.getCity().trim().isEmpty()) {
+                validateCity(address.getCity(), errors);
+            }
+            if (address.getCountry() != null && !address.getCountry().trim().isEmpty()) {
+                validateCountry(address.getCountry(), errors);
+            }
         }
 
         if (!errors.isEmpty()) {
@@ -64,6 +77,15 @@ public class AddressValidation {
         }
     }
 
+    private void validateApartmentNumber(String apartmentNumber, List<String> errors) {
+        if (apartmentNumber == null || apartmentNumber.trim().isEmpty()) {
+            errors.add("Apartment number cannot be empty");
+        }
+        else if (apartmentNumber.length() > MAX_APARTMENT_NUMBER_LENGTH) {
+            errors.add("Apartment number cannot be longer than " + MAX_APARTMENT_NUMBER_LENGTH + " characters");
+        }
+    }
+
     private void validateCity(String city, List<String> errors) {
         if (city == null || city.trim().isEmpty()) {
             errors.add("City cannot be empty");
@@ -79,4 +101,4 @@ public class AddressValidation {
             errors.add("Country cannot be longer than " + MAX_COUNTRY_LENGTH + " characters");
         }
     }
-} 
+}

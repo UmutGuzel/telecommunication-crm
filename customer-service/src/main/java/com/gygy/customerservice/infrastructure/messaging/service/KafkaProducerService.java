@@ -10,6 +10,7 @@ import com.gygy.customerservice.infrastructure.messaging.event.CreatedCorporateC
 import com.gygy.customerservice.infrastructure.messaging.event.CreatedIndividualCustomerEvent;
 import com.gygy.customerservice.infrastructure.messaging.event.UpdatedCorporateCustomerEvent;
 import com.gygy.customerservice.infrastructure.messaging.event.UpdatedIndividualCustomerEvent;
+import com.gygy.customerservice.infrastructure.messaging.event.db.CreatedIndividualCustomerReadEvent;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,7 @@ public class KafkaProducerService {
     private final KafkaTemplate<String, CreatedCorporateCustomerEvent> corporateCustomerKafkaTemplate;
     private final KafkaTemplate<String, UpdatedIndividualCustomerEvent> updatedIndividualCustomerKafkaTemplate;
     private final KafkaTemplate<String, UpdatedCorporateCustomerEvent> updatedCorporateCustomerKafkaTemplate;
+    private final KafkaTemplate<String, CreatedIndividualCustomerReadEvent> individualCustomerReadKafkaTemplate;
 
     public void sendCreatedIndividualCustomerEvent(CreatedIndividualCustomerEvent createdIndividualCustomerEvent) {
         log.info("Sending individual customer created event: {}", createdIndividualCustomerEvent);
@@ -58,5 +60,14 @@ public class KafkaProducerService {
                 .setHeader(KafkaHeaders.TOPIC, "corporate-customer-updated-topic")
                 .build();
         updatedCorporateCustomerKafkaTemplate.send(message);
+    }
+    
+    public void sendCreatedIndividualCustomerReadEvent(CreatedIndividualCustomerReadEvent createdIndividualCustomerReadEvent) {
+        log.info("Sending individual customer read created event: {}", createdIndividualCustomerReadEvent);
+        Message<CreatedIndividualCustomerReadEvent> message = MessageBuilder
+                .withPayload(createdIndividualCustomerReadEvent)
+                .setHeader(KafkaHeaders.TOPIC, "individual-customer-read-created-topic")
+                .build();
+        individualCustomerReadKafkaTemplate.send(message);
     }
 }

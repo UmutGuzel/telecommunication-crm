@@ -35,4 +35,11 @@ public class KafkaCustomerTopicConfig {
                 .name("corporate-customer-updated-topic")
                 .build();
     }
+    
+    @Bean
+    public NewTopic individualCustomerReadCreatedTopic() {
+        return TopicBuilder
+                .name("individual-customer-read-created-topic")
+                .build();
+    }
 }

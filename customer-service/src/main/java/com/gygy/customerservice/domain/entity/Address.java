@@ -1,21 +1,11 @@
 package com.gygy.customerservice.domain.entity;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
-
+import jakarta.persistence.*;
+import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -35,10 +25,9 @@ public class Address {
     private String apartmentNumber;
     private String city;
     private String country;
-    private String postalCode;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "address")
-    private List<Customer> customers;
+    @OneToOne(mappedBy = "address")
+    private Customer customer;
 } 
