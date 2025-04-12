@@ -5,11 +5,7 @@ import com.gygy.common.events.contractservice.ContractDetailEvent;
 import com.gygy.contractservice.client.CustomerClient;
 import com.gygy.contractservice.core.exception.type.BusinessException;
 
-import com.gygy.contractservice.dto.contract.GetCustomerByEmailResponse;
-import com.gygy.contractservice.dto.contractDetail.ContractDetailListiningDto;
-import com.gygy.contractservice.dto.contractDetail.CreateContractDetailDto;
-import com.gygy.contractservice.dto.contractDetail.DeleteContractDetailDto;
-import com.gygy.contractservice.dto.contractDetail.UpdateContractDetailDto;
+import com.gygy.contractservice.dto.contractDetail.*;
 import com.gygy.contractservice.entity.BillingPlan;
 import com.gygy.contractservice.entity.Contract;
 import com.gygy.contractservice.entity.ContractDetail;
