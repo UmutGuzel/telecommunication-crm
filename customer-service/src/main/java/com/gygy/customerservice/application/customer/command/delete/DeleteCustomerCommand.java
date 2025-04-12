@@ -6,7 +6,7 @@ import com.gygy.customerservice.application.customer.mapper.CustomerMapper;
 import com.gygy.customerservice.application.customer.rule.CustomerRule;
 import com.gygy.customerservice.application.customer.validation.CustomerValidation;
 import com.gygy.customerservice.domain.entity.Customer;
-import com.gygy.customerservice.persistance.repository.CustomerRepository;
+import com.gygy.customerservice.infrastructure.persistence.repository.CustomerRepository;
 
 import lombok.*;
 

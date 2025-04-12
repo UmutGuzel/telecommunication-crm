@@ -5,9 +5,10 @@ import org.springframework.stereotype.Component;
 import com.gygy.customerservice.core.exception.type.BusinessException;
 import com.gygy.customerservice.domain.entity.Customer;
 import com.gygy.customerservice.domain.enums.CustomerType;
-import com.gygy.customerservice.persistance.repository.CustomerRepository;
-import com.gygy.customerservice.persistance.repository.IndividualCustomerRepository;
-import com.gygy.customerservice.persistance.repository.CorporateCustomerRepository;
+import com.gygy.customerservice.infrastructure.persistence.repository.CustomerRepository;
+import com.gygy.customerservice.infrastructure.persistence.repository.IndividualCustomerRepository;
+import com.gygy.customerservice.infrastructure.persistence.repository.CorporateCustomerRepository;
+import com.gygy.customerservice.domain.entity.CustomerReadEntity;
 
 import lombok.RequiredArgsConstructor;
 import java.util.ArrayList;
@@ -101,6 +102,12 @@ public class CustomerRule {
 
         if (!errors.isEmpty()) {
             throw new BusinessException(errors);
+        }
+    }
+
+    public void checkCustomerReadEntityExists(CustomerReadEntity customer) {
+        if (customer == null) {
+            throw new BusinessException("Customer not found");
         }
     }
 }

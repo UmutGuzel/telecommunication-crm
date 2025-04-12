@@ -1,4 +1,4 @@
-package com.gygy.customerservice.persistance.repository;
+package com.gygy.customerservice.infrastructure.persistence.repository;
 
 import java.util.List;
 import java.util.Optional;

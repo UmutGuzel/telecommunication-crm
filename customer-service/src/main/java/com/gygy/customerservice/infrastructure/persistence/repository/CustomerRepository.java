@@ -1,4 +1,4 @@
-package com.gygy.customerservice.persistance.repository;
+package com.gygy.customerservice.infrastructure.persistence.repository;
 
 import com.gygy.customerservice.domain.entity.Customer;
 import com.gygy.customerservice.domain.enums.CustomerType;

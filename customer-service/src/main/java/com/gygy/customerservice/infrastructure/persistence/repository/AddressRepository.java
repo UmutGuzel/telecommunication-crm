@@ -1,4 +1,4 @@
-package com.gygy.customerservice.persistance.repository;
+package com.gygy.customerservice.infrastructure.persistence.repository;
 
 import java.util.Optional;
 import java.util.UUID;
