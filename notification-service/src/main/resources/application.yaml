@@ -41,6 +41,7 @@ kafka:
     corporateCustomerCreatedTopic: corporate-customer-created-topic
     corporateCustomerUpdatedTopic: corporate-customer-updated-topic
     planCampaignTopic: plan-campaign-topic
+    notificationPreferencesChangedTopic: notification-preferences-changed-topic
 
 server:
   port: 9080
