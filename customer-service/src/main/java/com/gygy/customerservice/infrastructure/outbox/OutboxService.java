@@ -1,12 +1,17 @@
 package com.gygy.customerservice.infrastructure.outbox;
 
+import java.time.LocalDate;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -14,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -106,10 +112,58 @@ public class OutboxService {
         }
     }
 
+    public void processOutboxEvent(String eventJson) {
+        try {
+            JsonNode eventNode = objectMapper.readTree(eventJson);
+            JsonNode payload = eventNode.get("payload");
+
+            if (payload != null) {
+                String operation = payload.get("op").asText();
+                if ("c".equals(operation)) { // Create operation
+                    JsonNode after = payload.get("after");
+                    if (after != null) {
+                        String id = after.get("id").asText();
+                        OutboxEntity outbox = outboxRepository.findById(UUID.fromString(id))
+                                .orElseThrow(() -> new RuntimeException("Outbox message not found: " + id));
+
+                        if (outbox.getStatus() == OutboxStatus.PENDING) {
+                            processOutboxMessage(outbox);
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error("Error processing CDC event", e);
+        }
+    }
+
     private Class<?> getEventClass(String eventType) {
         return switch (eventType) {
             case "INDIVIDUAL_CUSTOMER_READ_CREATED" -> com.gygy.customerservice.infrastructure.messaging.event.db.CreatedIndividualCustomerReadEvent.class;
             default -> throw new IllegalArgumentException("Unknown event type: " + eventType);
         };
+    }
+
+    @Transactional
+    public void markAsProcessed(UUID id) {
+        OutboxEntity outbox = outboxRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Outbox event not found: " + id));
+        
+        outbox.setStatus(OutboxStatus.PROCESSED);
+        outbox.setProcessedAt(LocalDateTime.now());
+        outboxRepository.save(outbox);
+        
+        log.info("Outbox event marked as processed: {}", id);
+    }
+
+    @Transactional
+    public void markAsFailed(UUID id) {
+        OutboxEntity outbox = outboxRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Outbox event not found: " + id));
+        
+        outbox.setStatus(OutboxStatus.FAILED);
+        outboxRepository.save(outbox);
+        
+        log.info("Outbox event marked as failed: {}", id);
     }
 } 

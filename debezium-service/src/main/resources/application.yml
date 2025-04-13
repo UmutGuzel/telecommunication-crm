@@ -2,6 +2,8 @@ server:
   port: 9021
 
 spring:
+  application:
+    name: debezium-service
   kafka:
     bootstrap-servers: localhost:29092
     producer:

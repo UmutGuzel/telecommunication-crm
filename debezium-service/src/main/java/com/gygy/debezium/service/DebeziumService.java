@@ -1,19 +1,17 @@
 package com.gygy.debezium.service;
 
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.debezium.engine.ChangeEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
@@ -22,10 +20,7 @@ public class DebeziumService {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final ObjectMapper objectMapper;
-    private static final int MAX_RETRIES = 3;
-    private static final int RETRY_DELAY_MS = 1000;
 
-    @Transactional
     public void handleEvent(ChangeEvent<String, String> event) {
         try {
             String key = event.key();
@@ -44,7 +39,6 @@ public class DebeziumService {
             }
             
             // Get the event type and aggregate ID
-            String eventId = (String) payload.get("id");
             String eventType = (String) payload.get("event_type");
             String aggregateId = (String) payload.get("aggregate_id");
             String originalPayload = (String) payload.get("payload");
@@ -52,19 +46,29 @@ public class DebeziumService {
             String status = (String) payload.get("status");
             String operation = (String) payload.get("__op");
             
-            if (eventId == null || eventType == null || aggregateId == null || originalPayload == null || originalTopic == null || status == null) {
-                log.error("Missing required fields in payload - EventId: {}, EventType: {}, AggregateId: {}, OriginalPayload: {}, OriginalTopic: {}, Status: {}", 
-                    eventId, eventType, aggregateId, originalPayload, originalTopic, status);
+            if (eventType == null || aggregateId == null || originalPayload == null || originalTopic == null || status == null) {
+                log.error("Missing required fields in payload - EventType: {}, AggregateId: {}, OriginalPayload: {}, OriginalTopic: {}, Status: {}", 
+                    eventType, aggregateId, originalPayload, originalTopic, status);
                 return;
             }
             
-            // Only process PENDING events
+            // Only publish PENDING events
             if (!"PENDING".equals(status) || !"c".equals(operation)) {
                 log.debug("Skipping non-PENDING event - Status: {}, Operation: {}", status, operation);
                 return;
             }
             
-            sendEventWithRetry(eventId, originalTopic, aggregateId, originalPayload);
+            // Send to the original topic with the original payload
+            log.info("Sending event to Kafka - Topic: {}, AggregateId: {}, EventType: {}", originalTopic, aggregateId, eventType);
+            
+            kafkaTemplate.send(originalTopic, aggregateId, originalPayload)
+                .whenComplete((result, ex) -> {
+                    if (ex != null) {
+                        log.error("Failed to send event to Kafka - Topic: {}, Error: {}", originalTopic, ex.getMessage(), ex);
+                    } else {
+                        log.info("Successfully sent event to Kafka - Topic: {}", originalTopic);
+                    }
+                });
             
         } catch (Exception e) {
             log.error("Error processing CDC event: {}", e.getMessage(), e);
@@ -72,25 +76,19 @@ public class DebeziumService {
     }
 
     private boolean sendEventWithRetry(String eventId, String topic, String key, String payload) {
-        for (int attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+        for(int attempt = 1; attempt <= 3; ++attempt) {
             try {
-                log.info("Attempting to send event - EventId: {}, Topic: {}, Attempt: {}/{}", 
-                    eventId, topic, attempt, MAX_RETRIES);
-                
-                CompletableFuture<?> future = kafkaTemplate.send(topic, key, payload);
-                future.get(5, TimeUnit.SECONDS); // Wait for the send to complete
-                
+                log.info("Attempting to send event - EventId: {}, Topic: {}, Attempt: {}/{}", new Object[]{eventId, topic, attempt, 3});
+                CompletableFuture<?> future = this.kafkaTemplate.send(topic, key, payload);
+                future.get(5L, TimeUnit.SECONDS);
                 log.info("Successfully sent event - EventId: {}, Topic: {}", eventId, topic);
                 return true;
-                
             } catch (Exception e) {
-                log.error("Failed to send event - EventId: {}, Topic: {}, Attempt: {}/{}, Error: {}", 
-                    eventId, topic, attempt, MAX_RETRIES, e.getMessage());
-                
-                if (attempt < MAX_RETRIES) {
+                log.error("Failed to send event - EventId: {}, Topic: {}, Attempt: {}/{}, Error: {}", new Object[]{eventId, topic, attempt, 3, e.getMessage()});
+                if (attempt < 3) {
                     try {
-                        Thread.sleep(RETRY_DELAY_MS);
-                    } catch (InterruptedException ie) {
+                        Thread.sleep(1000L);
+                    } catch (InterruptedException var8) {
                         Thread.currentThread().interrupt();
                         return false;
                     }
@@ -99,4 +97,5 @@ public class DebeziumService {
         }
         return false;
     }
-}
+
+} 
