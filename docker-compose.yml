@@ -65,16 +65,29 @@ services:
       - POSTGRES_DB=postgres
     volumes:
       - customer-service_data:/var/lib/postgresql/data
-  analytics-service-db:
+  notification-service-db:
     image: mongo
-    container_name: "analytics-service-db"
+    container_name: "notification-service-db"
     ports:
       - 27017:27017
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
+      MONGO_INITDB_DATABASE: notification-service
+    volumes:
+      - notification-service_data:/data/db
+  analytics-service-db:
+    image: mongo
+    container_name: "analytics-service-db"
+    ports:
+      - 27018:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+      MONGO_INITDB_DATABASE: analytics-service
     volumes:
       - analytics-service_data:/data/db
+  
   kafka:
     image: bitnami/kafka
     container_name: "kafka-1"
@@ -338,4 +351,5 @@ volumes:
     prometheus_data:
     grafana_data:
     analytics-service_data:
+    notification-service_data:
     customer-service-mongodb-data:

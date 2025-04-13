@@ -1,10 +1,13 @@
+configurl: http://localhost:8090
 spring:
   application:
     name: notification-service
-
   cloud:
     config:
-      enabled: false  # config-server kullanmıyoruz, bu yüzden kapalı
+      profile: local
+  config:
+    import: configserver:${configurl}
+ 
 
   mail:
     host: smtp.gmail.com
@@ -19,7 +22,7 @@ spring:
             enable: true
 
   kafka:
-    bootstrap-servers: kafka:9092
+    bootstrap-servers: localhost:9092
     consumer:
       group-id: notification-service-group
       auto-offset-reset: earliest
@@ -29,6 +32,7 @@ kafka:
     passwordResetEventsTopic: password-reset-events
     userActivationEventsTopic: user-activation-events
     contractDetailCreatedTopic: contract_detail_created_topic
+    contractCreatedEventTopic: contract_created_topic
     billCreatedEventsTopic: bill-created-events
     billOverdueEventsTopic: bill-overdue-events
     billPaidEventsTopic: bill-paid-events

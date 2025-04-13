@@ -12,6 +12,12 @@ alerting:
 
 
 scrape_configs:
+  - job_name: "all-services"
+    scrape_interval: 2s
+    metrics_path: "/actuator/prometheus"
+    static_configs:
+      - targets: ['config-server-app:8090', 'discovery-server:8888', 'user-service:9010', 'customer-service:9020', 'contract-service:9030', 'plan-service:9040', 'payment-service:9050', 'customer-support-service:9060', 'analytics-service:9070', 'notification-service:9080']
+
   - job_name: "config-server-app"
     scrape_interval: 2s
     metrics_path: "/actuator/prometheus"
@@ -23,12 +29,6 @@ scrape_configs:
     metrics_path: "/actuator/prometheus"
     static_configs:
       - targets: ["discovery-server:8888"]
-
-  - job_name: "gateway-server-app"
-    scrape_interval: 2s
-    metrics_path: "/actuator/prometheus"
-    static_configs:
-      - targets: ["gateway-server:8080"]
 
   - job_name: "user-service-app"
     scrape_interval: 2s

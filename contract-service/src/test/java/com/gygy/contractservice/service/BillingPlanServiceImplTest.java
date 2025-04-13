@@ -27,7 +27,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
- class BillingPlanServiceImplTest {
+class BillingPlanServiceImplTest {
 
     @Mock
     private BillingPlanRepository billingPlanRepository;
@@ -82,7 +82,7 @@ import static org.mockito.Mockito.*;
 
         createBillingPlanDto = new CreateBillingPlanDto();
         createBillingPlanDto.setContract(contractId);
-        createBillingPlanDto.setName("Test Name");
+        // createBillingPlanDto.setName("Test Name");
         createBillingPlanDto.setCycleType(MONTHLY);
         createBillingPlanDto.setTaxRate(12.2);
         createBillingPlanDto.setStatus(ACTIVE);
@@ -96,13 +96,14 @@ import static org.mockito.Mockito.*;
     void whenAddCalledWithValidRequest_itShouldSaveBillingPlanToRepository() {
         // Arrange: İş kuralları mock'lanıyor
         doNothing().when(billingPlanBusinessRules).checkIfBillingPlanNameExists(any(String.class));
-        doNothing().when(billingPlanBusinessRules).checkIfCycleTypeAndBillingDayAreConsistent(any(String.class), any(Integer.class));
-        doNothing().when(billingPlanBusinessRules).checkIfPaymentMethodAndDueDaysAreConsistent(any(String.class), any(Integer.class));
-        doNothing().when(billingPlanBusinessRules).checkIfBaseAmountAndTaxRateAreValid(any(Integer.class), any(Double.class));
+        doNothing().when(billingPlanBusinessRules).checkIfCycleTypeAndBillingDayAreConsistent(any(String.class),
+                any(Integer.class));
+        doNothing().when(billingPlanBusinessRules).checkIfPaymentMethodAndDueDaysAreConsistent(any(String.class),
+                any(Integer.class));
+        doNothing().when(billingPlanBusinessRules).checkIfBaseAmountAndTaxRateAreValid(any(Integer.class),
+                any(Double.class));
 
         when(contractService.findById(any(UUID.class))).thenReturn(Optional.of(contract));
-
-
 
         // BillingPlan Repository'sini mock'lıyoruz
         when(billingPlanRepository.save(any(BillingPlan.class))).thenReturn(billingPlan);
@@ -116,7 +117,6 @@ import static org.mockito.Mockito.*;
         // Assert: save metodunun bir kez çağrıldığını doğruluyoruz
         verify(billingPlanRepository, times(1)).save(any(BillingPlan.class));
 
-
     }
 
     @Test
@@ -127,6 +127,7 @@ import static org.mockito.Mockito.*;
         // Act & Assert: Hata fırlatılmasını bekliyoruz
         assertThrows(BusinessException.class, () -> billingPlanService.findById(UUID.randomUUID()));
     }
+
     @Test
     void whenFindByIdCalledWithValidId_itShouldReturnCommitment() {
         // Arrange
