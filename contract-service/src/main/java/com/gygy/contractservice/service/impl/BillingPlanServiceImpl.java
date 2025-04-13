@@ -4,7 +4,6 @@ import com.gygy.contractservice.client.PlanClient;
 import com.gygy.contractservice.dto.billingPlan.*;
 import com.gygy.contractservice.entity.BillingPlan;
 import com.gygy.contractservice.entity.Contract;
-import com.gygy.contractservice.entity.ContractDetail;
 import com.gygy.contractservice.mapper.BillingPlanMapper;
 import com.gygy.contractservice.repository.BillingPlanRepository;
 import com.gygy.contractservice.rules.BillingPlanBusinessRules;
@@ -15,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -70,32 +68,12 @@ public class BillingPlanServiceImpl implements BillingPlanService {
     @Override
     public void add(CreateBillingPlanDto createBillingPlanDto) {
 
-       // billingPlanBusinessRules.checkIfBillingPlanNameExists(createBillingPlanDto.getName());
-        
-        // 2. Döngü tipi ve faturalama günü tutarlılığı
-        billingPlanBusinessRules.checkIfCycleTypeAndBillingDayAreConsistent(
-            createBillingPlanDto.getCycleType().toString(),
-            createBillingPlanDto.getBillingDay()
-        );
-        
-        // 3. Ödeme yöntemi ve vade tutarlılığı
-        billingPlanBusinessRules.checkIfPaymentMethodAndDueDaysAreConsistent(
-            createBillingPlanDto.getPaymentMethod().toString(),
-            createBillingPlanDto.getPaymentDueDays()
-        );
-        
-        // 4. Temel ücret ve vergi oranı kontrolü
-        billingPlanBusinessRules.checkIfBaseAmountAndTaxRateAreValid(
-            createBillingPlanDto.getBaseAmount() ,
-            createBillingPlanDto.getTaxRate()
-        );
-        
         Contract contract = contractService.findById(createBillingPlanDto.getContract()).orElseThrow(()-> new RuntimeException("Contract Not Found"));
 
         try {
             BillingPlan billingPlan=billingPlanMapper.createBillingPlanFromCreateBillingPlanDto(createBillingPlanDto);
             billingPlan.setContract(contract);
-            PlanDto response=planClient.getCustomerByPhoneNumber(billingPlan.getPlanId());
+            PlanDto response=planClient.getPlanById(billingPlan.getPlanId());
             billingPlan.setName(response.getName());
             billingPlan.setDescription(response.getDescription());
             billingPlanRepository.save(billingPlan);
@@ -127,18 +105,6 @@ public class BillingPlanServiceImpl implements BillingPlanService {
             updateBillingPlanDto.getName()
         );
         
-        billingPlanBusinessRules.checkIfCycleTypeAndBillingDayAreConsistent(
-            updateBillingPlanDto.getCycleType().toString(),
-            updateBillingPlanDto.getBillingDay()
-        );
-        billingPlanBusinessRules.checkIfPaymentMethodAndDueDaysAreConsistent(
-            updateBillingPlanDto.getPaymentMethod().toString(),
-            updateBillingPlanDto.getPaymentDueDays()
-        );
-        billingPlanBusinessRules.checkIfBaseAmountAndTaxRateAreValid(
-            updateBillingPlanDto.getBaseAmount(),
-            updateBillingPlanDto.getTaxRate()
-        );
 
         Contract contract = contractService.findById(updateBillingPlanDto.getContractId()).orElseThrow(()->new RuntimeException("Contract Not Found"));
 

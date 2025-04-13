@@ -25,7 +25,6 @@ public class CreateDiscountDto {
     private BillingCycleType billingCycleType;
 
     private Status status;
-    private UUID customerId;
 
     @Min(value = 0, message = "Amount must be greater than or equal to 0")
     private double amount;

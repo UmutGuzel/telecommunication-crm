@@ -15,7 +15,6 @@ public interface DiscountService {
     Discount update(UpdateDiscountDto updateDiscountDto);
     void delete(DeleteDiscountDto deleteDiscountDto);
     List<DiscountListiningDto> getActiveDiscounts();
-    List<DiscountListiningDto> getActiveDiscountsByCustomerId(UUID customerId);
     List<DiscountListiningDto> getDiscountsByContractId(UUID contractId);
     Discount applyDiscountForAnnualPackage(CreateDiscountDto createDiscountDto);
 

@@ -22,7 +22,6 @@ public class DiscountMapper {
                 .createdAt(LocalDate.now())
                 .updatedAt(LocalDate.now())
         .status(createDiscountDto.getStatus())
-        .customerId(createDiscountDto.getCustomerId())
                 .description(createDiscountDto.getDescription())
                 .billingCycleType(createDiscountDto.getBillingCycleType())
                 .build();
@@ -38,7 +37,6 @@ public class DiscountMapper {
               .createdAt(LocalDate.now())
               .status(updateDiscountDto.getStatus())
               .description(updateDiscountDto.getDescription())
-              .customerId(updateDiscountDto.getCustomerId())
               .billingCycleType(updateDiscountDto.getBillingCycleType())
               .build();
     }
@@ -52,7 +50,6 @@ public class DiscountMapper {
                 ,discount.getStartDate()
                 ,discount.getCreatedAt(),
                 discount.getUpdatedAt()
-                ,discount.getCustomerId()
                 ,discount.getStatus()
                 ,discount.getDescription()
         );

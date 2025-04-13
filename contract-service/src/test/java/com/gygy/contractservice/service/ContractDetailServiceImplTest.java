@@ -1,22 +1,17 @@
 package com.gygy.contractservice.service;
 
 import com.gygy.contractservice.client.CustomerClient;
-import com.gygy.contractservice.dto.billingPlan.CreateBillingPlanDto;
 import com.gygy.contractservice.dto.contractDetail.CreateContractDetailDto;
 import com.gygy.contractservice.entity.Contract;
 import com.gygy.contractservice.entity.ContractDetail;
-import com.gygy.contractservice.entity.BillingPlan;
 import com.gygy.contractservice.mapper.ContractDetailMapper;
-import com.gygy.contractservice.model.enums.BillingCycleType;
 import com.gygy.contractservice.repository.ContractDetailRepository;
 import com.gygy.contractservice.service.impl.ContractDetailServiceImpl;
-import com.gygy.customerservice.application.customer.query.GetCustomerByPhoneNumberResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
@@ -83,7 +78,6 @@ class ContractDetailServiceImplTest {
         createContractDetailDto.setStartDate(LocalDate.now());
         createContractDetailDto.setContractDetailType(INDIVIDUAL);
         createContractDetailDto.setServiceType(INTERNET);
-        createContractDetailDto.setCustomerId(customer_id);
         contract= new Contract();
         contract.setId(contract_id);
     }

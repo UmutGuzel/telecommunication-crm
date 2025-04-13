@@ -12,7 +12,6 @@ import java.util.UUID;
 @Getter
 @Setter
 public class DiscountListiningDto {
-    private UUID customerId;
     private UUID contractId;
     private DiscountType discountType;
     private double amount;
@@ -26,7 +25,7 @@ public class DiscountListiningDto {
     private Status status;
 
 
-    public DiscountListiningDto(DiscountType discountType, double amount, double percentage, Contract contract, LocalDate endDate, LocalDate startDate, LocalDate createdAt, LocalDate updatedAt, UUID customerId, Status status, String description) {
+    public DiscountListiningDto(DiscountType discountType, double amount, double percentage, Contract contract, LocalDate endDate, LocalDate startDate, LocalDate createdAt, LocalDate updatedAt, Status status, String description) {
         this.discountType = discountType;
         this.amount = amount;
         this.percentage = percentage;
@@ -35,7 +34,6 @@ public class DiscountListiningDto {
         this.startDate = startDate;
         this.createDate = createdAt;
         this.updateDate = updatedAt;
-        this.customerId=customerId;
         this.status=status;
         this.description=description;
     }
