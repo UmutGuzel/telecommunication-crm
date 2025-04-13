@@ -5,7 +5,9 @@ import com.gygy.planservice.dto.ContractRequestDto;
 import com.gygy.planservice.entity.Contract;
 import com.gygy.planservice.entity.Plan;
 import com.gygy.planservice.exception.ContractNotFoundException;
-import com.gygy.planservice.exception.InvalidInputException;
+import com.gygy.planservice.exception.ContractRequestNullException;
+import com.gygy.planservice.exception.ContractIdNullException;
+import com.gygy.planservice.exception.PlanIdNullException;
 import com.gygy.planservice.exception.PlanNotFoundException;
 import com.gygy.planservice.mapper.ContractMapper;
 import com.gygy.planservice.repository.ContractRepository;
@@ -29,10 +31,10 @@ public class ContractServiceImpl implements ContractService {
     @Transactional
     public ContractDto createContract(ContractRequestDto requestDto) {
         if (requestDto == null) {
-            throw new InvalidInputException("Contract request cannot be null");
+            throw new ContractRequestNullException();
         }
         if (requestDto.getPlanId() == null) {
-            throw new InvalidInputException("Plan ID cannot be null");
+            throw new PlanIdNullException();
         }
 
         Plan plan = planRepository.findById(requestDto.getPlanId())
@@ -53,7 +55,7 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public ContractDto getContractById(UUID id) {
         if (id == null) {
-            throw new InvalidInputException("Contract ID cannot be null");
+            throw new ContractIdNullException();
         }
 
         Contract contract = contractRepository.findById(id)
@@ -65,13 +67,13 @@ public class ContractServiceImpl implements ContractService {
     @Transactional
     public ContractDto updateContract(UUID id, ContractRequestDto requestDto) {
         if (id == null) {
-            throw new InvalidInputException("Contract ID cannot be null");
+            throw new ContractIdNullException();
         }
         if (requestDto == null) {
-            throw new InvalidInputException("Contract request cannot be null");
+            throw new ContractRequestNullException();
         }
         if (requestDto.getPlanId() == null) {
-            throw new InvalidInputException("Plan ID cannot be null");
+            throw new PlanIdNullException();
         }
 
         Contract contract = contractRepository.findById(id)
@@ -92,7 +94,7 @@ public class ContractServiceImpl implements ContractService {
     @Transactional
     public void deleteContract(UUID id) {
         if (id == null) {
-            throw new InvalidInputException("Contract ID cannot be null");
+            throw new ContractIdNullException();
         }
 
         Contract contract = contractRepository.findById(id)

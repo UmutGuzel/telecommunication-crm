@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: config-server
-        image: umutgu/config-server:staging
+        image: 884574953537.dkr.ecr.eu-central-1.amazonaws.com/gygy/config-server
         imagePullPolicy: Always
         ports:
         - containerPort: 8090

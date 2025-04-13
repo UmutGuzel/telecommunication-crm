@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
- class DiscountControllerTest {
+class DiscountControllerTest {
     @Mock
     private DiscountService discountService;
     @InjectMocks
@@ -34,22 +34,26 @@ import java.util.UUID;
     private UUID billingPlanId;
     private UUID contractId;
     private Contract contract;
+
     @BeforeEach
-    void setup(){
+    void setup() {
         MockitoAnnotations.openMocks(this);
     }
+
     @Test
-    void addDiscount(){
-        CreateDiscountDto createDiscountDto=new CreateDiscountDto();
+    void addDiscount() {
+        CreateDiscountDto createDiscountDto = new CreateDiscountDto();
         doNothing().when(discountService).add(any(CreateDiscountDto.class));
         discountController.add(createDiscountDto);
-        verify(discountService,times(1)).add(any(CreateDiscountDto.class));
+        verify(discountService, times(1)).add(any(CreateDiscountDto.class));
     }
+
     @Test
     void getDiscount(){
         billingPlanId=UUID.randomUUID();
         contractId=UUID.randomUUID();
         DiscountListiningDto discountListiningDto=new DiscountListiningDto();
+
         discountListiningDto.setAmount(100.0);
         discountListiningDto.setDiscountType(STUDENT);
         discountListiningDto.setDescription("Test Description");
@@ -58,44 +62,50 @@ import java.util.UUID;
         discountListiningDto.setStartDate(LocalDate.now());
         discountListiningDto.setBillingPlanId(Collections.singletonList(billingPlanId));
         discountListiningDto.setContractId(contractId);
+
         discountListiningDto.setPercentage(0.1);
         discountListiningDto.setCreateDate(LocalDate.now());
         discountListiningDto.setUpdateDate(LocalDate.now());
 
-        List<DiscountListiningDto> discountListiningDtos=List.of(discountListiningDto);
+        List<DiscountListiningDto> discountListiningDtos = List.of(discountListiningDto);
         when(discountService.getAll()).thenReturn(discountListiningDtos);
-        List<DiscountListiningDto> response=discountController.getAll();
+        List<DiscountListiningDto> response = discountController.getAll();
 
         assertFalse(response.isEmpty());
-        assertEquals(100.0,response.get(0).getAmount());
-        assertEquals(STUDENT,response.get(0).getDiscountType());
-        assertEquals("Test Description",response.get(0).getDescription());
-        assertEquals(Status.ACTIVE,response.get(0).getStatus());
-        assertEquals(LocalDate.now(),response.get(0).getEndDate());
-        assertEquals(LocalDate.now(),response.get(0).getStartDate());
+        assertEquals(100.0, response.get(0).getAmount());
+        assertEquals(STUDENT, response.get(0).getDiscountType());
+        assertEquals("Test Description", response.get(0).getDescription());
+        assertEquals(Status.ACTIVE, response.get(0).getStatus());
+        assertEquals(LocalDate.now(), response.get(0).getEndDate());
+        assertEquals(LocalDate.now(), response.get(0).getStartDate());
         assertEquals(billingPlanId, response.get(0).getBillingPlanId().get(0)); // Düzeltildi!
         assertEquals(contractId,response.get(0).getContractId());
         assertEquals(0.1,response.get(0).getPercentage());
         assertEquals(LocalDate.now(),response.get(0).getCreateDate());
         assertEquals(LocalDate.now(),response.get(0).getUpdateDate());
 
-        verify(discountService,times(1)).getAll();
+
+        verify(discountService, times(1)).getAll();
     }
+
     @Test
     void deleteContract() {
         id = UUID.randomUUID();
-        DeleteDiscountDto deleteDiscountDto= new DeleteDiscountDto();
+        DeleteDiscountDto deleteDiscountDto = new DeleteDiscountDto();
         deleteDiscountDto.setId(id);
         doNothing().when(discountService).delete(any(DeleteDiscountDto.class));
         discountController.delete(deleteDiscountDto);
-        verify(discountService,times(1)).delete(any(DeleteDiscountDto.class));
+        verify(discountService, times(1)).delete(any(DeleteDiscountDto.class));
     }
+
     @Test
+
     void updateDiscount(){
         id=UUID.randomUUID();
         billingPlanId=UUID.randomUUID();
         contractId=UUID.randomUUID();
         UpdateDiscountDto updateDiscountDto=new UpdateDiscountDto();
+
         updateDiscountDto.setId(id);
         updateDiscountDto.setDiscountType(STUDENT);
         updateDiscountDto.setAmount(100);
@@ -105,9 +115,11 @@ import java.util.UUID;
         updateDiscountDto.setStartDate(LocalDate.now());
         updateDiscountDto.setEndDate(LocalDate.now());
         updateDiscountDto.setDescription("Test Description");
+
         updateDiscountDto.setContractId(contractId);
 
-        Discount updatedDiscount =new Discount();
+
+        Discount updatedDiscount = new Discount();
         updatedDiscount.setId(id);
         updatedDiscount.setDiscountType(STUDENT);
         updatedDiscount.setAmount(100);
@@ -117,12 +129,14 @@ import java.util.UUID;
         updatedDiscount.setEndDate(LocalDate.now());
         updatedDiscount.setDescription("Test Description");
         updatedDiscount.setContract(contract);
+
         when(discountService.update(any(UpdateDiscountDto.class))).thenReturn(updatedDiscount);
 
         discountController.update(updateDiscountDto);
 
         verify(discountService, times(1)).update(any(UpdateDiscountDto.class));
     }
+
     @Test
     void updateDiscountNotFound() {
         id = UUID.randomUUID();
@@ -138,6 +152,5 @@ import java.util.UUID;
             discountController.update(updateDiscountDto);
         });
     }
-
 
 }

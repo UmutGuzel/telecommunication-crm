@@ -1,9 +1,9 @@
 package com.gygy.customersupportservice.service;
 
 import com.gygy.customersupportservice.domain.Ticket;
+import com.gygy.customersupportservice.domain.TicketStatus;
 import com.gygy.customersupportservice.repository.TicketRepository;
-import com.gygy.customersupportservice.rule.RuleEngine;
-
+import com.gygy.customersupportservice.rule.TicketRules;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -18,16 +18,20 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class TicketService {
     private final TicketRepository ticketRepository;
-    private final RuleEngine ruleEngine;
+    private final AnalyticsEventService analyticsEventService;
+    private final TicketRules ticketRules;
 
-    @Transactional
     public Ticket createTicket(Ticket ticket) {
-        // Process the ticket through the rule engine
-        Ticket processedTicket = ruleEngine.processNewTicket(ticket);
-        return ticketRepository.save(processedTicket);
+        Ticket processedTicket = ticketRules.applyNewTicketRules(ticket);
+        // Save the ticket directly
+        Ticket savedTicket = ticketRepository.save(processedTicket);
+
+        // Publish analytics event
+        analyticsEventService.publishTicketCreatedEvent(savedTicket);
+
+        return savedTicket;
     }
 
-    @Transactional(readOnly = true)
     public Ticket getTicket(UUID id) {
         // Use the optimized query that fetches the status eagerly
         Ticket ticket = ticketRepository.findByIdWithStatus(id);
@@ -37,41 +41,40 @@ public class TicketService {
         return ticket;
     }
 
-    @Transactional(readOnly = true)
     public List<Ticket> getTicketsByCustomerId(Long customerId) {
         return ticketRepository.findByCustomerId(customerId);
     }
 
-    @Transactional(readOnly = true)
     public Page<Ticket> getTicketsByCustomerId(Long customerId, Pageable pageable) {
         return ticketRepository.findByCustomerId(customerId, pageable);
     }
 
-    @Transactional(readOnly = true)
     public List<Ticket> getTicketsByUserId(Long userId) {
         return ticketRepository.findByUserId(userId);
     }
 
-    @Transactional(readOnly = true)
     public Page<Ticket> getTicketsByUserId(Long userId, Pageable pageable) {
         return ticketRepository.findByUserId(userId, pageable);
     }
 
-    @Transactional(readOnly = true)
     public List<Ticket> getTicketsByStatus(String status) {
         return ticketRepository.findByStatusName(status);
     }
 
-    @Transactional(readOnly = true)
     public Page<Ticket> getTicketsByType(String type, Pageable pageable) {
         return ticketRepository.findByType(type, pageable);
     }
 
-    @Transactional
-    public Ticket updateTicketStatus(UUID ticketId, String status) {
+    public Ticket updateTicketStatus(UUID ticketId, String newStatusName) {
         Ticket ticket = getTicket(ticketId);
-        // Process the status change through the rule engine
-        Ticket updatedTicket = ruleEngine.processTicketStatusChange(ticket, status);
-        return ticketRepository.save(updatedTicket);
+        String previousStatus = ticket.getStatus().getStatus();
+        ticketRules.validateTicket(ticket);
+        Ticket processedTicket = ticketRules.applyStatusChangeRules(ticket, newStatusName);
+        Ticket savedTicket = ticketRepository.save(processedTicket);
+
+        // Publish status change analytics event
+        analyticsEventService.publishTicketStatusChangeEvent(savedTicket, previousStatus);
+
+        return savedTicket;
     }
 }

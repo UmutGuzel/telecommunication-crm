@@ -30,7 +30,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
- class BillingPlanServiceImplTest {
+class BillingPlanServiceImplTest {
 
     @Mock
     private BillingPlanRepository billingPlanRepository;
@@ -94,14 +94,13 @@ import static org.mockito.Mockito.*;
         // CreateBillingPlanDto nesnesi başlatılıyor
         createBillingPlanDto = new CreateBillingPlanDto();
         createBillingPlanDto.setContract(contractId);
+
         createBillingPlanDto.setCycleType(MONTHLY);
         createBillingPlanDto.setTaxRate(12.2);
         createBillingPlanDto.setStatus(ACTIVE);
         createBillingPlanDto.setPaymentMethod(CREDIT_CARD);
         createBillingPlanDto.setBaseAmount(12);
     }
-
-
 
     @Test
     void whenFindByIdCalledWithInvalidId_itShouldThrowException() {
@@ -111,6 +110,7 @@ import static org.mockito.Mockito.*;
         // Act & Assert: Hata fırlatılmasını bekliyoruz
         assertThrows(BusinessException.class, () -> billingPlanService.findById(UUID.randomUUID()));
     }
+
     @Test
     void whenFindByIdCalledWithValidId_itShouldReturnCommitment() {
         // Arrange
