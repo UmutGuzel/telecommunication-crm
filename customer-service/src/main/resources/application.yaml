@@ -11,13 +11,19 @@ spring:
 
   kafka:
     consumer:
-      group-id: notification-group
+      group-id: customer-read-group, notification-group
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
         spring.json.trusted.packages: '*'
-        spring.json.type.mapping: notificationPreferencesChangedEvent:com.gygy.customerservice.infrastructure.messaging.event.NotificationPreferencesChangedEvent
+        spring.json.type.mapping: notificationPreferencesChangedEvent:com.gygy.customerservice.infrastructure.messaging.event.NotificationPreferencesChangedEvent,createdIndividualCustomerReadEvent:com.gygy.customerservice.infrastructure.messaging.event.db.CreatedIndividualCustomerReadEvent
+        spring.json.value.default.type: com.gygy.customerservice.infrastructure.messaging.event.db.CreatedIndividualCustomerReadEvent
+
+    listener:
+      type: batch
+      ack-mode: manual_immediate
+      missing-topics-fatal: false
 
 management:
   endpoints:

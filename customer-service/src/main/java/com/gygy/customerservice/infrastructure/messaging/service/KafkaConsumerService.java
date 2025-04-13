@@ -22,7 +22,7 @@ public class KafkaConsumerService {
     private final CustomerRule customerRule;
     private final CustomerMapper customerMapper;
 
-    @KafkaListener(topics = "notification-preferences-changed-topic")
+    @KafkaListener(topics = "notification-preferences-changed-topic", groupId = "notification-group")
     public void consumePaymentSuccessNotification(NotificationPreferencesChangedEvent event) {
         log.info("Consuming the message from notification-preferences-changed-topic: {}", event);
         Customer customer = customerRepository.findById(event.getId()).orElse(null);
@@ -30,7 +30,7 @@ public class KafkaConsumerService {
         customerMapper.updateCustomerNotificationPreferences(customer, event);
     }
     
-    @KafkaListener(topics = "individual-customer-read-created-topic")
+    @KafkaListener(topics = "individual-customer-read-created-topic", groupId = "customer-read-group")
     public void consumeIndividualCustomerReadCreatedEvent(CreatedIndividualCustomerReadEvent event) {
         log.info("Consuming the message from individual-customer-read-created-topic: {}", event);
         
