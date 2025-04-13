@@ -20,7 +20,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.ArrayList;
+import jakarta.annotation.PreDestroy;
 
 @Slf4j
 @Service
@@ -29,6 +34,10 @@ public class OutboxService {
     private final OutboxRepository outboxRepository;
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final ObjectMapper objectMapper;
+
+    private static final int BATCH_SIZE = 5;
+    private static final int MAX_THREAD_POOL_SIZE = 10;
+    private final ExecutorService executorService = Executors.newFixedThreadPool(MAX_THREAD_POOL_SIZE);
 
     @PostConstruct
     public void init() {
@@ -59,9 +68,33 @@ public class OutboxService {
 
     @Transactional
     public void processOutboxMessages() {
-        List<OutboxEntity> messages = outboxRepository.findByStatusOrderByCreatedAtAsc(OutboxStatus.FAILED);
+        List<OutboxEntity> allMessages = outboxRepository.findByStatusOrderByCreatedAtAsc(OutboxStatus.FAILED);
+        log.info("Found {} failed messages to process", allMessages.size());
         
-        for (OutboxEntity message : messages) {
+        // Mesajları batch'lere böl
+        List<List<OutboxEntity>> batches = new ArrayList<>();
+        for (int i = 0; i < allMessages.size(); i += BATCH_SIZE) {
+            batches.add(allMessages.subList(i, Math.min(i + BATCH_SIZE, allMessages.size())));
+        }
+        log.info("Created {} batches of size {}", batches.size(), BATCH_SIZE);
+        
+        // Her batch'i paralel işle
+        List<CompletableFuture<Void>> batchFutures = batches.stream()
+            .map(batch -> CompletableFuture.runAsync(() -> {
+                log.info("Processing batch of {} messages", batch.size());
+                processBatchInTransaction(batch);
+                log.info("Completed processing batch of {} messages", batch.size());
+            }, executorService))
+            .collect(Collectors.toList());
+        
+        // Tüm batch'lerin tamamlanmasını bekle
+        CompletableFuture.allOf(batchFutures.toArray(new CompletableFuture[0])).join();
+        log.info("Completed processing all {} messages", allMessages.size());
+    }
+
+    @Transactional
+    protected void processBatchInTransaction(List<OutboxEntity> batch) {
+        for (OutboxEntity message : batch) {
             try {
                 boolean success = processOutboxMessageWithRetry(message);
                 if (success) {
@@ -84,6 +117,8 @@ public class OutboxService {
     }
 
     private boolean processOutboxMessageWithRetry(OutboxEntity message) {
+        long retryDelay = OutboxConfig.INITIAL_RETRY_DELAY_MS;
+        
         for (int attempt = 1; attempt <= OutboxConfig.MAX_RETRY_ATTEMPTS; attempt++) {
             try {
                 log.info("Attempting to process outbox message - MessageId: {}, Attempt: {}/{}", 
@@ -103,7 +138,12 @@ public class OutboxService {
                 
                 if (attempt < OutboxConfig.MAX_RETRY_ATTEMPTS) {
                     try {
-                        Thread.sleep(OutboxConfig.RETRY_DELAY_MS);
+                        // Exponential backoff
+                        Thread.sleep(retryDelay);
+                        retryDelay = Math.min(
+                            (long)(retryDelay * OutboxConfig.RETRY_DELAY_MULTIPLIER),
+                            OutboxConfig.MAX_RETRY_DELAY_MS
+                        );
                     } catch (InterruptedException ie) {
                         Thread.currentThread().interrupt();
                         return false;
@@ -111,6 +151,9 @@ public class OutboxService {
                 }
             }
         }
+        
+        // If all retry attempts failed, log the error and return false
+        log.error("All retry attempts failed for message: {}. Event will remain in FAILED state.", message.getId());
         return false;
     }
 
@@ -192,5 +235,18 @@ public class OutboxService {
         outboxRepository.save(outbox);
         
         log.info("Outbox event marked as failed: {}", id);
+    }
+
+    @PreDestroy
+    public void cleanup() {
+        executorService.shutdown();
+        try {
+            if (!executorService.awaitTermination(60, TimeUnit.SECONDS)) {
+                executorService.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            executorService.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
     }
 } 
