@@ -89,7 +89,7 @@
                         "type": "prometheus",
                         "uid": "prometheus"
                     },
-                    "expr": "round(process_cpu_usage{job=~\"config-server-app|discovery-server-app|gateway-server-app|user-service-app|customer-service-app\"} * 100)",
+                    "expr": "round(process_cpu_usage{job=~\".+-app\"} * 100)",
                     "instant": true,
                     "legendFormat": "{{job}}",
                     "refId": "A"
@@ -97,181 +97,6 @@
             ],
             "title": "Core Services CPU Usage",
             "type": "gauge"
-        },
-        {
-            "datasource": {
-                "type": "prometheus",
-                "uid": "prometheus"
-            },
-            "description": "Overview of CPU usage for all microservices",
-            "fieldConfig": {
-                "defaults": {
-                    "color": {
-                        "mode": "thresholds"
-                    },
-                    "custom": {
-                        "align": "auto",
-                        "displayMode": "auto",
-                        "filterable": true,
-                        "inspect": false
-                    },
-                    "mappings": [],
-                    "thresholds": {
-                        "mode": "absolute",
-                        "steps": [
-                            {
-                                "color": "green",
-                                "value": null
-                            },
-                            {
-                                "color": "yellow",
-                                "value": 50
-                            },
-                            {
-                                "color": "red",
-                                "value": 80
-                            }
-                        ]
-                    },
-                    "unit": "percent"
-                },
-                "overrides": [
-                    {
-                        "matcher": {
-                            "id": "byName",
-                            "options": "Service"
-                        },
-                        "properties": [
-                            {
-                                "id": "custom.width",
-                                "value": 250
-                            }
-                        ]
-                    },
-                    {
-                        "matcher": {
-                            "id": "byName",
-                            "options": "CPU Usage"
-                        },
-                        "properties": [
-                            {
-                                "id": "custom.displayMode",
-                                "value": "color-background"
-                            },
-                            {
-                                "id": "min",
-                                "value": 0
-                            },
-                            {
-                                "id": "max",
-                                "value": 100
-                            },
-                            {
-                                "id": "unit",
-                                "value": "percent"
-                            },
-                            {
-                                "id": "thresholds",
-                                "value": {
-                                    "mode": "absolute",
-                                    "steps": [
-                                        {
-                                            "color": "green",
-                                            "value": null
-                                        },
-                                        {
-                                            "color": "yellow",
-                                            "value": 50
-                                        },
-                                        {
-                                            "color": "red",
-                                            "value": 80
-                                        }
-                                    ]
-                                }
-                            }
-                        ]
-                    }
-                ]
-            },
-            "gridPos": {
-                "h": 12,
-                "w": 24,
-                "x": 0,
-                "y": 8
-            },
-            "id": 12,
-            "options": {
-                "footer": {
-                    "enablePagination": true,
-                    "fields": "",
-                    "reducer": [
-                        "sum"
-                    ],
-                    "show": false
-                },
-                "showHeader": true,
-                "sortBy": [
-                    {
-                        "desc": true,
-                        "displayName": "CPU Usage"
-                    }
-                ]
-            },
-            "pluginVersion": "9.3.6",
-            "targets": [
-                {
-                    "datasource": {
-                        "type": "prometheus",
-                        "uid": "prometheus"
-                    },
-                    "editorMode": "code",
-                    "exemplar": false,
-                    "expr": "round(process_cpu_usage{job=~\".+-app\"} * 100)",
-                    "format": "table",
-                    "instant": true,
-                    "legendFormat": "{{job}}",
-                    "range": false,
-                    "refId": "A"
-                }
-            ],
-            "title": "All Services CPU Metrics (Consolidated View)",
-            "transformations": [
-                {
-                    "id": "organize",
-                    "options": {
-                        "excludeByName": {
-                            "Time": true,
-                            "__name__": true,
-                            "instance": true
-                        },
-                        "indexByName": {
-                            "Time": 0,
-                            "Value": 2,
-                            "__name__": 1,
-                            "instance": 3,
-                            "job": 1
-                        },
-                        "renameByName": {
-                            "Value": "CPU Usage",
-                            "job": "Service"
-                        }
-                    }
-                },
-                {
-                    "id": "convertFieldType",
-                    "options": {
-                        "conversions": [
-                            {
-                                "destinationType": "number",
-                                "targetField": "CPU Usage"
-                            }
-                        ],
-                        "fields": {}
-                    }
-                }
-            ],
-            "type": "table"
         },
         {
             "datasource": {
@@ -336,7 +161,7 @@
                 "h": 8,
                 "w": 24,
                 "x": 0,
-                "y": 32
+                "y": 8
             },
             "id": 13,
             "options": {
@@ -372,261 +197,6 @@
             ],
             "title": "CPU Usage Trends (All Services)",
             "type": "timeseries"
-        },
-        {
-            "datasource": {
-                "type": "prometheus",
-                "uid": "prometheus"
-            },
-            "description": "Overview of memory usage for all microservices",
-            "fieldConfig": {
-                "defaults": {
-                    "color": {
-                        "mode": "thresholds"
-                    },
-                    "custom": {
-                        "align": "auto",
-                        "displayMode": "auto",
-                        "filterable": true,
-                        "inspect": false
-                    },
-                    "mappings": [],
-                    "thresholds": {
-                        "mode": "absolute",
-                        "steps": [
-                            {
-                                "color": "green",
-                                "value": null
-                            },
-                            {
-                                "color": "yellow",
-                                "value": 70
-                            },
-                            {
-                                "color": "red",
-                                "value": 85
-                            }
-                        ]
-                    },
-                    "unit": "bytes"
-                },
-                "overrides": [
-                    {
-                        "matcher": {
-                            "id": "byName",
-                            "options": "Service"
-                        },
-                        "properties": [
-                            {
-                                "id": "custom.width",
-                                "value": 250
-                            }
-                        ]
-                    },
-                    {
-                        "matcher": {
-                            "id": "byName",
-                            "options": "Memory Usage"
-                        },
-                        "properties": [
-                            {
-                                "id": "custom.displayMode",
-                                "value": "color-background"
-                            },
-                            {
-                                "id": "unit",
-                                "value": "bytes"
-                            },
-                            {
-                                "id": "thresholds",
-                                "value": {
-                                    "mode": "absolute",
-                                    "steps": [
-                                        {
-                                            "color": "green",
-                                            "value": null
-                                        },
-                                        {
-                                            "color": "yellow",
-                                            "value": 262144000
-                                        },
-                                        {
-                                            "color": "red",
-                                            "value": 524288000
-                                        }
-                                    ]
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "matcher": {
-                            "id": "byName",
-                            "options": "Memory %"
-                        },
-                        "properties": [
-                            {
-                                "id": "custom.displayMode",
-                                "value": "color-background"
-                            },
-                            {
-                                "id": "unit",
-                                "value": "percent"
-                            },
-                            {
-                                "id": "min",
-                                "value": 0
-                            },
-                            {
-                                "id": "max",
-                                "value": 100
-                            },
-                            {
-                                "id": "thresholds",
-                                "value": {
-                                    "mode": "absolute",
-                                    "steps": [
-                                        {
-                                            "color": "green",
-                                            "value": null
-                                        },
-                                        {
-                                            "color": "yellow",
-                                            "value": 70
-                                        },
-                                        {
-                                            "color": "red",
-                                            "value": 85
-                                        }
-                                    ]
-                                }
-                            }
-                        ]
-                    }
-                ]
-            },
-            "gridPos": {
-                "h": 12,
-                "w": 24,
-                "x": 0,
-                "y": 20
-            },
-            "id": 15,
-            "options": {
-                "footer": {
-                    "enablePagination": true,
-                    "fields": "",
-                    "reducer": [
-                        "sum"
-                    ],
-                    "show": false
-                },
-                "showHeader": true,
-                "sortBy": [
-                    {
-                        "desc": true,
-                        "displayName": "Memory %"
-                    }
-                ]
-            },
-            "pluginVersion": "9.3.6",
-            "targets": [
-                {
-                    "datasource": {
-                        "type": "prometheus",
-                        "uid": "prometheus"
-                    },
-                    "editorMode": "code",
-                    "exemplar": false,
-                    "expr": "jvm_memory_used_bytes{job=~\".+-app\", area=\"heap\"}",
-                    "format": "table",
-                    "instant": true,
-                    "legendFormat": "{{job}}",
-                    "range": false,
-                    "refId": "A"
-                },
-                {
-                    "datasource": {
-                        "type": "prometheus",
-                        "uid": "prometheus"
-                    },
-                    "editorMode": "code",
-                    "exemplar": false,
-                    "expr": "jvm_memory_max_bytes{job=~\".+-app\", area=\"heap\"}",
-                    "format": "table",
-                    "hide": false,
-                    "instant": true,
-                    "legendFormat": "{{job}}",
-                    "range": false,
-                    "refId": "B"
-                }
-            ],
-            "title": "All Services Memory Usage (Consolidated View)",
-            "transformations": [
-                {
-                    "id": "joinByField",
-                    "options": {
-                        "byField": "job",
-                        "mode": "outer"
-                    }
-                },
-                {
-                    "id": "organize",
-                    "options": {
-                        "excludeByName": {
-                            "Time 1": true,
-                            "Time 2": true,
-                            "__name__ 1": true,
-                            "__name__ 2": true,
-                            "area 1": true,
-                            "area 2": true,
-                            "instance 1": true,
-                            "instance 2": true
-                        },
-                        "indexByName": {},
-                        "renameByName": {
-                            "Value 1": "Memory Usage",
-                            "Value 2": "Max Memory",
-                            "job": "Service"
-                        }
-                    }
-                },
-                {
-                    "id": "calculateField",
-                    "options": {
-                        "alias": "Memory %",
-                        "binary": {
-                            "left": "Memory Usage",
-                            "operator": "/",
-                            "right": "Max Memory"
-                        },
-                        "mode": "binary",
-                        "reduce": {
-                            "include": [],
-                            "reducer": "sum"
-                        },
-                        "replaceFields": false
-                    }
-                },
-                {
-                    "id": "calculateField",
-                    "options": {
-                        "alias": "Memory %",
-                        "binary": {
-                            "left": "Memory %",
-                            "operator": "*",
-                            "right": "100"
-                        },
-                        "mode": "binary",
-                        "reduce": {
-                            "include": [],
-                            "reducer": "sum"
-                        },
-                        "replaceFields": true
-                    }
-                }
-            ],
-            "type": "table"
         },
         {
             "datasource": {
@@ -695,7 +265,7 @@
                 "h": 8,
                 "w": 24,
                 "x": 0,
-                "y": 40
+                "y": 16
             },
             "id": 16,
             "options": {
@@ -722,7 +292,7 @@
                         "uid": "prometheus"
                     },
                     "editorMode": "code",
-                    "expr": "jvm_memory_used_bytes{job=~\".+-app\", area=\"heap\"}",
+                    "expr": "sum by(job) (jvm_memory_used_bytes{job=~\".+-app\", area=\"heap\"})",
                     "instant": false,
                     "legendFormat": "{{job}}",
                     "range": true,
@@ -791,7 +361,7 @@
                 "h": 9,
                 "w": 24,
                 "x": 0,
-                "y": 48
+                "y": 24
             },
             "id": 17,
             "options": {
@@ -820,7 +390,7 @@
                         "uid": "prometheus"
                     },
                     "editorMode": "code",
-                    "expr": "sum by(job) (rate(http_server_requests_seconds_count{job=~\".+-app\"}[1m]))",
+                    "expr": "sum by(job) (rate(http_server_requests_seconds_count{job=~\".+-app\", uri!~\".*(actuator|prometheus).*\"}[1m]))",
                     "legendFormat": "{{job}}",
                     "range": true,
                     "refId": "A"
@@ -831,7 +401,7 @@
                         "uid": "prometheus"
                     },
                     "editorMode": "code",
-                    "expr": "sum(rate(http_server_requests_seconds_count{job=~\".+-app\"}[1m]))",
+                    "expr": "sum(rate(http_server_requests_seconds_count{job=~\".+-app\", uri!~\".*(actuator|prometheus).*\"}[1m]))",
                     "hide": false,
                     "legendFormat": "Total Requests",
                     "range": true,
@@ -867,7 +437,7 @@
                 "h": 9,
                 "w": 12,
                 "x": 0,
-                "y": 57
+                "y": 33
             },
             "id": 18,
             "options": {
@@ -903,7 +473,7 @@
                         "uid": "prometheus"
                     },
                     "editorMode": "code",
-                    "expr": "sum by(job) (increase(http_server_requests_seconds_count{job=~\".+-app\"}[5m]))",
+                    "expr": "sum by(job) (increase(http_server_requests_seconds_count{job=~\".+-app\", uri!~\".*(actuator|prometheus).*\"}[5m]))",
                     "instant": false,
                     "legendFormat": "{{job}}",
                     "range": true,
@@ -985,7 +555,7 @@
                 "h": 9,
                 "w": 12,
                 "x": 12,
-                "y": 57
+                "y": 33
             },
             "id": 19,
             "options": {
@@ -1021,7 +591,7 @@
                         "uid": "prometheus"
                     },
                     "editorMode": "code",
-                    "expr": "sum(increase(http_server_requests_seconds_count{job=~\".+-app\", status=~\"2..\"}[5m]))",
+                    "expr": "sum(increase(http_server_requests_seconds_count{job=~\".+-app\", uri!~\".*(actuator|prometheus).*\", status=~\"2..\"}[5m]))",
                     "instant": false,
                     "legendFormat": "2xx",
                     "range": true,
@@ -1033,7 +603,7 @@
                         "uid": "prometheus"
                     },
                     "editorMode": "code",
-                    "expr": "sum(increase(http_server_requests_seconds_count{job=~\".+-app\", status=~\"4..\"}[5m]))",
+                    "expr": "sum(increase(http_server_requests_seconds_count{job=~\".+-app\", uri!~\".*(actuator|prometheus).*\", status=~\"4..\"}[5m]))",
                     "instant": false,
                     "legendFormat": "4xx",
                     "range": true,
@@ -1045,7 +615,7 @@
                         "uid": "prometheus"
                     },
                     "editorMode": "code",
-                    "expr": "sum(increase(http_server_requests_seconds_count{job=~\".+-app\", status=~\"5..\"}[5m]))",
+                    "expr": "sum(increase(http_server_requests_seconds_count{job=~\".+-app\", uri!~\".*(actuator|prometheus).*\", status=~\"5..\"}[5m]))",
                     "instant": false,
                     "legendFormat": "5xx",
                     "range": true,
@@ -1140,7 +710,7 @@
                 "h": 12,
                 "w": 24,
                 "x": 0,
-                "y": 66
+                "y": 42
             },
             "id": 20,
             "options": {
@@ -1168,7 +738,7 @@
                         "uid": "prometheus"
                     },
                     "editorMode": "code",
-                    "expr": "sum by(job, uri) (increase(http_server_requests_seconds_count{job=~\".+-app\"}[5m])) > 0",
+                    "expr": "sum by(job, uri) (increase(http_server_requests_seconds_count{job=~\".+-app\", uri!~\".*(actuator|prometheus).*\"}[5m])) > 0",
                     "format": "table",
                     "instant": true,
                     "range": false,
