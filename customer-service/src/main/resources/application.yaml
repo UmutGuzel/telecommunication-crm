@@ -22,7 +22,7 @@ spring:
 
     listener:
       type: batch
-      ack-mode: manual_immediate
+      ack-mode: MANUAL_IMMEDIATE
       missing-topics-fatal: false
 
 management:
@@ -33,14 +33,15 @@ management:
   endpoint:
     prometheus:
       enabled: true
-  metrics:
-    export:
-      prometheus:
+  prometheus:
+    metrics:
+      export:
         enabled: true
 
 logging:
   level:
     com.gygy.customerservice: DEBUG
+    com.gygy.customerservice.infrastructure.outbox: DEBUG
 
 encryption:
   secret-key: "GygyTelecomCRM2024!@#$%^&*()"

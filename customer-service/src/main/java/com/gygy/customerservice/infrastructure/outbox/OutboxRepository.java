@@ -8,7 +8,6 @@ import java.util.UUID;
 
 @Repository
 public interface OutboxRepository extends JpaRepository<OutboxEntity, UUID> {
-    List<OutboxEntity> findByStatusOrderByCreatedAtAsc(OutboxStatus status);
-    
     List<OutboxEntity> findByStatusInOrderByCreatedAtAsc(List<OutboxStatus> statuses);
+    List<OutboxEntity> findByStatus(OutboxStatus status);
 } 

@@ -8,6 +8,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -69,6 +70,38 @@ public class OutboxService {
                 log.error("Error while processing outbox message: {}", message.getId(), e);
                 message.setStatus(OutboxStatus.FAILED);
                 outboxRepository.save(message);
+            }
+        }
+    }
+
+    @Transactional
+    public void processOutboxMessage(OutboxEntity message) {
+        try {
+            EventType eventType = EventType.fromString(message.getEventType());
+            Object event = objectMapper.readValue(message.getPayload(), eventType.getEventClass());
+
+            kafkaTemplate.send(eventType.getTopic(), event);
+            message.setStatus(OutboxStatus.PROCESSED);
+            message.setProcessedAt(LocalDateTime.now());
+            outboxRepository.save(message);
+            log.info("Successfully processed outbox message: {}", message.getId());
+        } catch (Exception e) {
+            log.error("Error while processing outbox message: {}", message.getId(), e);
+            message.setStatus(OutboxStatus.FAILED);
+            outboxRepository.save(message);
+        }
+    }
+
+    @Scheduled(fixedRate = 60000) // 1 dakikada bir çalışacak
+    public void processFailedOutboxMessages() {
+        log.info("Processing failed outbox messages...");
+        List<OutboxEntity> failedMessages = outboxRepository.findByStatus(OutboxStatus.FAILED);
+
+        for (OutboxEntity outbox : failedMessages) {
+            try {
+                processOutboxMessage(outbox);
+            } catch (Exception e) {
+                log.error("Failed to process outbox message: {}", outbox.getId(), e);
             }
         }
     }
