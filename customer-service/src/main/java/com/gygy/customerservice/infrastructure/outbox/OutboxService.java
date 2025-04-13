@@ -1,6 +1,5 @@
 package com.gygy.customerservice.infrastructure.outbox;
 
-import java.time.LocalDate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -20,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
@@ -58,26 +59,59 @@ public class OutboxService {
 
     @Transactional
     public void processOutboxMessages() {
-        List<OutboxEntity> messages = outboxRepository.findByStatusInOrderByCreatedAtAsc(
-                List.of(OutboxStatus.PENDING, OutboxStatus.FAILED)
-        );
+        List<OutboxEntity> messages = outboxRepository.findByStatusOrderByCreatedAtAsc(OutboxStatus.FAILED);
         
         for (OutboxEntity message : messages) {
             try {
-                EventType eventType = EventType.fromString(message.getEventType());
-                Object event = objectMapper.readValue(message.getPayload(), eventType.getEventClass());
-                
-                kafkaTemplate.send(eventType.getTopic(), event);
-                message.setStatus(OutboxStatus.PROCESSED);
-                message.setProcessedAt(LocalDateTime.now());
-                outboxRepository.save(message);
-                log.info("Successfully processed outbox message: {}", message.getId());
+                boolean success = processOutboxMessageWithRetry(message);
+                if (success) {
+                    message.setStatus(OutboxStatus.PROCESSED);
+                    message.setProcessedAt(LocalDateTime.now());
+                    outboxRepository.save(message);
+                    log.info("Successfully processed outbox message: {}", message.getId());
+                } else {
+                    message.setStatus(OutboxStatus.FAILED);
+                    outboxRepository.save(message);
+                    log.error("Failed to process outbox message after {} attempts: {}", 
+                        OutboxConfig.MAX_RETRY_ATTEMPTS, message.getId());
+                }
             } catch (Exception e) {
                 log.error("Error while processing outbox message: {}", message.getId(), e);
                 message.setStatus(OutboxStatus.FAILED);
                 outboxRepository.save(message);
             }
         }
+    }
+
+    private boolean processOutboxMessageWithRetry(OutboxEntity message) {
+        for (int attempt = 1; attempt <= OutboxConfig.MAX_RETRY_ATTEMPTS; attempt++) {
+            try {
+                log.info("Attempting to process outbox message - MessageId: {}, Attempt: {}/{}", 
+                    message.getId(), attempt, OutboxConfig.MAX_RETRY_ATTEMPTS);
+                
+                EventType eventType = EventType.fromString(message.getEventType());
+                Object event = objectMapper.readValue(message.getPayload(), eventType.getEventClass());
+                
+                CompletableFuture<?> future = kafkaTemplate.send(eventType.getTopic(), event);
+                future.get(OutboxConfig.KAFKA_SEND_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+                
+                log.info("Successfully processed outbox message - MessageId: {}", message.getId());
+                return true;
+            } catch (Exception e) {
+                log.error("Failed to process outbox message - MessageId: {}, Attempt: {}/{}, Error: {}", 
+                    message.getId(), attempt, OutboxConfig.MAX_RETRY_ATTEMPTS, e.getMessage());
+                
+                if (attempt < OutboxConfig.MAX_RETRY_ATTEMPTS) {
+                    try {
+                        Thread.sleep(OutboxConfig.RETRY_DELAY_MS);
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        return false;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     @Transactional
@@ -98,7 +132,7 @@ public class OutboxService {
         }
     }
 
-    @Scheduled(fixedRate = 60000) // 1 dakikada bir çalışacak
+    @Scheduled(fixedRate = 60000) // 1 minute
     public void processFailedOutboxMessages() {
         log.info("Processing failed outbox messages...");
         List<OutboxEntity> failedMessages = outboxRepository.findByStatus(OutboxStatus.FAILED);
@@ -137,16 +171,9 @@ public class OutboxService {
         }
     }
 
-    private Class<?> getEventClass(String eventType) {
-        return switch (eventType) {
-            case "INDIVIDUAL_CUSTOMER_READ_CREATED" -> com.gygy.customerservice.infrastructure.messaging.event.db.CreatedIndividualCustomerReadEvent.class;
-            default -> throw new IllegalArgumentException("Unknown event type: " + eventType);
-        };
-    }
-
     @Transactional
     public void markAsProcessed(UUID id) {
-        OutboxEntity outbox = outboxRepository.findById(id)
+        OutboxEntity outbox = outboxRepository.findByAggregateId(id.toString())
             .orElseThrow(() -> new RuntimeException("Outbox event not found: " + id));
         
         outbox.setStatus(OutboxStatus.PROCESSED);
@@ -158,7 +185,7 @@ public class OutboxService {
 
     @Transactional
     public void markAsFailed(UUID id) {
-        OutboxEntity outbox = outboxRepository.findById(id)
+        OutboxEntity outbox = outboxRepository.findByAggregateId(id.toString())
             .orElseThrow(() -> new RuntimeException("Outbox event not found: " + id));
         
         outbox.setStatus(OutboxStatus.FAILED);

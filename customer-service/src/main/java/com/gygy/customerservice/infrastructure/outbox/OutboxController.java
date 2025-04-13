@@ -16,14 +16,14 @@ public class OutboxController {
     private final OutboxService outboxService;
 
     @PutMapping("/{id}/mark-as-processed")
-    public ResponseEntity<Void> markAsProcessed(@PathVariable UUID id) {
+    public ResponseEntity<Void> markAsProcessed(@PathVariable("id") UUID id) {
         log.info("Marking outbox event as processed: {}", id);
         outboxService.markAsProcessed(id);
         return ResponseEntity.ok().build();
     }
 
     @PutMapping("/{id}/mark-as-failed")
-    public ResponseEntity<Void> markAsFailed(@PathVariable UUID id) {
+    public ResponseEntity<Void> markAsFailed(@PathVariable("id") UUID id) {
         log.info("Marking outbox event as failed: {}", id);
         outboxService.markAsFailed(id);
         return ResponseEntity.ok().build();

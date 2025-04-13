@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.debezium.engine.ChangeEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.client.RestTemplate;
 
 @Slf4j
 @Service
@@ -20,6 +21,10 @@ public class DebeziumService {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final ObjectMapper objectMapper;
+    private final RestTemplate restTemplate;
+
+    private static final int MAX_RETRY_ATTEMPTS = 3;
+    private static final long RETRY_DELAY_MS = 1000L;
 
     public void handleEvent(ChangeEvent<String, String> event) {
         try {
@@ -60,15 +65,15 @@ public class DebeziumService {
             
             // Send to the original topic with the original payload
             log.info("Sending event to Kafka - Topic: {}, AggregateId: {}, EventType: {}", originalTopic, aggregateId, eventType);
-            
-            kafkaTemplate.send(originalTopic, aggregateId, originalPayload)
-                .whenComplete((result, ex) -> {
-                    if (ex != null) {
-                        log.error("Failed to send event to Kafka - Topic: {}, Error: {}", originalTopic, ex.getMessage(), ex);
-                    } else {
-                        log.info("Successfully sent event to Kafka - Topic: {}", originalTopic);
-                    }
-                });
+
+            boolean success = sendEventWithRetry(aggregateId, originalTopic, aggregateId, originalPayload);
+            if (success) {
+                // If event is successfully sent, mark as processed
+                restTemplate.put("http://localhost:9020/api/outbox/{id}/mark-as-processed", null, aggregateId);
+            } else {
+                // If event sending failed, mark as failed
+                restTemplate.put("http://localhost:9020/api/outbox/{id}/mark-as-failed", null, aggregateId);
+            }
             
         } catch (Exception e) {
             log.error("Error processing CDC event: {}", e.getMessage(), e);
@@ -76,7 +81,7 @@ public class DebeziumService {
     }
 
     private boolean sendEventWithRetry(String eventId, String topic, String key, String payload) {
-        for(int attempt = 1; attempt <= 3; ++attempt) {
+        for(int attempt = 1; attempt <= MAX_RETRY_ATTEMPTS; ++attempt) {
             try {
                 log.info("Attempting to send event - EventId: {}, Topic: {}, Attempt: {}/{}", new Object[]{eventId, topic, attempt, 3});
                 CompletableFuture<?> future = this.kafkaTemplate.send(topic, key, payload);
@@ -85,9 +90,9 @@ public class DebeziumService {
                 return true;
             } catch (Exception e) {
                 log.error("Failed to send event - EventId: {}, Topic: {}, Attempt: {}/{}, Error: {}", new Object[]{eventId, topic, attempt, 3, e.getMessage()});
-                if (attempt < 3) {
+                if (attempt < MAX_RETRY_ATTEMPTS) {
                     try {
-                        Thread.sleep(1000L);
+                        Thread.sleep(RETRY_DELAY_MS);
                     } catch (InterruptedException var8) {
                         Thread.currentThread().interrupt();
                         return false;
