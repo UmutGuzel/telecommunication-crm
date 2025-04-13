@@ -5,7 +5,7 @@ import com.gygy.contractservice.dto.discount.CreateDiscountDto;
 import com.gygy.contractservice.dto.discount.DeleteDiscountDto;
 import com.gygy.contractservice.dto.discount.DiscountListiningDto;
 import com.gygy.contractservice.dto.discount.UpdateDiscountDto;
-import com.gygy.contractservice.entity.ContractDetail;
+import com.gygy.contractservice.entity.Contract;
 import com.gygy.contractservice.entity.Discount;
 import com.gygy.contractservice.model.enums.Status;
 import com.gygy.contractservice.service.DiscountService;
@@ -32,9 +32,8 @@ class DiscountControllerTest {
     private DiscountController discountController;
     private UUID id;
     private UUID billingPlanId;
-    private UUID contractDetailId;
-    private UUID customerId;
-    private ContractDetail contractDetail;
+    private UUID contractId;
+    private Contract contract;
 
     @BeforeEach
     void setup() {
@@ -50,11 +49,11 @@ class DiscountControllerTest {
     }
 
     @Test
-    void getDiscount() {
-        billingPlanId = UUID.randomUUID();
-        contractDetailId = UUID.randomUUID();
-        customerId = UUID.randomUUID();
-        DiscountListiningDto discountListiningDto = new DiscountListiningDto();
+    void getDiscount(){
+        billingPlanId=UUID.randomUUID();
+        contractId=UUID.randomUUID();
+        DiscountListiningDto discountListiningDto=new DiscountListiningDto();
+
         discountListiningDto.setAmount(100.0);
         discountListiningDto.setDiscountType(STUDENT);
         discountListiningDto.setDescription("Test Description");
@@ -62,8 +61,8 @@ class DiscountControllerTest {
         discountListiningDto.setEndDate(LocalDate.now());
         discountListiningDto.setStartDate(LocalDate.now());
         discountListiningDto.setBillingPlanId(Collections.singletonList(billingPlanId));
-        // discountListiningDto.setContractDetailId(contractDetailId);
-        discountListiningDto.setCustomerId(customerId);
+        discountListiningDto.setContractId(contractId);
+
         discountListiningDto.setPercentage(0.1);
         discountListiningDto.setCreateDate(LocalDate.now());
         discountListiningDto.setUpdateDate(LocalDate.now());
@@ -80,11 +79,11 @@ class DiscountControllerTest {
         assertEquals(LocalDate.now(), response.get(0).getEndDate());
         assertEquals(LocalDate.now(), response.get(0).getStartDate());
         assertEquals(billingPlanId, response.get(0).getBillingPlanId().get(0)); // Düzeltildi!
-        // assertEquals(contractDetailId,response.get(0).getContractDetailId());
-        assertEquals(customerId, response.get(0).getCustomerId());
-        assertEquals(0.1, response.get(0).getPercentage());
-        assertEquals(LocalDate.now(), response.get(0).getCreateDate());
-        assertEquals(LocalDate.now(), response.get(0).getUpdateDate());
+        assertEquals(contractId,response.get(0).getContractId());
+        assertEquals(0.1,response.get(0).getPercentage());
+        assertEquals(LocalDate.now(),response.get(0).getCreateDate());
+        assertEquals(LocalDate.now(),response.get(0).getUpdateDate());
+
 
         verify(discountService, times(1)).getAll();
     }
@@ -100,35 +99,37 @@ class DiscountControllerTest {
     }
 
     @Test
-    void updateDiscount() {
-        id = UUID.randomUUID();
-        customerId = UUID.randomUUID();
-        billingPlanId = UUID.randomUUID();
-        contractDetailId = UUID.randomUUID();
-        UpdateDiscountDto updateDiscountDto = new UpdateDiscountDto();
+
+    void updateDiscount(){
+        id=UUID.randomUUID();
+        billingPlanId=UUID.randomUUID();
+        contractId=UUID.randomUUID();
+        UpdateDiscountDto updateDiscountDto=new UpdateDiscountDto();
+
         updateDiscountDto.setId(id);
         updateDiscountDto.setDiscountType(STUDENT);
         updateDiscountDto.setAmount(100);
-        updateDiscountDto.setCustomerId(customerId);
         updateDiscountDto.setPercentage(0.1);
         updateDiscountDto.setBillingPlanId(Collections.singletonList(billingPlanId));
         updateDiscountDto.setStatus(Status.ACTIVE);
         updateDiscountDto.setStartDate(LocalDate.now());
         updateDiscountDto.setEndDate(LocalDate.now());
         updateDiscountDto.setDescription("Test Description");
-        // updateDiscountDto.setContractDetailId(contractDetailId);
+
+        updateDiscountDto.setContractId(contractId);
+
 
         Discount updatedDiscount = new Discount();
         updatedDiscount.setId(id);
         updatedDiscount.setDiscountType(STUDENT);
         updatedDiscount.setAmount(100);
-        updatedDiscount.setCustomerId(customerId);
         updatedDiscount.setPercentage(0.1);
         updatedDiscount.setStatus(Status.ACTIVE);
         updatedDiscount.setStartDate(LocalDate.now());
         updatedDiscount.setEndDate(LocalDate.now());
         updatedDiscount.setDescription("Test Description");
-        // updatedDiscount.setContractDetail(contractDetail);
+        updatedDiscount.setContract(contract);
+
         when(discountService.update(any(UpdateDiscountDto.class))).thenReturn(updatedDiscount);
 
         discountController.update(updateDiscountDto);
