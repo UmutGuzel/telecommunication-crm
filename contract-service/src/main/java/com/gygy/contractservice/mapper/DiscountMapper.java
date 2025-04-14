@@ -34,8 +34,8 @@ public class DiscountMapper {
 
     public DiscountListiningDto toDiscountListiningDto(Discount discount) {
         return new DiscountListiningDto(
-                discount.getPercentage(), discount.getContract(), discount.getEndDate(), discount.getStartDate(),
-                discount.getCreatedAt(), discount.getUpdatedAt(), discount.getCustomerId(), discount.getStatus(),
+                discount.getName(),
+                discount.getPercentage(),
                 discount.getDescription());
     }
 }

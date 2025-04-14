@@ -4,7 +4,6 @@ import com.gygy.contractservice.client.PlanClient;
 import com.gygy.contractservice.dto.billingPlan.*;
 import com.gygy.contractservice.entity.BillingPlan;
 import com.gygy.contractservice.entity.Contract;
-import com.gygy.contractservice.entity.ContractDetail;
 import com.gygy.contractservice.mapper.BillingPlanMapper;
 import com.gygy.contractservice.repository.BillingPlanRepository;
 import com.gygy.contractservice.rules.BillingPlanBusinessRules;
@@ -110,8 +109,8 @@ public class BillingPlanServiceImpl implements BillingPlanService {
             // billingPlan.setBillingDay(1); // TODO: 1 gün olacak
             billingPlanRepository.save(billingPlan);
 
-            ContractDetail contractDetail = new ContractDetail();
-            contractDetail.setContract(contract);
+            // ContractDetail contractDetail = new ContractDetail();
+            // contractDetail.setContract(contract);
             contractDetailService.add(billingPlan, contract, createContractDto);
             logger.info("Successfully created billing plan with ID: {}", billingPlan.getId());
         } catch (Exception e) {
@@ -136,19 +135,19 @@ public class BillingPlanServiceImpl implements BillingPlanService {
     @Override
     public BillingPlan update(UpdateBillingPlanDto updateBillingPlanDto) {
 
-        billingPlanBusinessRules.checkIfBillingPlanNameExistsForUpdate(
-                updateBillingPlanDto.getId(),
-                updateBillingPlanDto.getName());
+        // billingPlanBusinessRules.checkIfBillingPlanNameExistsForUpdate(
+        // updateBillingPlanDto.getId(),
+        // updateBillingPlanDto.getName());
 
-        billingPlanBusinessRules.checkIfCycleTypeAndBillingDayAreConsistent(
-                updateBillingPlanDto.getCycleType().toString(),
-                updateBillingPlanDto.getBillingDay());
-        billingPlanBusinessRules.checkIfPaymentMethodAndDueDaysAreConsistent(
-                updateBillingPlanDto.getPaymentMethod().toString(),
-                updateBillingPlanDto.getPaymentDueDays());
-        billingPlanBusinessRules.checkIfBaseAmountAndTaxRateAreValid(
-                updateBillingPlanDto.getBaseAmount(),
-                updateBillingPlanDto.getTaxRate());
+        // billingPlanBusinessRules.checkIfCycleTypeAndBillingDayAreConsistent(
+        // updateBillingPlanDto.getCycleType().toString(),
+        // updateBillingPlanDto.getBillingDay());
+        // billingPlanBusinessRules.checkIfPaymentMethodAndDueDaysAreConsistent(
+        // updateBillingPlanDto.getPaymentMethod().toString(),
+        // updateBillingPlanDto.getPaymentDueDays());
+        // billingPlanBusinessRules.checkIfBaseAmountAndTaxRateAreValid(
+        // updateBillingPlanDto.getBaseAmount(),
+        // updateBillingPlanDto.getTaxRate());
 
         Contract contract = contractService.findById(updateBillingPlanDto.getContractId())
                 .orElseThrow(() -> new RuntimeException("Contract Not Found"));

@@ -40,8 +40,6 @@ public class Discount {
     @Column(columnDefinition = "varchar(255) default 'ACTIVE'")
     @Enumerated(EnumType.STRING)
     private Status status;
-
-    private UUID customerId;
     private String description;
 
     @Column(name = "start_date")

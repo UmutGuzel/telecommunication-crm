@@ -12,16 +12,13 @@ import java.util.UUID;
 @Getter
 @Setter
 public class DiscountListiningDto {
-    private UUID contractId;
     private String name;
     private String description;
     private double percentage;
 
-    public DiscountListiningDto(double percentage, Contract contract, LocalDate endDate, LocalDate startDate,
-            LocalDate createdAt, LocalDate updatedAt, UUID customerId, Status status, String description) {
-        this.percentage = percentage;
-        this.contractId = contract.getId();
+    public DiscountListiningDto(String name, double percentage, String description) {
         this.name = name;
+        this.percentage = percentage;
         this.description = description;
     }
 

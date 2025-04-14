@@ -9,12 +9,20 @@ import com.gygy.customerservice.application.customer.dto.AddressResponse;
 import com.gygy.customerservice.application.customer.mapper.AddressMapper;
 import com.gygy.customerservice.domain.entity.Address;
 import com.gygy.customerservice.domain.entity.CorporateCustomer;
+import com.gygy.customerservice.domain.entity.CustomerReadEntity;
+import com.gygy.customerservice.domain.enums.CustomerType;
 import com.gygy.customerservice.infrastructure.messaging.event.CreatedCorporateCustomerEvent;
 import com.gygy.customerservice.infrastructure.messaging.event.UpdatedCorporateCustomerEvent;
+import com.gygy.customerservice.infrastructure.messaging.event.db.CreatedCorporateCustomerReadEvent;
+import com.gygy.customerservice.infrastructure.messaging.event.db.UpdatedCorporateCustomerReadEvent;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+
+import com.gygy.customerservice.application.corporateCustomer.query.read.GetListCorporateCustomerItemReadDto;
 
 @RequiredArgsConstructor
 @Component
@@ -116,6 +124,40 @@ public class CorporateCustomerMapper {
                 .contactPersonName(customer.getContactPersonName())
                 .contactPersonSurname(customer.getContactPersonSurname())
                 .address(addressMapper.convertAddressToAddressResponse(customer.getAddress()))
+                .build();
+    }
+
+    public CreatedCorporateCustomerReadEvent convertToCreatedCorporateCustomerReadEvent(CorporateCustomer customer) {
+        return CreatedCorporateCustomerReadEvent.builder()
+                .id(customer.getId())
+                .email(customer.getEmail())
+                .phoneNumber(customer.getPhoneNumber())
+                .type(CustomerType.CORPORATE)
+                .companyName(customer.getCompanyName())
+                .contactPersonName(customer.getContactPersonName())
+                .contactPersonSurname(customer.getContactPersonSurname())
+                .build();
+    }
+
+    public UpdatedCorporateCustomerReadEvent convertToUpdatedCorporateCustomerReadEvent(CorporateCustomer customer) {
+        return UpdatedCorporateCustomerReadEvent.builder()
+                .id(customer.getId())
+                .email(customer.getEmail())
+                .phoneNumber(customer.getPhoneNumber())
+                .companyName(customer.getCompanyName())
+                .contactPersonName(customer.getContactPersonName())
+                .contactPersonSurname(customer.getContactPersonSurname())
+                .build();
+    }
+
+    public GetListCorporateCustomerItemReadDto convertCustomerReadEntityToGetListCorporateCustomerItemReadDto(CustomerReadEntity entity) {
+        return GetListCorporateCustomerItemReadDto.builder()
+                .id(entity.getId())
+                .email(entity.getEmail())
+                .phoneNumber(entity.getPhoneNumber())
+                .companyName(entity.getCompanyName())
+                .contactPersonName(entity.getContactPersonName())
+                .contactPersonSurname(entity.getContactPersonSurname())
                 .build();
     }
 }

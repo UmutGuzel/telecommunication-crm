@@ -296,6 +296,22 @@ services:
     environment:
       SPRING_CLOUD_CONFIG_PROFILE: "dev"
       CONFIGURL: "http://config-server:8090"
+  debezium-service:
+    image: debezium-service
+    build: ./debezium-service
+    container_name: "debezium-service"
+    depends_on:
+      config-server:
+        condition: service_healthy
+      costumer-service:
+        condition: service_healthy
+      customer-service-db:
+        condition: service_healthy
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_CLOUD_CONFIG_PROFILE: "dev"
+      CONFIGURL: "http://config-server:8090"
   prometheus:
     image: prom/prometheus
     ports:

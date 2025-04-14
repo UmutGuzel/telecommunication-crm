@@ -70,6 +70,10 @@ public class UpdateCorporateCustomerCommand implements Command<UpdatedCorporateC
                 corporateCustomerMapper.convertToUpdatedCorporateCustomerEvent(corporateCustomer)
             );
 
+            kafkaProducerService.sendUpdatedCorporateCustomerReadEvent(
+                corporateCustomerMapper.convertToUpdatedCorporateCustomerReadEvent(corporateCustomer)
+            );
+
             return corporateCustomerMapper.convertCorporateCustomerToUpdatedCorporateCustomerResponse(corporateCustomer);
         }
     }

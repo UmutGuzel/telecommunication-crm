@@ -20,7 +20,6 @@ public class CreatedIndividualCustomerReadEvent {
     private String phoneNumber;
     private CustomerType type;
     
-    // Individual Customer fields
     private String name;
     private String surname;
     private IndividualCustomerGender gender;

@@ -8,6 +8,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="common" />
+        <module name="debezium-service" />
       </profile>
       <profile name="Annotation profile for contract-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -57,6 +58,7 @@
       <module name="contract-service" options="-parameters" />
       <module name="customer-service" options="-parameters" />
       <module name="customer-support-service" options="-parameters" />
+      <module name="debezium-service" options="-parameters" />
       <module name="discovery-server" options="-parameters" />
       <module name="gateway-server" options="-parameters" />
       <module name="notification-service" options="-parameters" />

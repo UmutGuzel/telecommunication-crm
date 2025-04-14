@@ -13,12 +13,9 @@ import com.gygy.customerservice.application.customer.validation.CustomerValidati
 import com.gygy.customerservice.application.individualCustomer.mapper.IndividualCustomerMapper;
 import com.gygy.customerservice.domain.entity.Address;
 import com.gygy.customerservice.domain.entity.IndividualCustomer;
-import com.gygy.customerservice.domain.enums.CustomerType;
 import com.gygy.customerservice.domain.enums.IndividualCustomerGender;
-import com.gygy.customerservice.infrastructure.messaging.event.db.CreatedIndividualCustomerReadEvent;
 import com.gygy.customerservice.infrastructure.messaging.service.KafkaProducerService;
 import com.gygy.customerservice.infrastructure.persistence.repository.AddressRepository;
-import com.gygy.customerservice.infrastructure.persistence.repository.CustomerRepository;
 import com.gygy.customerservice.infrastructure.persistence.repository.IndividualCustomerRepository;
 
 import an.awesome.pipelinr.Command;
@@ -52,7 +49,6 @@ public class CreateIndividualCustomerCommand implements Command<CreatedIndividua
     @Component
     @RequiredArgsConstructor
     public static class CreateIndividualCustomerCommandHandler implements Handler<CreateIndividualCustomerCommand, CreatedIndividualCustomerResponse> {
-        private final CustomerRepository customerRepository;
         private final IndividualCustomerRepository individualCustomerRepository;
         private final IndividualCustomerMapper individualCustomerMapper;
         private final CustomerRule customerRule;
@@ -83,16 +79,7 @@ public class CreateIndividualCustomerCommand implements Command<CreatedIndividua
             );
 
             kafkaProducerService.sendCreatedIndividualCustomerReadEvent(
-                CreatedIndividualCustomerReadEvent.builder()
-                    .id(newIndividualCustomer.getId())
-                    .email(newIndividualCustomer.getEmail())
-                    .phoneNumber(newIndividualCustomer.getPhoneNumber())
-                    .type(CustomerType.INDIVIDUAL)
-                    .name(newIndividualCustomer.getName())
-                    .surname(newIndividualCustomer.getSurname())
-                    .gender(newIndividualCustomer.getGender())
-                    .birthDate(newIndividualCustomer.getBirthDate())
-                    .build()
+                individualCustomerMapper.convertToCreatedIndividualCustomerReadEvent(newIndividualCustomer)
             );
 
             return individualCustomerMapper.convertIndividualCustomerToResponse(newIndividualCustomer);

@@ -5,7 +5,7 @@ import com.gygy.contractservice.dto.discount.CreateDiscountDto;
 import com.gygy.contractservice.dto.discount.DeleteDiscountDto;
 import com.gygy.contractservice.dto.discount.DiscountListiningDto;
 import com.gygy.contractservice.dto.discount.UpdateDiscountDto;
-import com.gygy.contractservice.entity.ContractDetail;
+import com.gygy.contractservice.entity.Contract;
 import com.gygy.contractservice.entity.Discount;
 import com.gygy.contractservice.model.enums.Status;
 import com.gygy.contractservice.service.DiscountService;
@@ -32,9 +32,8 @@ class DiscountControllerTest {
     private DiscountController discountController;
     private UUID id;
     private UUID billingPlanId;
-    private UUID contractDetailId;
-    private UUID customerId;
-    private ContractDetail contractDetail;
+    private UUID contractId;
+    private Contract contract;
 
     @BeforeEach
     void setup() {
@@ -109,13 +108,13 @@ class DiscountControllerTest {
         updatedDiscount.setId(id);
         updatedDiscount.setDiscountType(STUDENT);
         updatedDiscount.setAmount(100);
-        updatedDiscount.setCustomerId(customerId);
         updatedDiscount.setPercentage(0.1);
         updatedDiscount.setStatus(Status.ACTIVE);
         updatedDiscount.setStartDate(LocalDate.now());
         updatedDiscount.setEndDate(LocalDate.now());
         updatedDiscount.setDescription("Test Description");
-        // updatedDiscount.setContractDetail(contractDetail);
+        updatedDiscount.setContract(contract);
+
         when(discountService.update(any(UpdateDiscountDto.class))).thenReturn(updatedDiscount);
 
         discountController.update(updateDiscountDto);

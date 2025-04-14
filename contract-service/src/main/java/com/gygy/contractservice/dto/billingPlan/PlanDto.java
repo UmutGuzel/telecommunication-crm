@@ -16,4 +16,5 @@ public class PlanDto {
     private String description;
     private BigDecimal price;
     private CategoryDto category;
+
 }

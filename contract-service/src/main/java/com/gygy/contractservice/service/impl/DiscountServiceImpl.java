@@ -68,6 +68,14 @@ public class DiscountServiceImpl implements DiscountService {
         try {
             Discount discount = discountMapper.createDiscountFromCreateDiscountDto(createDiscountDto);
 
+            // BillingPlan ve ContractDetail ilişkilerini null kontrolü ile ekleyelim
+            if (createDiscountDto.getBillingPlanId() != null && !createDiscountDto.getBillingPlanId().isEmpty()) {
+                List<BillingPlan> billingPlans = billingPlanService.findAll(createDiscountDto.getBillingPlanId());
+                if (!billingPlans.isEmpty()) {
+                    discount.setBillingPlan(billingPlans.get(0));
+                }
+            }
+
             discountRepository.save(discount);
             logger.info("Successfully created discount with ID: {}", discount.getId());
         } catch (Exception e) {
@@ -134,19 +142,6 @@ public class DiscountServiceImpl implements DiscountService {
     }
 
     @Override
-    public List<DiscountListiningDto> getActiveDiscountsByCustomerId(UUID customerId) {
-        logger.debug(FETCHING_ALL_DISCOUNT);
-        List<Discount> discounts = discountRepository.findAll();
-        List<DiscountListiningDto> discountListiningDtos = discounts.stream()
-                .filter(discount -> "ACTIVE".equals(discount.getStatus().toString())
-                        && discount.getCustomerId().equals(customerId))
-                .map(discountMapper::toDiscountListiningDto)
-                .collect(Collectors.toList());
-        logger.info("Found {} active contracts", discounts.size());
-        return discountListiningDtos;
-    }
-
-    @Override
     public List<DiscountListiningDto> getDiscountsByContractId(UUID contractId) {
         logger.debug(FETCHING_ALL_DISCOUNT);
         List<Discount> discounts = discountRepository.findAll();
@@ -158,6 +153,37 @@ public class DiscountServiceImpl implements DiscountService {
         return discountListiningDtos;
     }
 
+    <<<<<<<HEAD
+    // @Override
+    // public Discount applyDiscountForAnnualPackage(CreateDiscountDto
+    // createDiscountDto) {
+    // if ("ANNUAL".equals(createDiscountDto.getBillingCycleType().toString())) {
+    // // Create and save discount
+    // Discount discount = new Discount();
+    // discount.setDiscountType(DiscountType.YEARLY_SUBSCRIPTION);
+    // discount.setPercentage(5.0);
+    // discount.setStartDate(LocalDate.now());
+    // discount.setEndDate(createDiscountDto.getEndDate());
+    // discount.setCreatedAt(LocalDate.now());
+    // discount.setUpdatedAt(LocalDate.now());
+    // discount.setStatus(Status.ACTIVE);
+    // discount.setCustomerId(createDiscountDto.getCustomerId());
+    // discount.setAmount(0.1); // Geçici bir değer veya hesaplanmış değer atan
+    =======
+
+    @Override
+    public Discount applyDiscountForAnnualPackage(CreateDiscountDto createDiscountDto) {
+        if ("ANNUAL".equals(createDiscountDto.getBillingCycleType().toString())) {
+            Discount discount = new Discount();
+            discount.setDiscountType(DiscountType.YEARLY_SUBSCRIPTION);
+            discount.setPercentage(5.0);
+            discount.setStartDate(LocalDate.now());
+            discount.setEndDate(createDiscountDto.getEndDate());
+            discount.setCreatedAt(LocalDate.now());
+            discount.setUpdatedAt(LocalDate.now());
+            discount.setStatus(Status.ACTIVE);
+            discount.setAmount(0.1);
+            Discount savedDiscount = discountRepository.save(discount);
     // @Override
     // public Discount applyDiscountForAnnualPackage(CreateDiscountDto
     // createDiscountDto) {
