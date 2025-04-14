@@ -51,8 +51,6 @@ class DiscountControllerTest {
     @Test
     void getDiscount() {
         billingPlanId = UUID.randomUUID();
-        contractDetailId = UUID.randomUUID();
-        customerId = UUID.randomUUID();
         DiscountListiningDto discountListiningDto = new DiscountListiningDto();
         discountListiningDto.setDescription("Test Description");
         discountListiningDto.setPercentage(0.1);
@@ -95,9 +93,6 @@ class DiscountControllerTest {
     @Test
     void updateDiscount() {
         id = UUID.randomUUID();
-        customerId = UUID.randomUUID();
-        billingPlanId = UUID.randomUUID();
-        contractDetailId = UUID.randomUUID();
         UpdateDiscountDto updateDiscountDto = new UpdateDiscountDto();
         updateDiscountDto.setName("Test Name");
         updateDiscountDto.setPercentage(0.1);

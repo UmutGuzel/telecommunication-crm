@@ -23,9 +23,10 @@ public interface DiscountService {
 
     List<DiscountListiningDto> getActiveDiscounts();
 
-    List<DiscountListiningDto> getActiveDiscountsByCustomerId(UUID customerId);
+    // List<DiscountListiningDto> getActiveDiscountsByCustomerId(UUID customerId);
 
-    List<DiscountListiningDto> getDiscountsByContractId(UUID contractId);
+    public List<DiscountListiningDto> getDiscountsByContractId(UUID contractId);
+
     // Discount applyDiscountForAnnualPackage(CreateDiscountDto createDiscountDto);
 
 }
