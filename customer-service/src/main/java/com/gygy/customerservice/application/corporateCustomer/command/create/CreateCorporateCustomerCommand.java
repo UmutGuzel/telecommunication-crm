@@ -52,13 +52,17 @@ public class CreateCorporateCustomerCommand implements Command<CreatedCorporateC
             Address newAddress = addressMapper.convertCreateAddressDtoToAddress(command.getAddress());
             addressRepository.save(newAddress);
 
-            CorporateCustomer corporateCustomer = corporateCustomerMapper.convertCreateCommandToCorporateCustomer(command);
-            corporateCustomer.setAddress(newAddress);
+            CorporateCustomer newCorporateCustomer = corporateCustomerMapper.convertCreateCommandToCorporateCustomer(command);
+            newCorporateCustomer.setAddress(newAddress);
 
-            CorporateCustomer newCorporateCustomer = corporateCustomerRepository.save(corporateCustomer);
+            corporateCustomerRepository.save(newCorporateCustomer);
 
             kafkaProducerService.sendCreatedCorporateCustomerEvent(
                 corporateCustomerMapper.convertToCreatedCorporateCustomerEvent(newCorporateCustomer)
+            );
+
+            kafkaProducerService.sendCreatedCorporateCustomerReadEvent(
+                corporateCustomerMapper.convertToCreatedCorporateCustomerReadEvent(newCorporateCustomer)
             );
 
             return corporateCustomerMapper.convertCorporateCustomerToResponse(newCorporateCustomer);

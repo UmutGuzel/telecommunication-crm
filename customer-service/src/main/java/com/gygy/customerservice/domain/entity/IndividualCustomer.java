@@ -22,6 +22,9 @@ import java.time.LocalDate;
 public class IndividualCustomer extends Customer {
     @Column(name = "identity_number", nullable = false)
     private String identityNumber;
+    
+    @Column(name = "identity_number_hash", nullable = false, unique = true)
+    private String identityNumberHash;
 
     private String name;
     private String surname;

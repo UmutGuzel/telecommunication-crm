@@ -2,6 +2,10 @@ package com.gygy.customerservice.application.customer.controller;
 
 import java.util.List;
 
+import com.gygy.customerservice.application.corporateCustomer.query.GetCorporateCustomerByIdQuery;
+import com.gygy.customerservice.application.corporateCustomer.query.GetCorporateCustomerByIdResponse;
+import com.gygy.customerservice.application.individualCustomer.query.GetIndividualCustomerByIdQuery;
+import com.gygy.customerservice.application.individualCustomer.query.GetIndividualCustomerByIdResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,4 +51,4 @@ public class CustomerReadController extends BaseController {
         GetCustomerByPhoneNumberReadQuery query = new GetCustomerByPhoneNumberReadQuery(phoneNumber);
         return query.execute(pipeline);
     }
-} 
+}

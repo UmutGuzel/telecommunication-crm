@@ -20,6 +20,9 @@ public class CorporateCustomer extends Customer {
     @Column(name = "tax_number", nullable = false)
     private String taxNumber;
 
+    @Column(name = "tax_number_hash", nullable = false, unique = true)
+    private String taxNumberHash;
+
     @Column(name = "company_name")
     private String companyName;
 

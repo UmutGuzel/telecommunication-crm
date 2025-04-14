@@ -75,6 +75,10 @@ public class UpdateIndividualCustomerCommand implements Command<UpdatedIndividua
                 individualCustomerMapper.convertToUpdatedIndividualCustomerEvent(individualCustomer)
             );
 
+            kafkaProducerService.sendUpdatedIndividualCustomerReadEvent(
+                individualCustomerMapper.convertToUpdatedIndividualCustomerReadEvent(individualCustomer)
+            );
+
             return individualCustomerMapper.convertIndividualCustomerToUpdatedIndividualCustomerResponse(individualCustomer);
         }
     }

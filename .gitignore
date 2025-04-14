@@ -3,3 +3,4 @@
 .idea/
 .vscode/
 docker-to-ecr.sh
+/debezium-service/target/
