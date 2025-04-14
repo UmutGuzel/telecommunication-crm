@@ -7,10 +7,15 @@ import com.gygy.customerservice.application.individualCustomer.command.create.Cr
 import com.gygy.customerservice.application.individualCustomer.command.update.UpdateIndividualCustomerCommand;
 import com.gygy.customerservice.application.individualCustomer.command.update.UpdatedIndividualCustomerResponse;
 import com.gygy.customerservice.application.individualCustomer.query.GetListIndividualCustomerItemDto;
+import com.gygy.customerservice.application.individualCustomer.query.read.GetListIndividualCustomerItemReadDto;
 import com.gygy.customerservice.domain.entity.Address;
+import com.gygy.customerservice.domain.entity.CustomerReadEntity;
 import com.gygy.customerservice.domain.entity.IndividualCustomer;
+import com.gygy.customerservice.domain.enums.CustomerType;
 import com.gygy.customerservice.infrastructure.messaging.event.CreatedIndividualCustomerEvent;
 import com.gygy.customerservice.infrastructure.messaging.event.UpdatedIndividualCustomerEvent;
+import com.gygy.customerservice.infrastructure.messaging.event.db.CreatedIndividualCustomerReadEvent;
+import com.gygy.customerservice.infrastructure.messaging.event.db.UpdatedIndividualCustomerReadEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -132,6 +137,43 @@ public class IndividualCustomerMapper {
                 .gender(customer.getGender())
                 .birthDate(customer.getBirthDate())
                 .address(addressMapper.convertAddressToAddressResponse(customer.getAddress()))
+                .build();
+    }
+
+    public CreatedIndividualCustomerReadEvent convertToCreatedIndividualCustomerReadEvent(IndividualCustomer customer) {
+        return CreatedIndividualCustomerReadEvent.builder()
+                .id(customer.getId())
+                .email(customer.getEmail())
+                .phoneNumber(customer.getPhoneNumber())
+                .type(CustomerType.INDIVIDUAL)
+                .name(customer.getName())
+                .surname(customer.getSurname())
+                .gender(customer.getGender())
+                .birthDate(customer.getBirthDate())
+                .build();
+    }
+
+    public UpdatedIndividualCustomerReadEvent convertToUpdatedIndividualCustomerReadEvent(IndividualCustomer customer) {
+        return UpdatedIndividualCustomerReadEvent.builder()
+                .id(customer.getId())
+                .email(customer.getEmail())
+                .phoneNumber(customer.getPhoneNumber())
+                .name(customer.getName())
+                .surname(customer.getSurname())
+                .gender(customer.getGender())
+                .birthDate(customer.getBirthDate())
+                .build();
+    }
+
+    public GetListIndividualCustomerItemReadDto convertCustomerReadEntityToGetListIndividualCustomerItemReadDto(CustomerReadEntity entity) {
+        return GetListIndividualCustomerItemReadDto.builder()
+                .id(entity.getId())
+                .email(entity.getEmail())
+                .phoneNumber(entity.getPhoneNumber())
+                .name(entity.getName())
+                .surname(entity.getSurname())
+                .gender(entity.getGender())
+                .birthDate(entity.getBirthDate())
                 .build();
     }
 }

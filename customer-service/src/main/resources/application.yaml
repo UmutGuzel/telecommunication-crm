@@ -10,14 +10,22 @@ spring:
     import: configserver:${configurl}
 
   kafka:
-    consumer:
+     producer:
+       key-serializer: org.apache.kafka.common.serialization.StringSerializer
+       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+       properties:
+         spring.json.add.type.headers: true
+         spring.json.type.mapping: createdIndividualCustomerReadEvent:com.gygy.customerservice.infrastructure.messaging.event.db.CreatedIndividualCustomerReadEvent,createdIndividualCustomerEvent:com.gygy.customerservice.infrastructure.messaging.event.CreatedIndividualCustomerEvent,createdCorporateCustomerEvent:com.gygy.customerservice.infrastructure.messaging.event.CreatedCorporateCustomerEvent,updatedIndividualCustomerEvent:com.gygy.customerservice.infrastructure.messaging.event.UpdatedIndividualCustomerEvent,updatedCorporateCustomerEvent:com.gygy.customerservice.infrastructure.messaging.event.UpdatedCorporateCustomerEvent,createdCorporateCustomerReadEvent:com.gygy.customerservice.infrastructure.messaging.event.db.CreatedCorporateCustomerReadEvent
+         spring.json.type.trusted.packages: "*"
+     consumer:
       group-id: customer-read-group, notification-group
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
+        spring.json.use.type.headers: true
         spring.json.trusted.packages: '*'
-        spring.json.type.mapping: notificationPreferencesChangedEvent:com.gygy.customerservice.infrastructure.messaging.event.NotificationPreferencesChangedEvent,createdIndividualCustomerReadEvent:com.gygy.customerservice.infrastructure.messaging.event.db.CreatedIndividualCustomerReadEvent
+        spring.json.type.mapping: "notificationPreferencesChangedEvent:com.gygy.customerservice.infrastructure.messaging.event.NotificationPreferencesChangedEvent,createdIndividualCustomerReadEvent:com.gygy.customerservice.infrastructure.messaging.event.db.CreatedIndividualCustomerReadEvent,createdCorporateCustomerReadEvent:com.gygy.customerservice.infrastructure.messaging.event.db.CreatedCorporateCustomerReadEvent,updatedIndividualCustomerReadEvent:com.gygy.customerservice.infrastructure.messaging.event.db.UpdatedIndividualCustomerReadEvent,updatedCorporateCustomerReadEvent:com.gygy.customerservice.infrastructure.messaging.event.db.UpdatedCorporateCustomerReadEvent"
         spring.json.value.default.type: com.gygy.customerservice.infrastructure.messaging.event.db.CreatedIndividualCustomerReadEvent
 
 management:

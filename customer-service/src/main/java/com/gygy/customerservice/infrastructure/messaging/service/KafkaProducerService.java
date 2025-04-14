@@ -1,5 +1,8 @@
 package com.gygy.customerservice.infrastructure.messaging.service;
 
+import com.gygy.customerservice.infrastructure.messaging.event.db.CreatedCorporateCustomerReadEvent;
+import com.gygy.customerservice.infrastructure.messaging.event.db.UpdatedCorporateCustomerReadEvent;
+import com.gygy.customerservice.infrastructure.messaging.event.db.UpdatedIndividualCustomerReadEvent;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.Message;
@@ -71,6 +74,39 @@ public class KafkaProducerService {
                 "INDIVIDUAL_CUSTOMER_READ_CREATED",
                 createdIndividualCustomerReadEvent,
                 "individual-customer-read-created-topic"
+        );
+    }
+
+    public void sendCreatedCorporateCustomerReadEvent(CreatedCorporateCustomerReadEvent createdCorporateCustomerReadEvent) {
+        log.info("Saving corporate customer read created event to outbox: {}", createdCorporateCustomerReadEvent);
+        outboxService.saveOutbox(
+                "CORPORATE_CUSTOMER",
+                createdCorporateCustomerReadEvent.getId().toString(),
+                "CORPORATE_CUSTOMER_READ_CREATED",
+                createdCorporateCustomerReadEvent,
+                "corporate-customer-read-created-topic"
+        );
+    }
+
+    public void sendUpdatedIndividualCustomerReadEvent(UpdatedIndividualCustomerReadEvent updatedIndividualCustomerReadEvent) {
+        log.info("Saving individual customer read updated event to outbox: {}", updatedIndividualCustomerReadEvent);
+        outboxService.saveOutbox(
+                "INDIVIDUAL_CUSTOMER",
+                updatedIndividualCustomerReadEvent.getId().toString(),
+                "INDIVIDUAL_CUSTOMER_READ_UPDATED",
+                updatedIndividualCustomerReadEvent,
+                "individual-customer-read-updated-topic"
+        );
+    }
+
+    public void sendUpdatedCorporateCustomerReadEvent(UpdatedCorporateCustomerReadEvent updatedCorporateCustomerReadEvent) {
+        log.info("Saving corporate customer read updated event to outbox: {}", updatedCorporateCustomerReadEvent);
+        outboxService.saveOutbox(
+                "CORPORATE_CUSTOMER",
+                updatedCorporateCustomerReadEvent.getId().toString(),
+                "CORPORATE_CUSTOMER_READ_UPDATED",
+                updatedCorporateCustomerReadEvent,
+                "corporate-customer-read-updated-topic"
         );
     }
 }
