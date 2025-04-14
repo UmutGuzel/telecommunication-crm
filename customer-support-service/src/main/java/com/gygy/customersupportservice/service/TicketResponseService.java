@@ -62,12 +62,12 @@ public class TicketResponseService {
     }
 
     @Transactional(readOnly = true)
-    public List<TicketResponse> getResponsesByUserId(Long userId) {
+    public List<TicketResponse> getResponsesByUserId(UUID userId) {
         return ticketResponseRepository.findByUserId(userId);
     }
 
     @Transactional(readOnly = true)
-    public Page<TicketResponse> getResponsesByUserId(Long userId, Pageable pageable) {
+    public Page<TicketResponse> getResponsesByUserId(UUID userId, Pageable pageable) {
         return ticketResponseRepository.findByUserId(userId, pageable);
     }
 }

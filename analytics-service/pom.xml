@@ -94,7 +94,7 @@
         <dependency>
             <groupId>io.github.umutguzel</groupId>
             <artifactId>common</artifactId>
-            <version>1.0.14</version>
+            <version>1.0.17</version>
         </dependency>
         <!-- Spring Boot Actuator -->
         <dependency>
@@ -105,6 +105,10 @@
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
     </dependencies>
     <dependencyManagement>

@@ -24,10 +24,10 @@ public class Contract {
     @UuidGenerator
     private UUID id;
 
-    @Column(name = "contract_number", unique = true, nullable = false)
+    @Column(name = "contract_number")
     private String contractNumber;
 
-    @Column(name = "document_type", nullable = false)
+    @Column(name = "document_type")
     private String documentType;
 
     @Column(name = "document_url")
@@ -37,10 +37,10 @@ public class Contract {
     private LocalDateTime uploadDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
+    @Column(name = "status")
     private Status status;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")

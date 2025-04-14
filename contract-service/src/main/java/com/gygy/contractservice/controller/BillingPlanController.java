@@ -16,22 +16,25 @@ public class BillingPlanController {
     public BillingPlanController(BillingPlanService billingPlanService) {
         this.billingPlanService = billingPlanService;
     }
+
     @GetMapping
     public List<BillingPlanListiningDto> getAllBillingPlans() {
         return this.billingPlanService.getAll();
     }
-    @PostMapping
-    public void createBillingPlan(@RequestBody CreateBillingPlanDto createBillingPlanDto) {
-        this.billingPlanService.add(createBillingPlanDto);
-    }
+
+    // @PostMapping
+    // public void createBillingPlan(@RequestBody CreateBillingPlanDto
+    // createBillingPlanDto) {
+    // this.billingPlanService.add(createBillingPlanDto);
+    // }
     @PutMapping
     public void updateBillingPlan(@RequestBody UpdateBillingPlanDto updateBillingPlanDto) {
         this.billingPlanService.update(updateBillingPlanDto);
     }
+
     @DeleteMapping
     public void deleteBillingPlan(@RequestBody DeleteBillingPlanDto deleteBillingPlanDto) {
         this.billingPlanService.delete(deleteBillingPlanDto);
     }
-
 
 }

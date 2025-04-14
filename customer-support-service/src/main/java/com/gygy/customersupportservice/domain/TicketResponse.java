@@ -28,7 +28,7 @@ public class TicketResponse {
     private String message;
 
     @Column(name = "user_id", nullable = false)
-    private Long userId;
+    private UUID userId;
 
     @ManyToOne
     @JoinColumn(name = "ticket_id", nullable = false)

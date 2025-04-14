@@ -1,4 +1,5 @@
 package com.gygy.contractservice.entity;
+
 import com.gygy.contractservice.model.enums.ContractDetailType;
 import com.gygy.contractservice.model.enums.Status;
 import com.gygy.contractservice.model.enums.ServiceType;
@@ -16,7 +17,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@Table(name="contract_details")
+@Table(name = "contract_details")
 @Getter
 @Setter
 @Builder
@@ -26,62 +27,56 @@ public class ContractDetail {
     @UuidGenerator
     private UUID id;
 
-
     private String name;
 
-    @Column(name="customer_name")
+    @Column(name = "customer_name")
     private String customerName;
 
     @Column(name = "signature_date")
     private LocalDateTime signatureDate;
 
-    @Column(name="cusmomer_id")
+    @Column(name = "cusmomer_id")
     private UUID customerId;
 
-    @Column(name="phone_number")
+    @Column(name = "phone_number")
     private String phoneNumber;
 
-
-    @Column(name = "start_date", nullable = false)
+    @Column(name = "start_date")
     private LocalDate startDate;
 
     @Column(name = "end_date")
     private LocalDate endDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
+    @Column(name = "status")
     private Status status;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "service_type", nullable = false)
+    @Column(name = "service_type")
     private ServiceType serviceType;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "contract_detail_type", nullable = false)
+    @Column(name = "contract_detail_type")
     private ContractDetailType contractDetailType;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     @Email(message = "Email is not in proper format", regexp = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")
     private String email;
 
-
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
     @ManyToOne
-    @JoinColumn(name="contract_id",nullable = false)
+    @JoinColumn(name = "contract_id")
     private Contract contract;
 
     @OneToMany(mappedBy = "contractDetail")
     private Set<Commitment> commitments;
 
-
-
     public ContractDetail() {
 
     }
-
 
 }

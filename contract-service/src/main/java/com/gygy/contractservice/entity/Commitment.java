@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name="commitments")
+@Table(name = "commitments")
 @Getter
 @Setter
 @Builder
@@ -23,38 +23,36 @@ public class Commitment {
 
     private String name;
 
-    @Column(name = "duration_months", nullable = false)
+    @Column(name = "duration_months")
     private Integer durationMonths;
-    @Column(name = "billing_day", nullable = false)
+    @Column(name = "billing_day")
     private Integer billingDay;
 
-
-    @Column(name = "start_date", nullable = false)
+    @Column(name = "start_date")
     private LocalDate startDate;
 
-    @Column(name = "end_date", nullable = false)
+    @Column(name = "end_date")
     private LocalDate endDate;
 
-    @Column(name = "early_termination_fee", nullable = false)
+    @Column(name = "early_termination_fee")
     private Double earlyTerminationFee;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
+    @Column(name = "status")
     private Status status;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-
     @Enumerated(EnumType.STRING)
-    @Column(name = "cycle_type", nullable = false)
+    @Column(name = "cycle_type")
     private BillingCycleType cycleType;
 
     @ManyToOne
-    @JoinColumn(name="contract_detail_id", nullable = false)
+    @JoinColumn(name = "contract_detail_id")
     private ContractDetail contractDetail;
 
     public Commitment() {

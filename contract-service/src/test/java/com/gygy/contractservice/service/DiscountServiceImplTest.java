@@ -25,7 +25,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.*;
 
-
 @ExtendWith(MockitoExtension.class)
 class DiscountServiceImplTest {
 
@@ -61,9 +60,6 @@ class DiscountServiceImplTest {
 
         createDiscountDto = new CreateDiscountDto();
         createDiscountDto.setDescription("Test Description");
-        createDiscountDto.setAmount(12.22);
-        createDiscountDto.setStartDate(LocalDate.now());
-        createDiscountDto.setEndDate(LocalDate.now());
     }
 
     @Test
@@ -79,10 +75,8 @@ class DiscountServiceImplTest {
         verify(discountMapper, times(1)).createDiscountFromCreateDiscountDto(createDiscountDto);
     }
 
-
-
     @Test
-     void whenFindByIdCalledWithValidId_itShouldReturnDiscount() {
+    void whenFindByIdCalledWithValidId_itShouldReturnDiscount() {
         // Arrange
         when(discountRepository.findById(discountId)).thenReturn(Optional.of(discount));
 

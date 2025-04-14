@@ -1,4 +1,5 @@
 package com.gygy.contractservice.service;
+
 import com.gygy.contractservice.dto.discount.CreateDiscountDto;
 import com.gygy.contractservice.dto.discount.DeleteDiscountDto;
 import com.gygy.contractservice.dto.discount.DiscountListiningDto;
@@ -9,15 +10,22 @@ import java.util.UUID;
 
 public interface DiscountService {
     List<Discount> findAllById(List<UUID> ids);
-    Discount findById(UUID id);
-    void add(CreateDiscountDto createDiscountDto);
-    List<DiscountListiningDto> getAll();
-    Discount update(UpdateDiscountDto updateDiscountDto);
-    void delete(DeleteDiscountDto deleteDiscountDto);
-    List<DiscountListiningDto> getActiveDiscounts();
-    List<DiscountListiningDto> getActiveDiscountsByCustomerId(UUID customerId);
-    List<DiscountListiningDto> getDiscountsByContractId(UUID contractId);
-    Discount applyDiscountForAnnualPackage(CreateDiscountDto createDiscountDto);
 
+    Discount findById(UUID id);
+
+    void add(CreateDiscountDto createDiscountDto);
+
+    List<DiscountListiningDto> getAll();
+
+    Discount update(UpdateDiscountDto updateDiscountDto);
+
+    void delete(DeleteDiscountDto deleteDiscountDto);
+
+    List<DiscountListiningDto> getActiveDiscounts();
+
+    List<DiscountListiningDto> getActiveDiscountsByCustomerId(UUID customerId);
+
+    List<DiscountListiningDto> getDiscountsByContractId(UUID contractId);
+    // Discount applyDiscountForAnnualPackage(CreateDiscountDto createDiscountDto);
 
 }

@@ -47,13 +47,13 @@ class ContractServiceImplTest {
         contract.setDocumentType("Test Type");
 
         createContractDto = new CreateContractDto();
-        createContractDto.setStatus(ACTIVE);
-        createContractDto.setDocumentType("Test URL");
-        createContractDto.setUploadDate(LocalDateTime.now());
-        createContractDto.setDocumentType("Test Type");
-        // createContractDto.setSignatureDate(LocalDateTime.now());
-        createContractDto.setContractNumber("1212");
-        createContractDto.setCreateDate(LocalDateTime.now());
+        // createContractDto.setStatus(ACTIVE);
+        // createContractDto.setDocumentType("Test URL");
+        // createContractDto.setUploadDate(LocalDateTime.now());
+        // createContractDto.setDocumentType("Test Type");
+        // // createContractDto.setSignatureDate(LocalDateTime.now());
+        // createContractDto.setContractNumber("1212");
+        // createContractDto.setCreateDate(LocalDateTime.now());
     }
 
     @Test

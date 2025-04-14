@@ -24,10 +24,6 @@ public class CreateBillingPlanDto {
     @Min(value = 1, message = "Billing day must be at least 1")
     private Integer billingDay;
 
-    @NotNull(message = "Payment due days is required")
-    @Min(value = 0, message = "Payment due days must be at least 0")
-    private Integer paymentDueDays;
-
     @NotNull(message = "Base amount is required")
     @DecimalMin(value = "0.0", inclusive = true, message = "Base amount must be at least 0")
     private Integer baseAmount;
@@ -41,6 +37,5 @@ public class CreateBillingPlanDto {
 
     @NotNull(message = "Status is required")
     private Status status;
-
 
 }

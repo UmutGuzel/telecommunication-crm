@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -20,20 +19,18 @@ public class TicketService {
     private final TicketRepository ticketRepository;
     private final AnalyticsEventService analyticsEventService;
     private final TicketRules ticketRules;
+    private final TicketStatusService ticketStatusService;
 
     public Ticket createTicket(Ticket ticket) {
-        Ticket processedTicket = ticketRules.applyNewTicketRules(ticket);
-        // Save the ticket directly
-        Ticket savedTicket = ticketRepository.save(processedTicket);
-
-        // Publish analytics event
+        TicketStatus defaultStatus = ticketStatusService.findByStatus("OPEN");
+        ticket.setStatus(defaultStatus);
+        Ticket savedTicket = ticketRepository.save(ticket);
         analyticsEventService.publishTicketCreatedEvent(savedTicket);
 
         return savedTicket;
     }
 
     public Ticket getTicket(UUID id) {
-        // Use the optimized query that fetches the status eagerly
         Ticket ticket = ticketRepository.findByIdWithStatus(id);
         if (ticket == null) {
             throw new EntityNotFoundException("Ticket not found with id: " + id);
@@ -41,19 +38,19 @@ public class TicketService {
         return ticket;
     }
 
-    public List<Ticket> getTicketsByCustomerId(Long customerId) {
+    public List<Ticket> getTicketsByCustomerId(UUID customerId) {
         return ticketRepository.findByCustomerId(customerId);
     }
 
-    public Page<Ticket> getTicketsByCustomerId(Long customerId, Pageable pageable) {
+    public Page<Ticket> getTicketsByCustomerId(UUID customerId, Pageable pageable) {
         return ticketRepository.findByCustomerId(customerId, pageable);
     }
 
-    public List<Ticket> getTicketsByUserId(Long userId) {
+    public List<Ticket> getTicketsByUserId(UUID userId) {
         return ticketRepository.findByUserId(userId);
     }
 
-    public Page<Ticket> getTicketsByUserId(Long userId, Pageable pageable) {
+    public Page<Ticket> getTicketsByUserId(UUID userId, Pageable pageable) {
         return ticketRepository.findByUserId(userId, pageable);
     }
 

@@ -14,13 +14,13 @@ import java.util.UUID;
 
 @Repository
 public interface TicketRepository extends JpaRepository<Ticket, UUID> {
-    List<Ticket> findByCustomerId(Long customerId);
+    List<Ticket> findByCustomerId(UUID customerId);
 
-    List<Ticket> findByUserId(Long userId);
+    List<Ticket> findByUserId(UUID userId);
 
-    Page<Ticket> findByCustomerId(Long customerId, Pageable pageable);
+    Page<Ticket> findByCustomerId(UUID customerId, Pageable pageable);
 
-    Page<Ticket> findByUserId(Long userId, Pageable pageable);
+    Page<Ticket> findByUserId(UUID userId, Pageable pageable);
 
     @Query(value = "SELECT t.* FROM tickets t " +
             "INNER JOIN ticket_statuses ts ON t.status_id = ts.id " +

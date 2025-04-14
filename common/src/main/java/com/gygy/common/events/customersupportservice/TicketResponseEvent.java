@@ -11,13 +11,13 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TicketResponseEvent extends TicketAnalyticsEvent {
+@Builder
+public class TicketResponseEvent {
     private UUID responseId;
-
-    @Builder
-    public TicketResponseEvent(UUID ticketId, String ticketTitle, String ticketType, Long customerId, Long userId,
-            UUID responseId) {
-        super(ticketId, customerId, userId, ticketTitle, ticketType, LocalDateTime.now());
-        this.responseId = responseId;
-    }
+    private UUID ticketId;
+    private UUID customerId;
+    private UUID userId;
+    private String ticketTitle;
+    private String ticketType;
+    private LocalDateTime timestamp;
 }

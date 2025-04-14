@@ -12,8 +12,8 @@ import java.util.UUID;
 @NoArgsConstructor
 public class TicketAnalyticsEvent {
     private UUID ticketId;
-    private Long customerId;
-    private Long userId;
+    private UUID customerId;
+    private UUID userId;
     private String ticketTitle;
     private String ticketType;
     private LocalDateTime timestamp;

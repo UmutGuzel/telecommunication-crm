@@ -32,10 +32,10 @@ public class Ticket {
     private String type;
 
     @Column(name = "customer_id", nullable = false)
-    private Long customerId;
+    private UUID customerId;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @Column(name = "user_id")
+    private UUID userId;
 
     @OneToMany(mappedBy = "ticket")
     private List<TicketResponse> responses;

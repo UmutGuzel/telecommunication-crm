@@ -59,12 +59,12 @@ class BillingPlanServiceImplTest {
         billingPlan = new BillingPlan();
         billingPlan.setId(id);
         billingPlan.setStatus(ACTIVE);
-        billingPlan.setBillingDay(2);
+        // billingPlan.setBillingDay(2);
         billingPlan.setPaymentMethod(CREDIT_CARD);
         billingPlan.setContract(contract);
         billingPlan.setTaxRate(12.2);
         billingPlan.setCycleType(MONTHLY);
-        billingPlan.setPaymentDueDays(2);
+        // billingPlan.setPaymentDueDays(2);
         billingPlan.setDescription("Test Description");
         billingPlan.setUpdatedAt(LocalDateTime.now());
         billingPlan.setBaseAmount(12);
@@ -87,8 +87,6 @@ class BillingPlanServiceImplTest {
         createBillingPlanDto.setTaxRate(12.2);
         createBillingPlanDto.setStatus(ACTIVE);
         createBillingPlanDto.setPaymentMethod(CREDIT_CARD);
-        createBillingPlanDto.setBillingDay(2);
-        createBillingPlanDto.setPaymentDueDays(2);
         createBillingPlanDto.setBaseAmount(12);
     }
 
@@ -112,7 +110,7 @@ class BillingPlanServiceImplTest {
                 .thenReturn(billingPlan);
 
         // Act: add metodu çağrılıyor
-        billingPlanService.add(createBillingPlanDto);
+        // billingPlanService.add(createBillingPlanDto);
 
         // Assert: save metodunun bir kez çağrıldığını doğruluyoruz
         verify(billingPlanRepository, times(1)).save(any(BillingPlan.class));

@@ -12,32 +12,17 @@ import java.util.UUID;
 @Getter
 @Setter
 public class DiscountListiningDto {
-    private UUID customerId;
     private UUID contractId;
-    private DiscountType discountType;
-    private double amount;
-    private double percentage;
-    private LocalDate startDate;
-    private LocalDate endDate;
+    private String name;
     private String description;
-    private  List<UUID> billingPlanId;
-    private LocalDate createDate;
-    private LocalDate updateDate;
-    private Status status;
+    private double percentage;
 
-
-    public DiscountListiningDto(DiscountType discountType, double amount, double percentage, Contract contract, LocalDate endDate, LocalDate startDate, LocalDate createdAt, LocalDate updatedAt, UUID customerId, Status status, String description) {
-        this.discountType = discountType;
-        this.amount = amount;
+    public DiscountListiningDto(double percentage, Contract contract, LocalDate endDate, LocalDate startDate,
+            LocalDate createdAt, LocalDate updatedAt, UUID customerId, Status status, String description) {
         this.percentage = percentage;
         this.contractId = contract.getId();
-        this.endDate = endDate;
-        this.startDate = startDate;
-        this.createDate = createdAt;
-        this.updateDate = updatedAt;
-        this.customerId=customerId;
-        this.status=status;
-        this.description=description;
+        this.name = name;
+        this.description = description;
     }
 
     public DiscountListiningDto() {

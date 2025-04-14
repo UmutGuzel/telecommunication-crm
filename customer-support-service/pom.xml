@@ -90,7 +90,7 @@
         <dependency>
             <groupId>io.github.umutguzel</groupId>
             <artifactId>common</artifactId>
-            <version>1.0.14</version>
+            <version>1.0.17</version>
         </dependency>
     </dependencies>
     <dependencyManagement>

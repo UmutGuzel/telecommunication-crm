@@ -19,37 +19,46 @@ public class DiscountController {
     public DiscountController(DiscountService discountService) {
         this.discountService = discountService;
     }
+
     @GetMapping
-    public List<DiscountListiningDto> getAll(){
+    public List<DiscountListiningDto> getAll() {
         return discountService.getAll();
     }
+
     @PostMapping
     public void add(@RequestBody CreateDiscountDto createDiscountDto) {
         discountService.add(createDiscountDto);
     }
+
     @PutMapping
     public void update(@RequestBody UpdateDiscountDto updateDiscountDto) {
         discountService.update(updateDiscountDto);
     }
+
     @DeleteMapping
     public void delete(@RequestBody DeleteDiscountDto deleteDiscountDto) {
         discountService.delete(deleteDiscountDto);
     }
+
     @GetMapping("/getActiveDiscounts")
-    public List<DiscountListiningDto> getActiveDiscounts(){
+    public List<DiscountListiningDto> getActiveDiscounts() {
         return discountService.getActiveDiscounts();
     }
+
     @GetMapping("/get-active-discountsByCustomerId")
-    public List<DiscountListiningDto> getActiveDiscountsByCustomerId(@RequestParam UUID id){
+    public List<DiscountListiningDto> getActiveDiscountsByCustomerId(@RequestParam UUID id) {
         return discountService.getActiveDiscountsByCustomerId(id);
     }
+
     @GetMapping("/getDiscountsByContractId")
-    public List<DiscountListiningDto> getDiscountsByContractId(@RequestParam UUID id){
+    public List<DiscountListiningDto> getDiscountsByContractId(@RequestParam UUID id) {
         return discountService.getDiscountsByContractId(id);
     }
-    @PostMapping("/discounted")
-    public Discount createDiscountForAnnualPackage(@RequestBody CreateDiscountDto createDiscountDto) {
-        Discount createdDiscount = discountService.applyDiscountForAnnualPackage(createDiscountDto);
-        return createdDiscount;
-    }
+    // @PostMapping("/discounted")
+    // public Discount createDiscountForAnnualPackage(@RequestBody CreateDiscountDto
+    // createDiscountDto) {
+    // Discount createdDiscount =
+    // discountService.applyDiscountForAnnualPackage(createDiscountDto);
+    // return createdDiscount;
+    // }
 }

@@ -3,13 +3,20 @@ package com.gygy.common.events.customersupportservice;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-public class TicketCreatedEvent extends TicketAnalyticsEvent {
-    @Builder
-    public TicketCreatedEvent(UUID ticketId, String ticketTitle, String ticketType, Long customerId, Long userId) {
-        super(ticketId, customerId, userId, ticketTitle, ticketType, LocalDateTime.now());
-    }
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class TicketCreatedEvent {
+    private UUID ticketId;
+    private UUID customerId;
+    private UUID userId;
+    private String ticketTitle;
+    private String ticketType;
+    private LocalDateTime timestamp;
 }

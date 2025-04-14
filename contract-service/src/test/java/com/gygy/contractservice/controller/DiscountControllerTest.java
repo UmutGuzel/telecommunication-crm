@@ -55,36 +55,30 @@ class DiscountControllerTest {
         contractDetailId = UUID.randomUUID();
         customerId = UUID.randomUUID();
         DiscountListiningDto discountListiningDto = new DiscountListiningDto();
-        discountListiningDto.setAmount(100.0);
-        discountListiningDto.setDiscountType(STUDENT);
         discountListiningDto.setDescription("Test Description");
-        discountListiningDto.setStatus(Status.ACTIVE);
-        discountListiningDto.setEndDate(LocalDate.now());
-        discountListiningDto.setStartDate(LocalDate.now());
-        discountListiningDto.setBillingPlanId(Collections.singletonList(billingPlanId));
-        // discountListiningDto.setContractDetailId(contractDetailId);
-        discountListiningDto.setCustomerId(customerId);
         discountListiningDto.setPercentage(0.1);
-        discountListiningDto.setCreateDate(LocalDate.now());
-        discountListiningDto.setUpdateDate(LocalDate.now());
+        // discountListiningDto.setContract(contract);
+        // discountListiningDto.setEndDate(LocalDate.now());
+        // discountListiningDto.setStartDate(LocalDate.now());
+        // discountListiningDto.setCreateDate(LocalDate.now());
+        // discountListiningDto.setUpdateDate(LocalDate.now());
 
         List<DiscountListiningDto> discountListiningDtos = List.of(discountListiningDto);
         when(discountService.getAll()).thenReturn(discountListiningDtos);
         List<DiscountListiningDto> response = discountController.getAll();
 
         assertFalse(response.isEmpty());
-        assertEquals(100.0, response.get(0).getAmount());
-        assertEquals(STUDENT, response.get(0).getDiscountType());
-        assertEquals("Test Description", response.get(0).getDescription());
-        assertEquals(Status.ACTIVE, response.get(0).getStatus());
-        assertEquals(LocalDate.now(), response.get(0).getEndDate());
-        assertEquals(LocalDate.now(), response.get(0).getStartDate());
-        assertEquals(billingPlanId, response.get(0).getBillingPlanId().get(0)); // Düzeltildi!
-        // assertEquals(contractDetailId,response.get(0).getContractDetailId());
-        assertEquals(customerId, response.get(0).getCustomerId());
         assertEquals(0.1, response.get(0).getPercentage());
-        assertEquals(LocalDate.now(), response.get(0).getCreateDate());
-        assertEquals(LocalDate.now(), response.get(0).getUpdateDate());
+        assertEquals("Test Description", response.get(0).getDescription());
+        // assertEquals(LocalDate.now(), response.get(0).getEndDate());
+        // assertEquals(LocalDate.now(), response.get(0).getStartDate());
+        // assertEquals(billingPlanId, response.get(0).getBillingPlanId().get(0)); //
+        // Düzeltildi!
+        // assertEquals(contractDetailId,response.get(0).getContractDetailId());
+        // assertEquals(customerId, response.get(0).getCustomerId());
+        // assertEquals(0.1, response.get(0).getPercentage());
+        // assertEquals(LocalDate.now(), response.get(0).getCreateDate());
+        // assertEquals(LocalDate.now(), response.get(0).getUpdateDate());
 
         verify(discountService, times(1)).getAll();
     }
@@ -106,15 +100,8 @@ class DiscountControllerTest {
         billingPlanId = UUID.randomUUID();
         contractDetailId = UUID.randomUUID();
         UpdateDiscountDto updateDiscountDto = new UpdateDiscountDto();
-        updateDiscountDto.setId(id);
-        updateDiscountDto.setDiscountType(STUDENT);
-        updateDiscountDto.setAmount(100);
-        updateDiscountDto.setCustomerId(customerId);
+        updateDiscountDto.setName("Test Name");
         updateDiscountDto.setPercentage(0.1);
-        updateDiscountDto.setBillingPlanId(Collections.singletonList(billingPlanId));
-        updateDiscountDto.setStatus(Status.ACTIVE);
-        updateDiscountDto.setStartDate(LocalDate.now());
-        updateDiscountDto.setEndDate(LocalDate.now());
         updateDiscountDto.setDescription("Test Description");
         // updateDiscountDto.setContractDetailId(contractDetailId);
 
@@ -140,7 +127,7 @@ class DiscountControllerTest {
     void updateDiscountNotFound() {
         id = UUID.randomUUID();
         UpdateDiscountDto updateDiscountDto = new UpdateDiscountDto();
-        updateDiscountDto.setId(id);
+        updateDiscountDto.setName("Test Name");
 
         // Simulate the service throwing an exception
         when(discountService.update(any(UpdateDiscountDto.class)))

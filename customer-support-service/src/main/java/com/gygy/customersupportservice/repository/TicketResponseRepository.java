@@ -16,11 +16,11 @@ import java.util.UUID;
 public interface TicketResponseRepository extends JpaRepository<TicketResponse, UUID> {
     List<TicketResponse> findByTicketId(UUID ticketId);
 
-    List<TicketResponse> findByUserId(Long userId);
+    List<TicketResponse> findByUserId(UUID userId);
 
     Page<TicketResponse> findByTicketId(UUID ticketId, Pageable pageable);
 
-    Page<TicketResponse> findByUserId(Long userId, Pageable pageable);
+    Page<TicketResponse> findByUserId(UUID userId, Pageable pageable);
 
     @Query("SELECT r FROM TicketResponse r JOIN FETCH r.ticket WHERE r.id = :id")
     TicketResponse findByIdWithTicket(@Param("id") UUID id);

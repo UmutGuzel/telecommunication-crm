@@ -12,10 +12,11 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TicketResponseDTO {
-    private UUID id;
-    private String message;
-    private UUID userId;
-    private UUID ticketId;
+public class TicketReturnDTO {
+    private String title;
+    private String description;
+    private String type;
+    private UUID customerId;
+    private String status;
     private LocalDateTime createdAt;
 }

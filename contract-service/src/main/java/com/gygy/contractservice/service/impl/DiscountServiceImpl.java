@@ -5,21 +5,16 @@ import com.gygy.contractservice.dto.discount.CreateDiscountDto;
 import com.gygy.contractservice.dto.discount.DeleteDiscountDto;
 import com.gygy.contractservice.dto.discount.DiscountListiningDto;
 import com.gygy.contractservice.dto.discount.UpdateDiscountDto;
-import com.gygy.contractservice.entity.BillingPlan;
 import com.gygy.contractservice.entity.Contract;
 import com.gygy.contractservice.entity.Discount;
 import com.gygy.contractservice.mapper.DiscountMapper;
-import com.gygy.contractservice.model.enums.DiscountType;
-import com.gygy.contractservice.model.enums.Status;
 import com.gygy.contractservice.repository.DiscountRepository;
-import com.gygy.contractservice.service.BillingPlanService;
 import com.gygy.contractservice.service.ContractService;
 import com.gygy.contractservice.service.DiscountService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -29,15 +24,15 @@ import static com.gygy.contractservice.constant.GeneralConstant.*;
 @Service
 public class DiscountServiceImpl implements DiscountService {
     private final DiscountRepository discountRepository;
-    private final BillingPlanService billingPlanService;
+    // private final BillingPlanService billingPlanService;
     private final ContractService contractService;
     private static final Logger logger = LoggerFactory.getLogger(DiscountServiceImpl.class);
     private final DiscountMapper discountMapper;
 
-    public DiscountServiceImpl(DiscountRepository discountRepository, BillingPlanService billingPlanService,
-                                ContractService contractService, DiscountMapper discountMapper) {
+    public DiscountServiceImpl(DiscountRepository discountRepository, ContractService contractService,
+            DiscountMapper discountMapper) {
         this.discountRepository = discountRepository;
-        this.billingPlanService = billingPlanService;
+        // this.billingPlanService = billingPlanService;
         this.contractService = contractService;
         this.discountMapper = discountMapper;
     }
@@ -72,16 +67,7 @@ public class DiscountServiceImpl implements DiscountService {
         logger.info("Creating new discount with name: {}", createDiscountDto.getName());
         try {
             Discount discount = discountMapper.createDiscountFromCreateDiscountDto(createDiscountDto);
-            
-            // BillingPlan ve ContractDetail ilişkilerini null kontrolü ile ekleyelim
-            if (createDiscountDto.getBillingPlanId() != null && !createDiscountDto.getBillingPlanId().isEmpty()) {
-                List<BillingPlan> billingPlans = billingPlanService.findAll(createDiscountDto.getBillingPlanId());
-                if (!billingPlans.isEmpty()) {
-                    // İlk billing plan'ı kullanıyoruz
-                    discount.setBillingPlan(billingPlans.get(0));
-                }
-            }
-            
+
             discountRepository.save(discount);
             logger.info("Successfully created discount with ID: {}", discount.getId());
         } catch (Exception e) {
@@ -93,9 +79,9 @@ public class DiscountServiceImpl implements DiscountService {
     @Override
     public List<DiscountListiningDto> getAll() {
         logger.debug(FETCHING_ALL_DISCOUNT);
-        List<Discount>  discounts = discountRepository.findAll();
+        List<Discount> discounts = discountRepository.findAll();
         List<DiscountListiningDto> discountListiningDtos = discounts.stream()
-                .map(discountMapper::toDiscountListiningDto )
+                .map(discountMapper::toDiscountListiningDto)
                 .collect(Collectors.toList());
         logger.info("Found {}  discount", discountListiningDtos.size());
         return discountListiningDtos;
@@ -103,15 +89,16 @@ public class DiscountServiceImpl implements DiscountService {
 
     @Override
     public Discount update(UpdateDiscountDto updateDiscountDto) {
-        logger.info("Updating discount  with ID: {}", updateDiscountDto.getId());
+        logger.info("Updating discount  with name: {}", updateDiscountDto.getName());
         try {
-            Contract contract = contractService.findById(updateDiscountDto.getContractId()).orElseThrow(()->new RuntimeException("Contract Not Found."));
-            List<BillingPlan> billingPlan = billingPlanService.findAll(updateDiscountDto.getBillingPlanId());
-            Discount discount=discountMapper.updateDiscountFromUpdateDiscountDto(updateDiscountDto);
-            discount.setId(updateDiscountDto.getId());
-            discount.setContract(contract);
-         //   discount.setBillingPlans(billingPlan);
-            Discount updatedDiscount=discountRepository.save(discount);
+            // Discount discount = discountRepository.findById(updateDiscountDto.getName())
+            // .orElseThrow(() -> new RuntimeException("Discount Not Found."));
+            // List<BillingPlan> billingPlan =
+            // billingPlanService.findAll(updateDiscountDto.getBillingPlanId());
+            Discount discount = discountMapper.updateDiscountFromUpdateDiscountDto(updateDiscountDto);
+            // discount.setContract(contract);
+            // discount.setBillingPlans(billingPlan);
+            Discount updatedDiscount = discountRepository.save(discount);
             logger.info("Successfully updated billing plan with ID: {}", updatedDiscount.getId());
             return updatedDiscount;
         } catch (Exception e) {
@@ -138,23 +125,11 @@ public class DiscountServiceImpl implements DiscountService {
         }
     }
 
-
-
     @Override
     public List<DiscountListiningDto> getActiveDiscounts() {
         return discountRepository.findAll().stream()
                 .filter(discounts -> "ACTIVE".equals(discounts.getStatus().toString()))
-                .map(discount -> new DiscountListiningDto(      discount.getDiscountType()
-                        ,discount.getAmount()
-                        ,discount.getPercentage()
-                        ,discount.getContract()
-                        ,discount.getEndDate()
-                        ,discount.getStartDate()
-                        ,discount.getCreatedAt(),
-                        discount.getUpdatedAt()
-                        ,discount.getCustomerId()
-                        ,discount.getStatus()
-                        ,discount.getDescription()))
+                .map(discountMapper::toDiscountListiningDto)
                 .toList();
     }
 
@@ -183,28 +158,28 @@ public class DiscountServiceImpl implements DiscountService {
         return discountListiningDtos;
     }
 
-    @Override
-    public Discount applyDiscountForAnnualPackage(CreateDiscountDto createDiscountDto) {
-        if ("ANNUAL".equals(createDiscountDto.getBillingCycleType().toString())) {
-            // Create and save discount
-            Discount discount = new Discount();
-            discount.setDiscountType(DiscountType.YEARLY_SUBSCRIPTION);
-            discount.setPercentage(5.0);
-            discount.setStartDate(LocalDate.now());
-            discount.setEndDate(createDiscountDto.getEndDate());
-            discount.setCreatedAt(LocalDate.now());
-            discount.setUpdatedAt(LocalDate.now());
-            discount.setStatus(Status.ACTIVE);
-            discount.setCustomerId(createDiscountDto.getCustomerId());
-            discount.setAmount(0.1); // Geçici bir değer veya hesaplanmış değer atan
+    // @Override
+    // public Discount applyDiscountForAnnualPackage(CreateDiscountDto
+    // createDiscountDto) {
+    // if ("ANNUAL".equals(createDiscountDto.getBillingCycleType().toString())) {
+    // // Create and save discount
+    // Discount discount = new Discount();
+    // discount.setDiscountType(DiscountType.YEARLY_SUBSCRIPTION);
+    // discount.setPercentage(5.0);
+    // discount.setStartDate(LocalDate.now());
+    // discount.setEndDate(createDiscountDto.getEndDate());
+    // discount.setCreatedAt(LocalDate.now());
+    // discount.setUpdatedAt(LocalDate.now());
+    // discount.setStatus(Status.ACTIVE);
+    // discount.setCustomerId(createDiscountDto.getCustomerId());
+    // discount.setAmount(0.1); // Geçici bir değer veya hesaplanmış değer atan
 
-            Discount savedDiscount = discountRepository.save(discount);
+    // Discount savedDiscount = discountRepository.save(discount);
 
-            return savedDiscount;
-        }
-        throw new IllegalArgumentException("Invalid billing cycle type: " + createDiscountDto.getBillingCycleType());
-    }
-
-
+    // return savedDiscount;
+    // }
+    // throw new IllegalArgumentException("Invalid billing cycle type: " +
+    // createDiscountDto.getBillingCycleType());
+    // }
 
 }

@@ -12,14 +12,14 @@ import java.time.LocalDateTime;
 @Component
 @Data
 public class BillingPlanMapper {
-    public BillingPlan createBillingPlanFromCreateBillingPlanDto(CreateBillingPlanDto createBillingPlanDto){
+    public BillingPlan createBillingPlanFromCreateBillingPlanDto(CreateBillingPlanDto createBillingPlanDto) {
         return BillingPlan.builder()
                 .createdAt(LocalDateTime.now())
-                .billingDay(createBillingPlanDto.getBillingDay())
+                // .billingDay(createBillingPlanDto.getBillingDay())
                 .baseAmount(createBillingPlanDto.getBaseAmount())
                 .cycleType(createBillingPlanDto.getCycleType())
                 .status(createBillingPlanDto.getStatus())
-                .paymentDueDays(createBillingPlanDto.getPaymentDueDays())
+                // .paymentDueDays(createBillingPlanDto.getPaymentDueDays())
                 .updatedAt(LocalDateTime.now())
                 .taxRate(createBillingPlanDto.getTaxRate())
                 .paymentMethod(createBillingPlanDto.getPaymentMethod())
@@ -27,36 +27,28 @@ public class BillingPlanMapper {
                 .build();
 
     }
-    public BillingPlan updateBillingPlanFromUpdateBillingPlanDto(UpdateBillingPlanDto updateBillingPlanDto){
+
+    public BillingPlan updateBillingPlanFromUpdateBillingPlanDto(UpdateBillingPlanDto updateBillingPlanDto) {
         return BillingPlan.builder()
                 .taxRate(updateBillingPlanDto.getTaxRate())
                 .updatedAt(LocalDateTime.now())
-                .paymentDueDays(updateBillingPlanDto.getPaymentDueDays())
+                // .paymentDueDays(updateBillingPlanDto.getPaymentDueDays())
                 .cycleType(updateBillingPlanDto.getCycleType())
                 .id(updateBillingPlanDto.getId())
                 .status(updateBillingPlanDto.getStatus())
                 .description(updateBillingPlanDto.getDescription())
                 .baseAmount(updateBillingPlanDto.getBaseAmount())
                 .name(updateBillingPlanDto.getName())
-                .billingDay(updateBillingPlanDto.getBillingDay())
+                // .billingDay(updateBillingPlanDto.getBillingDay())
                 .createdAt(LocalDateTime.now())
                 .paymentMethod(updateBillingPlanDto.getPaymentMethod())
                 .build();
     }
-    public BillingPlanListiningDto toBillingPlanListiningDto(BillingPlan billingPlan){
+
+    public BillingPlanListiningDto toBillingPlanListiningDto(BillingPlan billingPlan) {
         return new BillingPlanListiningDto(
-                billingPlan.getName()
-                ,billingPlan.getDescription()
-                ,billingPlan.getBillingDay()
-                ,billingPlan.getCycleType()
-                ,billingPlan.getCreatedAt(),
-                billingPlan.getUpdatedAt()
-                ,billingPlan.getBaseAmount()
-                ,billingPlan.getContract()
-                ,billingPlan.getPaymentDueDays()
-                ,billingPlan.getStatus()
-                ,billingPlan.getTaxRate()
-                ,billingPlan.getPaymentMethod()
-        );
+                billingPlan.getName(), billingPlan.getDescription(), billingPlan.getCycleType(),
+                billingPlan.getBaseAmount(), billingPlan.getContract(), billingPlan.getStatus(),
+                billingPlan.getTaxRate(), billingPlan.getPaymentMethod());
     }
 }

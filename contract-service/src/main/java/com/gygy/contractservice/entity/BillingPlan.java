@@ -14,7 +14,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@Table(name="billing_plans")
+@Table(name = "billing_plans")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -28,26 +28,21 @@ public class BillingPlan {
     private UUID planId;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "cycle_type", nullable = false)
+    @Column(name = "cycle_type")
     private BillingCycleType cycleType;
 
-    @Column(name = "billing_day", nullable = false)
-    private Integer billingDay;
-    @Column(name = "payment_due_days", nullable = false)
-    private Integer paymentDueDays;
-    @Column(name = "base_amount", nullable = false)
+    @Column(name = "base_amount")
     private Integer baseAmount;
-    @Column(name = "tax_rate", nullable = false)
+    @Column(name = "tax_rate")
     private Double taxRate;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "payment_method", nullable = false)
+    @Column(name = "payment_method")
     private PaymentMethod paymentMethod;
 
-
-    @Column(name = "status", nullable = false)
+    @Column(name = "status")
     private Status status;
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
@@ -55,9 +50,7 @@ public class BillingPlan {
     @JoinColumn(name = "contract_id")
     private Contract contract;
 
-
     @OneToMany(mappedBy = "billingPlan")
     private Set<Discount> discounts;
-
 
 }

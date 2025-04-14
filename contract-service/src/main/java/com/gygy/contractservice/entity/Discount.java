@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name="discount")
+@Table(name = "discount")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -27,39 +27,36 @@ public class Discount {
     private String name;
 
     @Enumerated(EnumType.STRING)
-    @Column(name="billing_cycle_type")
+    @Column(name = "billing_cycle_type")
     private BillingCycleType billingCycleType;
 
-
     @Enumerated(EnumType.STRING)
-    @Column(name="discount_type")
+    @Column(name = "discount_type")
     private DiscountType discountType;
 
     private double amount;
     private double percentage;
 
-    @Column(nullable = false, columnDefinition = "varchar(255) default 'ACTIVE'")
+    @Column(columnDefinition = "varchar(255) default 'ACTIVE'")
     @Enumerated(EnumType.STRING)
     private Status status;
 
     private UUID customerId;
     private String description;
 
-
-    @Column(name="start_date")
+    @Column(name = "start_date")
     private LocalDate startDate;
-    @Column(name="end_date")
+    @Column(name = "end_date")
     private LocalDate endDate;
-    @Column(name="created_at")
+    @Column(name = "created_at")
     private LocalDate createdAt;
-    @Column(name="updated_at")
+    @Column(name = "updated_at")
     private LocalDate updatedAt;
     @ManyToOne
-    @JoinColumn(name="contract_id", nullable = true)
+    @JoinColumn(name = "contract_id")
     private Contract contract;
     @ManyToOne
-    @JoinColumn(name="billing_plan_id")
+    @JoinColumn(name = "billing_plan_id")
     private BillingPlan billingPlan;
-
 
 }

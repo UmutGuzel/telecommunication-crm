@@ -57,14 +57,14 @@ public class TicketResponseController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<TicketResponseDTO>> getResponsesByUserId(@PathVariable Long userId) {
+    public ResponseEntity<List<TicketResponseDTO>> getResponsesByUserId(@PathVariable UUID userId) {
         List<TicketResponse> responses = ticketResponseService.getResponsesByUserId(userId);
         return ResponseEntity.ok(responseMapper.toDTOList(responses));
     }
 
     @GetMapping("/user/{userId}/paged")
     public ResponseEntity<Page<TicketResponseDTO>> getPagedResponsesByUserId(
-            @PathVariable Long userId, Pageable pageable) {
+            @PathVariable UUID userId, Pageable pageable) {
         Page<TicketResponse> responsesPage = ticketResponseService.getResponsesByUserId(userId, pageable);
         List<TicketResponseDTO> responseDTOs = responseMapper.toDTOList(responsesPage.getContent());
         return ResponseEntity.ok(new PageImpl<>(responseDTOs, pageable, responsesPage.getTotalElements()));

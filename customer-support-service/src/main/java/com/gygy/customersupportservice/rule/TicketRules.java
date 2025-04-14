@@ -19,9 +19,7 @@ public class TicketRules {
     private final TicketStatusRepository ticketStatusRepository;
 
     public Ticket applyNewTicketRules(Ticket ticket) {
-        TicketStatus defaultStatus = ticketStatusRepository.findByStatus("OPEN")
-                .orElseThrow(() -> new EntityNotFoundException("Default ticket status not found"));
-        ticket.setStatus(defaultStatus);
+
         ticket.setCreatedAt(LocalDateTime.now());
         return ticket;
     }

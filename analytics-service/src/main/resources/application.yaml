@@ -5,12 +5,6 @@ spring:
   cloud:
     config:
       profile: local
-      fail-fast: true
-      retry:
-        initial-interval: 1500
-        multiplier: 1.5
-        max-attempts: 10
-        max-interval: 10000
   config:
     import: configserver:${configurl}
   kafka:
@@ -20,10 +14,12 @@ spring:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
     consumer:
       group-id: analytics-service-group
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      key-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
       properties:
         spring.json.trusted.packages: com.gygy.common.events.*
+        spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
   data:
     mongodb:
       uri: mongodb://root:root@localhost:27017/analytics-service?authSource=admin
