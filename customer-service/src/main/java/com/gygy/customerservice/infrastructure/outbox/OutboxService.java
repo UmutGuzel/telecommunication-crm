@@ -69,51 +69,48 @@ public class OutboxService {
     @Transactional
     public void processOutboxMessages() {
         List<OutboxEntity> allMessages = outboxRepository.findByStatusOrderByCreatedAtAsc(OutboxStatus.FAILED);
-        log.info("Found {} failed messages to process", allMessages.size());
         
         // Mesajları batch'lere böl
         List<List<OutboxEntity>> batches = new ArrayList<>();
         for (int i = 0; i < allMessages.size(); i += BATCH_SIZE) {
             batches.add(allMessages.subList(i, Math.min(i + BATCH_SIZE, allMessages.size())));
         }
-        log.info("Created {} batches of size {}", batches.size(), BATCH_SIZE);
         
         // Her batch'i paralel işle
         List<CompletableFuture<Void>> batchFutures = batches.stream()
-            .map(batch -> CompletableFuture.runAsync(() -> {
-                log.info("Processing batch of {} messages", batch.size());
-                processBatchInTransaction(batch);
-                log.info("Completed processing batch of {} messages", batch.size());
-            }, executorService))
+            .map(batch -> CompletableFuture.runAsync(() -> processBatch(batch), executorService))
             .collect(Collectors.toList());
         
         // Tüm batch'lerin tamamlanmasını bekle
         CompletableFuture.allOf(batchFutures.toArray(new CompletableFuture[0])).join();
-        log.info("Completed processing all {} messages", allMessages.size());
     }
 
-    @Transactional
-    protected void processBatchInTransaction(List<OutboxEntity> batch) {
-        for (OutboxEntity message : batch) {
-            try {
-                boolean success = processOutboxMessageWithRetry(message);
-                if (success) {
-                    message.setStatus(OutboxStatus.PROCESSED);
-                    message.setProcessedAt(LocalDateTime.now());
-                    outboxRepository.save(message);
-                    log.info("Successfully processed outbox message: {}", message.getId());
-                } else {
+    private void processBatch(List<OutboxEntity> batch) {
+        List<CompletableFuture<Void>> messageFutures = batch.stream()
+            .map(message -> CompletableFuture.runAsync(() -> {
+                try {
+                    boolean success = processOutboxMessageWithRetry(message);
+                    if (success) {
+                        message.setStatus(OutboxStatus.PROCESSED);
+                        message.setProcessedAt(LocalDateTime.now());
+                        outboxRepository.save(message);
+                        log.info("Successfully processed outbox message: {}", message.getId());
+                    } else {
+                        message.setStatus(OutboxStatus.FAILED);
+                        outboxRepository.save(message);
+                        log.error("Failed to process outbox message after {} attempts: {}", 
+                            OutboxConfig.MAX_RETRY_ATTEMPTS, message.getId());
+                    }
+                } catch (Exception e) {
+                    log.error("Error while processing outbox message: {}", message.getId(), e);
                     message.setStatus(OutboxStatus.FAILED);
                     outboxRepository.save(message);
-                    log.error("Failed to process outbox message after {} attempts: {}", 
-                        OutboxConfig.MAX_RETRY_ATTEMPTS, message.getId());
                 }
-            } catch (Exception e) {
-                log.error("Error while processing outbox message: {}", message.getId(), e);
-                message.setStatus(OutboxStatus.FAILED);
-                outboxRepository.save(message);
-            }
-        }
+            }, executorService))
+            .collect(Collectors.toList());
+        
+        // Batch içindeki tüm mesajların tamamlanmasını bekle
+        CompletableFuture.allOf(messageFutures.toArray(new CompletableFuture[0])).join();
     }
 
     private boolean processOutboxMessageWithRetry(OutboxEntity message) {

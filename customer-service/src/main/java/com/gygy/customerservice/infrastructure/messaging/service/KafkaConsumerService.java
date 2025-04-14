@@ -11,7 +11,9 @@ import com.gygy.customerservice.infrastructure.persistence.repository.CustomerRe
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
+
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,11 +31,12 @@ public class KafkaConsumerService {
         customerRule.checkCustomerExists(customer);
         customerMapper.updateCustomerNotificationPreferences(customer, event);
     }
-    
+
     @KafkaListener(topics = "individual-customer-read-created-topic", groupId = "customer-read-group")
+    @Transactional
     public void consumeIndividualCustomerReadCreatedEvent(CreatedIndividualCustomerReadEvent event) {
         log.info("Consuming the message from individual-customer-read-created-topic: {}", event);
-        
+
         CustomerReadEntity customerReadEntity = CustomerReadEntity.builder()
                 .id(event.getId())
                 .email(event.getEmail())
@@ -44,7 +47,7 @@ public class KafkaConsumerService {
                 .gender(event.getGender())
                 .birthDate(event.getBirthDate())
                 .build();
-        
+
         customerReadRepository.save(customerReadEntity);
     }
 }

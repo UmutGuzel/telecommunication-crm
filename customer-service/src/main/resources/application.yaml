@@ -20,11 +20,6 @@ spring:
         spring.json.type.mapping: notificationPreferencesChangedEvent:com.gygy.customerservice.infrastructure.messaging.event.NotificationPreferencesChangedEvent,createdIndividualCustomerReadEvent:com.gygy.customerservice.infrastructure.messaging.event.db.CreatedIndividualCustomerReadEvent
         spring.json.value.default.type: com.gygy.customerservice.infrastructure.messaging.event.db.CreatedIndividualCustomerReadEvent
 
-    listener:
-      type: batch
-      ack-mode: MANUAL_IMMEDIATE
-      missing-topics-fatal: false
-
 management:
   endpoints:
     web:
