@@ -31,10 +31,6 @@ public class BillingPlan {
     @Column(name = "cycle_type", nullable = false)
     private BillingCycleType cycleType;
 
-    @Column(name = "billing_day", nullable = false)
-    private Integer billingDay;
-    @Column(name = "payment_due_days", nullable = false)
-    private Integer paymentDueDays;
     @Column(name = "base_amount", nullable = false)
     private Integer baseAmount;
     @Column(name = "tax_rate", nullable = false)

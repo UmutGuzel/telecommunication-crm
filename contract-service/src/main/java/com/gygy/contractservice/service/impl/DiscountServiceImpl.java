@@ -77,7 +77,6 @@ public class DiscountServiceImpl implements DiscountService {
             if (createDiscountDto.getBillingPlanId() != null && !createDiscountDto.getBillingPlanId().isEmpty()) {
                 List<BillingPlan> billingPlans = billingPlanService.findAll(createDiscountDto.getBillingPlanId());
                 if (!billingPlans.isEmpty()) {
-                    // İlk billing plan'ı kullanıyoruz
                     discount.setBillingPlan(billingPlans.get(0));
                 }
             }
@@ -106,11 +105,9 @@ public class DiscountServiceImpl implements DiscountService {
         logger.info("Updating discount  with ID: {}", updateDiscountDto.getId());
         try {
             Contract contract = contractService.findById(updateDiscountDto.getContractId()).orElseThrow(()->new RuntimeException("Contract Not Found."));
-            List<BillingPlan> billingPlan = billingPlanService.findAll(updateDiscountDto.getBillingPlanId());
             Discount discount=discountMapper.updateDiscountFromUpdateDiscountDto(updateDiscountDto);
             discount.setId(updateDiscountDto.getId());
             discount.setContract(contract);
-         //   discount.setBillingPlans(billingPlan);
             Discount updatedDiscount=discountRepository.save(discount);
             logger.info("Successfully updated billing plan with ID: {}", updatedDiscount.getId());
             return updatedDiscount;
@@ -152,24 +149,11 @@ public class DiscountServiceImpl implements DiscountService {
                         ,discount.getStartDate()
                         ,discount.getCreatedAt(),
                         discount.getUpdatedAt()
-                        ,discount.getCustomerId()
                         ,discount.getStatus()
                         ,discount.getDescription()))
                 .toList();
     }
 
-    @Override
-    public List<DiscountListiningDto> getActiveDiscountsByCustomerId(UUID customerId) {
-        logger.debug(FETCHING_ALL_DISCOUNT);
-        List<Discount> discounts = discountRepository.findAll();
-        List<DiscountListiningDto> discountListiningDtos = discounts.stream()
-                .filter(discount -> "ACTIVE".equals(discount.getStatus().toString())
-                        && discount.getCustomerId().equals(customerId))
-                .map(discountMapper::toDiscountListiningDto)
-                .collect(Collectors.toList());
-        logger.info("Found {} active contracts", discounts.size());
-        return discountListiningDtos;
-    }
 
     @Override
     public List<DiscountListiningDto> getDiscountsByContractId(UUID contractId) {
@@ -186,7 +170,6 @@ public class DiscountServiceImpl implements DiscountService {
     @Override
     public Discount applyDiscountForAnnualPackage(CreateDiscountDto createDiscountDto) {
         if ("ANNUAL".equals(createDiscountDto.getBillingCycleType().toString())) {
-            // Create and save discount
             Discount discount = new Discount();
             discount.setDiscountType(DiscountType.YEARLY_SUBSCRIPTION);
             discount.setPercentage(5.0);
@@ -195,9 +178,7 @@ public class DiscountServiceImpl implements DiscountService {
             discount.setCreatedAt(LocalDate.now());
             discount.setUpdatedAt(LocalDate.now());
             discount.setStatus(Status.ACTIVE);
-            discount.setCustomerId(createDiscountDto.getCustomerId());
-            discount.setAmount(0.1); // Geçici bir değer veya hesaplanmış değer atan
-
+            discount.setAmount(0.1);
             Discount savedDiscount = discountRepository.save(discount);
 
             return savedDiscount;

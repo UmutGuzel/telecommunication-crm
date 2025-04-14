@@ -16,11 +16,7 @@ public class ContractCreatedEventConsumer {
     private final EmailService emailService;
     private final KafkaTopicConfig kafkaTopicConfig;
 
-    @KafkaListener(
-            topics = "${kafka.topics.contractCreatedEventTopic}",
-            groupId = "${spring.kafka.consumer.group-id}",
-            containerFactory = "kafkaListenerContainerFactory"
-    )
+    @KafkaListener(topics = "${kafka.topics.contractCreatedEventTopic}", groupId = "${spring.kafka.consumer.group-id}", containerFactory = "contractCreatedKafkaListenerContainerFactory")
     public void consume(ContractCreatedEvent event) {
         if (event == null) {
             log.error("Received null ContractCreatedEvent");

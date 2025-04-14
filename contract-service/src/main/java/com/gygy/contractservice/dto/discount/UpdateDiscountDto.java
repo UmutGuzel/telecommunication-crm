@@ -22,7 +22,6 @@ public class UpdateDiscountDto {
     private UUID contractId;
     @NotNull(message = "Billing Plan  ID is required")
     private List<UUID> billingPlanId;
-    private UUID customerId;
     private BillingCycleType billingCycleType;
 
 

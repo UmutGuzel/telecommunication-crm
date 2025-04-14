@@ -4,8 +4,6 @@ import com.gygy.contractservice.model.enums.BillingCycleType;
 import com.gygy.contractservice.model.enums.PaymentMethod;
 import com.gygy.contractservice.model.enums.Status;
 import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,13 +18,7 @@ public class CreateBillingPlanDto {
     @NotNull(message = "Cycle type is required")
     private BillingCycleType cycleType;
 
-    @NotNull(message = "Billing day is required")
-    @Min(value = 1, message = "Billing day must be at least 1")
-    private Integer billingDay;
 
-    @NotNull(message = "Payment due days is required")
-    @Min(value = 0, message = "Payment due days must be at least 0")
-    private Integer paymentDueDays;
 
     @NotNull(message = "Base amount is required")
     @DecimalMin(value = "0.0", inclusive = true, message = "Base amount must be at least 0")

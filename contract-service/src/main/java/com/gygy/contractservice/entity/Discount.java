@@ -41,8 +41,6 @@ public class Discount {
     @Column(nullable = false, columnDefinition = "varchar(255) default 'ACTIVE'")
     @Enumerated(EnumType.STRING)
     private Status status;
-
-    private UUID customerId;
     private String description;
 
 
@@ -55,7 +53,7 @@ public class Discount {
     @Column(name="updated_at")
     private LocalDate updatedAt;
     @ManyToOne
-    @JoinColumn(name="contract_id", nullable = true)
+    @JoinColumn(name="contract_id")
     private Contract contract;
     @ManyToOne
     @JoinColumn(name="billing_plan_id")

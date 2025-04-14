@@ -8,5 +8,6 @@ spring:
   config:
     import: configserver:${configurl}
 
+
 server:
   port: 9030

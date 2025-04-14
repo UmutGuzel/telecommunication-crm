@@ -19,8 +19,7 @@ public class BillingPlanListiningDto {
     private String name;
     private String description;
     private BillingCycleType cycleType;
-    private Integer billingDay;
-    private Integer paymentDueDays;
+
     private Integer baseAmount;
     private Double taxRate;
     private PaymentMethod paymentMethod;
@@ -29,16 +28,14 @@ public class BillingPlanListiningDto {
     private LocalDateTime updatedAt;
      private UUID contractId;
 
-    public BillingPlanListiningDto(String name, String description, Integer billingDay, BillingCycleType cycleType,LocalDateTime createdAt,LocalDateTime updatedAt, Integer baseAmount, Contract contract, Integer paymentDueDays, Status status, Double taxRate,PaymentMethod paymentMethod) {
+    public BillingPlanListiningDto(String name, String description, BillingCycleType cycleType,LocalDateTime createdAt,LocalDateTime updatedAt, Integer baseAmount, Contract contract, Status status, Double taxRate,PaymentMethod paymentMethod) {
         this.name = name;
         this.description = description;
-        this.billingDay = billingDay;
         this.cycleType = cycleType;
         this.createdAt=createdAt;
         this.updatedAt=updatedAt;
         this.baseAmount = baseAmount;
         this.taxRate = taxRate;
-        this.paymentDueDays = paymentDueDays;
         this.status = status;
         this.contractId = contract.getId();
         this.paymentMethod=paymentMethod;
