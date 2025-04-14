@@ -29,6 +29,10 @@ spring:
         spring.json.value.default.type: com.gygy.customerservice.infrastructure.messaging.event.db.CreatedIndividualCustomerReadEvent
 
 management:
+  tracing:
+    sampling:
+      probability: 1.0
+    enabled: true
   endpoints:
     web:
       exposure:

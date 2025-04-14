@@ -21,7 +21,11 @@ spring:
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       properties:
         spring.json.trusted.packages: '*'
-
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+    enabled: true
 debezium:
   connector:
     name: outbox-connector

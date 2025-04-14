@@ -14,6 +14,10 @@ import com.gygy.customerservice.application.individualCustomer.query.GetListIndi
 @Repository
 public interface IndividualCustomerRepository extends JpaRepository<IndividualCustomer, UUID> {
     Optional<IndividualCustomer> findByIdentityNumberHash(String identityNumberHash);
+    
+    IndividualCustomer findByEmail(String email);
+    
+    IndividualCustomer findByPhoneNumber(String phoneNumber);
 
     @Query("SELECT new com.gygy.customerservice.application.individualCustomer.query.GetListIndividualCustomerItemDto(" +
            "c.id, c.email, c.phoneNumber, c.name, c.surname, c.gender, c.birthDate) " +
