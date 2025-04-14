@@ -8,8 +8,8 @@ import com.gygy.customerservice.infrastructure.messaging.event.db.UpdatedIndivid
 
 
 public enum EventType {
-    INDIVIDUAL_CUSTOMER_READ_CREATED("individual-customer-read-created-topic", CreatedIndividualCustomerReadEvent.class),
     INDIVIDUAL_CUSTOMER_READ_UPDATED("individual-customer-read-updated-topic", UpdatedIndividualCustomerReadEvent.class),
+    INDIVIDUAL_CUSTOMER_READ_CREATED("individual-customer-read-created-topic", CreatedIndividualCustomerReadEvent.class),
     CORPORATE_CUSTOMER_READ_CREATED("corporate-customer-read-created-topic", CreatedCorporateCustomerReadEvent.class),
     CORPORATE_CUSTOMER_READ_UPDATED("corporate-customer-read-updated-topic", UpdatedCorporateCustomerReadEvent.class);
 

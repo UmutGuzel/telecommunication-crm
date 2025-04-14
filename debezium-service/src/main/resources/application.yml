@@ -9,6 +9,18 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      properties:
+        acks: all
+        retries: 3
+        max.in.flight.requests.per.connection: 1
+        enable.idempotence: true
+    consumer:
+      group-id: debezium-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      properties:
+        spring.json.trusted.packages: '*'
 
 debezium:
   connector:
@@ -22,17 +34,28 @@ debezium:
       server-name: customer-service
       schema-include-list: public
       table-include-list: public.outbox
+      include:
+        unknown:
+          datatypes: true
+      replication:
+        slot:
+          name: outbox_slot
+          drop-on-stop: true
+          stream-params:
+            include-xids: true
+            include-timestamp: true
+            include-lsn: true
+      publication:
+        name: outbox_publication
+        autocreate-mode: filtered
     offset:
       storage: org.apache.kafka.connect.storage.FileOffsetBackingStore
       file: offset.dat
       flush-interval-ms: 60000
+      cleanup:
+        on-shutdown: true
     plugin:
       name: pgoutput
-    slot:
-      name: outbox_slot
-    publication:
-      name: outbox_publication
-      autocreate-mode: filtered
     format:
       key: json
       value: json
@@ -43,8 +66,20 @@ debezium:
         delete-handling-mode: rewrite
         add-fields: op,source.ts_ms
         add-headers: op
+    snapshot:
+      mode: never
+    heartbeat:
+      interval-ms: 5000
+    poll:
+      interval-ms: 1000
+    max:
+      queue:
+        size: 8192
+        bytes: 1073741824
+    wal:
+      level: logical
 
 logging:
   level:
-    com.gygy.debezium: DEBUG
-    io.debezium: INFO 
+    com.gygy.debezium: INFO
+    io.debezium: INFO
